@@ -65,7 +65,17 @@ Settlement Engine → USDC payout to Provider wallet (periodic)
 
 5. **Arc testnet USDC acquisition is undocumented** — There's no official faucet page for Arc testnet USDC. We obtained test USDC through Circle Developer Console funding (40 USDC), but the process was trial-and-error. A `npx @circle-fin/faucet arc-testnet 0xADDRESS 100` CLI command would dramatically reduce onboarding friction for hackathon participants.
 
-6. **`x402-batching` `latest` tag on npm is risky for production** — The package doesn't have stable semver releases yet, so our `package.json` pins `"@circle-fin/x402-batching": "latest"`. A breaking change in middleware API shape during our development window (April 15-19) would have silently broken our 519-transaction demo. **Suggestion:** Publish tagged releases (`@circle-fin/x402-batching@1.0.0`) and document the middleware contract as stable.
+6. **`x402-batching` `latest` tag on npm is risky for production** — The package doesn't have stable semver releases yet, so our `package.json` pins `"@circle-fin/x402-batching": "latest"`. A breaking change in middleware API shape during our development window (April 15-19) would have silently broken our 589-transaction demo. **Suggestion:** Publish tagged releases (`@circle-fin/x402-batching@1.0.0`) and document the middleware contract as stable.
+
+**Recommendations for a More Seamless Developer Experience:**
+
+1. **Unified Python + TypeScript SDK coverage** — The biggest friction in our build was maintaining a dual-language architecture (TypeScript nanopayments sidecar + Python FastAPI backend) because x402-batching only exists in TypeScript. A `circle-x402-batching` PyPI package with the same `deposit/pay/getBalances` flow would let Python-first teams (LangChain, CrewAI, AutoGen) adopt x402 without a sidecar. This is the single highest-impact improvement Circle could make for agent commerce adoption.
+
+2. **Arc testnet developer onboarding kit** — Bundle a one-command setup: `npx @circle-fin/arc-quickstart` that creates a wallet set, funds testnet USDC from faucet, deploys a sample x402-protected endpoint, and opens the Arc Block Explorer to verify — all in under 60 seconds. Our hackathon team spent hours piecing together docs across Circle Wallets, x402, and Arc testnet. A unified quickstart would drastically reduce time-to-first-transaction.
+
+3. **Circle Console → Arc Explorer deep links** — When viewing a transaction in the Circle Developer Console, add a "View on Arc Explorer" button that links directly to the corresponding `testnet.arcscan.app/tx/{hash}` page. Currently, developers must manually copy the TX hash and navigate to the explorer. This small UX improvement would immediately validate the on-chain proof story for every Circle Wallets user on Arc.
+
+4. **x402 payment receipt webhook** — After `gateway.require()` processes a payment, provide a server-side callback with structured receipt data: `{ payer, amount, txHash, batchId, timestamp }`. Currently we parse `(req as any).payment` manually, and batch settlement timing is opaque. A first-class receipt webhook would let marketplace platforms like ours reconcile payments reliably.
 
 ### Technical Architecture
 
