@@ -245,7 +245,7 @@
                 <div class="stat-label">Seller Address</div>
                 <div class="stat-sub">
                     {% if seller != 'N/A' %}
-                    <a href="https://explorer.arc.circle.com/address/{{ seller }}" target="_blank" rel="noopener">View on Explorer &rarr;</a>
+                    <a href="https://testnet.arcscan.app/address/{{ seller }}" target="_blank" rel="noopener">View on Explorer &rarr;</a>
                     {% else %}
                     Not configured
                     {% endif %}
@@ -256,11 +256,11 @@
         {# ── Explorer Quick Links ── #}
         {% if stats.seller and stats.seller != 'N/A' %}
         <div class="explorer-links">
-            <a class="explorer-link" href="https://explorer.arc.circle.com/address/{{ stats.seller }}" target="_blank" rel="noopener">
+            <a class="explorer-link" href="https://testnet.arcscan.app/address/{{ stats.seller }}" target="_blank" rel="noopener">
                 &#x1f50d; Seller on Arc Explorer
             </a>
             {% if stats.explorer and stats.explorer.contract %}
-            <a class="explorer-link" href="https://explorer.arc.circle.com/address/{{ stats.explorer.contract }}" target="_blank" rel="noopener">
+            <a class="explorer-link" href="https://testnet.arcscan.app/address/{{ stats.explorer.contract }}" target="_blank" rel="noopener">
                 &#x1f4dc; USDC Contract
             </a>
             {% endif %}
@@ -300,7 +300,7 @@
                             <td>{{ tx.time|default('—') }}</td>
                             <td>
                                 {% if tx.tx_hash %}
-                                <a href="https://explorer.arc.circle.com/tx/{{ tx.tx_hash }}" target="_blank" rel="noopener">View &rarr;</a>
+                                <a href="https://testnet.arcscan.app/tx/{{ tx.tx_hash }}" target="_blank" rel="noopener">View &rarr;</a>
                                 {% else %}
                                 &mdash;
                                 {% endif %}
