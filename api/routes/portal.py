@@ -610,6 +610,80 @@ async def portal_referrals_generate(request: Request, csrf_token: str = Form("")
 
 
 # ---------------------------------------------------------------------------
+# Budget Governor
+# ---------------------------------------------------------------------------
+
+@router.get("/budget", response_class=HTMLResponse)
+async def portal_budget(request: Request):
+    """Agent budget governor — set spending limits."""
+    provider = _get_provider(request)
+    if not provider:
+        return RedirectResponse("/portal/login", status_code=303)
+
+    ctx = _locale_context(request)
+    return templates.TemplateResponse("portal/budget.html", {
+        "request": request, **ctx,
+        "provider": provider,
+    })
+
+
+# ---------------------------------------------------------------------------
+# Negotiations
+# ---------------------------------------------------------------------------
+
+@router.get("/negotiations", response_class=HTMLResponse)
+async def portal_negotiations(request: Request):
+    """Agent negotiation history — view autonomous price haggling."""
+    provider = _get_provider(request)
+    if not provider:
+        return RedirectResponse("/portal/login", status_code=303)
+
+    import json
+    data_dir = Path(__file__).resolve().parent.parent.parent / "data"
+    neg_file = data_dir / "negotiations.json"
+    negotiations = {}
+    if neg_file.exists():
+        try:
+            negotiations = json.loads(neg_file.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError):
+            pass
+
+    ctx = _locale_context(request)
+    return templates.TemplateResponse("portal/negotiations.html", {
+        "request": request, **ctx,
+        "provider": provider,
+        "negotiations": negotiations,
+    })
+
+
+# ---------------------------------------------------------------------------
+# Reputation
+# ---------------------------------------------------------------------------
+
+@router.get("/reputation", response_class=HTMLResponse)
+async def portal_reputation(request: Request):
+    """Agent reputation scores and leaderboard."""
+    provider = _get_provider(request)
+    if not provider:
+        return RedirectResponse("/portal/login", status_code=303)
+
+    db = request.app.state.db
+    leaderboard = []
+    try:
+        rep_engine = request.app.state.reputation_engine
+        leaderboard = rep_engine.leaderboard(limit=20)
+    except Exception:
+        pass
+
+    ctx = _locale_context(request)
+    return templates.TemplateResponse("portal/reputation.html", {
+        "request": request, **ctx,
+        "provider": provider,
+        "leaderboard": leaderboard,
+    })
+
+
+# ---------------------------------------------------------------------------
 # PAT (Personal API Token) helpers & routes
 # ---------------------------------------------------------------------------
 

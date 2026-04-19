@@ -72,6 +72,8 @@ from .routes import adcp as adcp_routes
 from .routes import agents as agents_routes
 from .routes import mcp_endpoint as mcp_routes
 from .routes import service_gateway as gateway_routes
+from .routes import negotiation as negotiation_routes
+from .routes import budget as budget_routes
 
 logger = logging.getLogger("acf")
 
@@ -522,6 +524,8 @@ app.include_router(adcp_routes.router)
 app.include_router(agents_routes.router, prefix="/api/v1")
 app.include_router(mcp_routes.router, prefix="/api/v1")
 app.include_router(gateway_routes.router)
+app.include_router(negotiation_routes.router, prefix="/api/v1")
+app.include_router(budget_routes.router, prefix="/api/v1")
 
 
 @app.get("/api/health")
