@@ -36,13 +36,13 @@ Settlement Engine → USDC payout to Provider wallet (periodic)
 ### Circle Product Feedback
 
 **Products Used:**
-- **USDC on Arc** — Settlement currency for all marketplace micropayments. Deposit TX: `0xead8b5f7bf91ca850f9af5293b2ee3aad0ac0fc32b8eeadad40aef1de6fed141`. 519 successful paid API calls at $0.001 each on Arc testnet (chain ID `eip155:5042002`). Full transaction log in `data/nanopayment_transactions.json`.
+- **USDC on Arc** — Settlement currency for all marketplace micropayments. Deposit TX: `0xead8b5f7bf91ca850f9af5293b2ee3aad0ac0fc32b8eeadad40aef1de6fed141`. 589 successful paid API calls at $0.001 each on Arc testnet (chain ID `eip155:5042002`). Full off-chain payment log in `data/nanopayment_transactions.json`. **Important:** The explorer shows only 2 on-chain transactions (deposit + batch settlement) — this is by design. Individual $0.001 API calls are processed off-chain via x402 batching, which is what enables zero gas fees per call. The 589 off-chain payment authorizations are EIP-712 signed and logged locally.
 - **x402 Payment Standard** — Server-side: `@circle-fin/x402-batching` middleware via `createGatewayMiddleware()` + `gateway.require("$0.001")` per-route pricing (`nanopayments/server.ts:39-79`). Client-side: `GatewayClient` with `client.deposit()` + `client.pay()` flow (`nanopayments/demo-buyer.ts:47-93`). Python buyer uses base `x402` library with `EthAccountSigner` for EIP-712 signed payments (`payments/x402_client.py:102-117`).
 - **Circle Programmable Wallets** — Developer-controlled seller wallet on ARC-TESTNET (wallet set `ab698b2d...`) via `payments/circle_wallets.py`, eliminating private key management for the provider side.
 
 **Why These Products:**
 - x402 eliminates the checkout step entirely — the agent includes USDC payment proof with every API call, no human intervention needed. This is the difference between "agent-compatible" and "agent-native" commerce.
-- Off-chain batching means individual API calls cost $0 gas — only the initial `client.deposit()` TX costs gas, making $0.001 micropayments economically viable. We ran 519 calls at $0.001 each with zero gas after one deposit.
+- Off-chain batching means individual API calls cost $0 gas — only the initial `client.deposit()` TX costs gas, making $0.001 micropayments economically viable. We ran 589 calls at $0.001 each with zero gas after one deposit.
 - USDC as Arc's native gas token eliminates the dual-token complexity of bridging ETH for gas fees. For AI agents that don't understand token management, single-token simplicity is critical.
 - Circle Programmable Wallets let us onboard providers with just an email — no MetaMask, no seed phrases, no "what's a gas fee?" friction.
 

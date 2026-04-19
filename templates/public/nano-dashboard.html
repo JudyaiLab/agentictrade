@@ -265,6 +265,11 @@
             </a>
             {% endif %}
         </div>
+        <p style="font-size:13px; color:var(--text-muted); margin-top:8px; max-width:720px;">
+            <strong>Note:</strong> The explorer shows only on-chain transactions (deposit + batch settlement).
+            Individual API call payments ($0.001 each) are processed off-chain via x402 batching &mdash;
+            this is what enables zero gas fees per call. The full off-chain payment log is recorded below.
+        </p>
         {% endif %}
 
         {# ── Recent Transactions Table ── #}
