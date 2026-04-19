@@ -620,10 +620,41 @@ async def portal_budget(request: Request):
     if not provider:
         return RedirectResponse("/portal/login", status_code=303)
 
+    import json
+    data_dir = Path(__file__).resolve().parent.parent.parent / "data"
+    budget_file = data_dir / "budget.json"
+    policy = None
+    history = []
+    daily_pct = 0
+    monthly_pct = 0
+    if budget_file.exists():
+        try:
+            all_budgets = json.loads(budget_file.read_text(encoding="utf-8"))
+            # Find this provider's budget or first available
+            agent_id = provider.get("id", "")
+            pol = all_budgets.get(agent_id) or (list(all_budgets.values())[0] if all_budgets else None)
+            if pol:
+                policy = pol
+                history = pol.get("history", [])[-20:]
+                if pol.get("daily_limit_usd", 0) > 0:
+                    daily_pct = round(pol.get("spent_today_usd", 0) / pol["daily_limit_usd"] * 100, 1)
+                if pol.get("monthly_limit_usd", 0) > 0:
+                    monthly_pct = round(pol.get("spent_month_usd", 0) / pol["monthly_limit_usd"] * 100, 1)
+        except (json.JSONDecodeError, OSError):
+            pass
+
+    session = request.cookies.get(_SESSION_COOKIE, "")
     ctx = _locale_context(request)
     return templates.TemplateResponse("portal/budget.html", {
         "request": request, **ctx,
         "provider": provider,
+        "policy": policy,
+        "history": history,
+        "daily_pct": daily_pct,
+        "monthly_pct": monthly_pct,
+        "alert_success": None,
+        "alert_error": None,
+        "csrf_token": _csrf_token(session),
     })
 
 
@@ -648,11 +679,21 @@ async def portal_negotiations(request: Request):
         except (json.JSONDecodeError, OSError):
             pass
 
+    # Compute stats from negotiations data
+    all_negs = list(negotiations.values()) if isinstance(negotiations, dict) else negotiations
+    stats = {
+        "total": len(all_negs),
+        "accepted": sum(1 for n in all_negs if n.get("status") == "accepted"),
+        "rejected": sum(1 for n in all_negs if n.get("status") == "rejected"),
+        "open": sum(1 for n in all_negs if n.get("status") in ("open", "expired")),
+    }
+
     ctx = _locale_context(request)
     return templates.TemplateResponse("portal/negotiations.html", {
         "request": request, **ctx,
         "provider": provider,
         "negotiations": negotiations,
+        "stats": stats,
     })
 
 
@@ -669,9 +710,11 @@ async def portal_reputation(request: Request):
 
     db = request.app.state.db
     leaderboard = []
+    my_reputation = None
     try:
         rep_engine = request.app.state.reputation_engine
         leaderboard = rep_engine.leaderboard(limit=20)
+        my_reputation = rep_engine.get_score(provider["id"])
     except Exception:
         pass
 
@@ -680,6 +723,7 @@ async def portal_reputation(request: Request):
         "request": request, **ctx,
         "provider": provider,
         "leaderboard": leaderboard,
+        "my_reputation": my_reputation,
     })
 
 
