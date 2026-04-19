@@ -4,13 +4,9 @@ After=network.target acf.service
 
 [Service]
 Type=simple
-User=ubuntu
-WorkingDirectory=/home/ubuntu/projects/agent-commerce-framework/nanopayments
-Environment=SELLER_ADDRESS=0xc04193f6efe8ee5bbf42cf42a11155724935a5c8
-Environment=ACF_BACKEND=http://localhost:8092
-Environment=NANO_PORT=3402
-Environment=ACCEPTED_NETWORKS=eip155:5042002
-Environment=DEFAULT_PRICE=$0.001
+User=deploy
+WorkingDirectory=/opt/agentictrade/nanopayments
+EnvironmentFile=/opt/agentictrade/nanopayments/.env
 ExecStart=/usr/bin/npx tsx server.ts
 Restart=on-failure
 RestartSec=5

@@ -1,0 +1,66 @@
+{
+  "75aa47b4-88d0-4f35-a90c-53b8872c3e08": {
+    "session_id": "75aa47b4-88d0-4f35-a90c-53b8872c3e08",
+    "buyer_id": "Judy-Buyer",
+    "seller_id": "CoinSifter-Provider",
+    "service_id": "svc-coinsifter",
+    "status": "accepted",
+    "rounds": [
+      {
+        "round_num": 1,
+        "proposer": "Judy-Buyer",
+        "proposed_price_usd": 0.005,
+        "response": "counter",
+        "counter_price_usd": 0.008,
+        "timestamp": "2026-04-19T08:47:00.531804+00:00"
+      },
+      {
+        "round_num": 2,
+        "proposer": "CoinSifter-Provider",
+        "proposed_price_usd": 0.008,
+        "response": "counter",
+        "counter_price_usd": 0.006,
+        "timestamp": "2026-04-19T08:47:01.546703+00:00"
+      },
+      {
+        "round_num": 3,
+        "proposer": "Judy-Buyer",
+        "proposed_price_usd": 0.006,
+        "response": "accept",
+        "counter_price_usd": 0.0,
+        "timestamp": "2026-04-19T08:47:02.560390+00:00"
+      }
+    ],
+    "max_rounds": 5,
+    "created_at": "2026-04-19T08:47:00.531804+00:00",
+    "expires_at": "2026-04-19T08:57:00.531804+00:00"
+  },
+  "3f08b8f2-3282-4b56-95b7-1dca72864291": {
+    "session_id": "3f08b8f2-3282-4b56-95b7-1dca72864291",
+    "buyer_id": "Moongg-QA",
+    "seller_id": "SignalFuse-Provider",
+    "service_id": "svc-signalfuse",
+    "status": "rejected",
+    "rounds": [
+      {
+        "round_num": 1,
+        "proposer": "Moongg-QA",
+        "proposed_price_usd": 0.001,
+        "response": "counter",
+        "counter_price_usd": 0.005,
+        "timestamp": "2026-04-19T08:47:05.285994+00:00"
+      },
+      {
+        "round_num": 2,
+        "proposer": "SignalFuse-Provider",
+        "proposed_price_usd": 0.005,
+        "response": "reject",
+        "counter_price_usd": 0.0,
+        "timestamp": "2026-04-19T08:47:06.299132+00:00"
+      }
+    ],
+    "max_rounds": 5,
+    "created_at": "2026-04-19T08:47:05.285994+00:00",
+    "expires_at": "2026-04-19T08:57:05.285994+00:00"
+  }
+}
