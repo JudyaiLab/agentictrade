@@ -1,0 +1,21 @@
+{% extends "public/base.html" %}
+
+{% block title %}500 — Server Error | AgenticTrade{% endblock %}
+{% block meta_description %}Something went wrong on our end. We're working on it.{% endblock %}
+{% block robots %}noindex, nofollow{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container" style="text-align:center; padding:80px 0;">
+        <div style="font-size:72px; font-weight:800; color:var(--red); margin-bottom:8px;">500</div>
+        <h1 style="margin-bottom:16px;">{{ t('error.500_title') if t else 'Something Went Wrong' }}</h1>
+        <p class="text-dim" style="max-width:45ch; margin:0 auto 32px; font-size:18px; line-height:1.7;">
+            {{ t('error.500_desc') if t else "We're experiencing a temporary issue. Please try again in a moment." }}
+        </p>
+        <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap;">
+            <a href="/" class="btn-primary">{{ t('error.go_home') if t else 'Go to Homepage' }}</a>
+            <a href="/status" class="btn-secondary">{{ t('error.check_status') if t else 'Check Status' }}</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

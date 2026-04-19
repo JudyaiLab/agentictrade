@@ -1,0 +1,123 @@
+{% extends "portal/base.html" %}
+{% block title %}Budget Management{% endblock %}
+
+{% block extra_css %}
+<style>
+    .budget-form-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+    .budget-input-group label { display: block; font-size: 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+    .budget-input-group input {
+        width: 100%; padding: 10px 14px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 8px; color: var(--text-bright); font-size: 16px; font-family: inherit; box-sizing: border-box;
+    }
+    .budget-input-group input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(99,102,241,0.2); }
+    .budget-input-group .input-hint { font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 4px; }
+    .budget-bar-wrap { height: 10px; background: rgba(255,255,255,0.06); border-radius: 5px; overflow: hidden; margin-top: 6px; }
+    .budget-bar-fill { height: 100%; border-radius: 5px; transition: width .3s; }
+    .budget-bar-fill.green { background: #34d399; }
+    .budget-bar-fill.yellow { background: #fbbf24; }
+    .budget-bar-fill.red { background: #ef4444; }
+    .budget-bar-label { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-dim); margin-bottom: 4px; }
+    @media (max-width: 640px) { .budget-form-grid { grid-template-columns: 1fr; } }
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 32px;">
+    <h1 style="font-size: 24px; font-weight: 700; color: var(--text-bright); margin-bottom: 8px;">Budget Management</h1>
+    <p style="color: var(--text-dim); font-size: 14px;">Set spending limits for your account. All your agents share these limits. When the cap is reached, agents are blocked from making further purchases until the next reset.</p>
+</div>
+
+{% if alert_success %}
+<div class="portal-alert portal-alert-success">{{ alert_success }}</div>
+{% endif %}
+{% if alert_error %}
+<div class="portal-alert portal-alert-error">{{ alert_error }}</div>
+{% endif %}
+
+<div class="portal-card">
+    <h3 style="font-size: 16px; font-weight: 600; color: var(--text-bright); margin-bottom: 20px;">Spending Limits</h3>
+
+    <form method="POST" action="/portal/budget">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+        <div class="budget-form-grid">
+            <div class="budget-input-group">
+                <label>Daily Limit (USD)</label>
+                <input type="number" name="daily_limit_usd" step="0.01" min="0.01" value="{{ policy.daily_limit_usd if policy else '1.00' }}">
+                <div class="input-hint">Maximum total spend per day</div>
+            </div>
+            <div class="budget-input-group">
+                <label>Per-Call Limit (USD)</label>
+                <input type="number" name="per_tx_limit_usd" step="0.001" min="0.001" value="{{ policy.per_tx_limit_usd if policy else '0.01' }}">
+                <div class="input-hint">Maximum cost for a single API call</div>
+            </div>
+            <div class="budget-input-group">
+                <label>Monthly Limit (USD)</label>
+                <input type="number" name="monthly_limit_usd" step="0.01" min="0.01" value="{{ policy.monthly_limit_usd if policy else '10.00' }}">
+                <div class="input-hint">Maximum total spend per calendar month</div>
+            </div>
+        </div>
+        <button type="submit" class="btn-primary" style="padding: 10px 24px;">Save Budget Policy</button>
+    </form>
+</div>
+
+{% if policy %}
+<div class="portal-card" style="margin-top: 20px;">
+    <h3 style="font-size: 16px; font-weight: 600; color: var(--text-bright); margin-bottom: 20px;">Current Spending</h3>
+    <div class="portal-grid" style="grid-template-columns: 1fr 1fr;">
+        <div>
+            <div class="budget-bar-label">
+                <span>Today: ${{ "%.4f"|format(policy.spent_today_usd) }}</span>
+                <span>Limit: ${{ "%.2f"|format(policy.daily_limit_usd) }}</span>
+            </div>
+            <div class="budget-bar-wrap">
+                {% set daily_pct = (policy.spent_today_usd / policy.daily_limit_usd * 100) if policy.daily_limit_usd > 0 else 0 %}
+                <div class="budget-bar-fill {% if daily_pct > 90 %}red{% elif daily_pct > 60 %}yellow{% else %}green{% endif %}"
+                     style="width: {{ [daily_pct, 100]|min }}%;"></div>
+            </div>
+        </div>
+        <div>
+            <div class="budget-bar-label">
+                <span>This Month: ${{ "%.4f"|format(policy.spent_month_usd) }}</span>
+                <span>Limit: ${{ "%.2f"|format(policy.monthly_limit_usd) }}</span>
+            </div>
+            <div class="budget-bar-wrap">
+                {% set monthly_pct = (policy.spent_month_usd / policy.monthly_limit_usd * 100) if policy.monthly_limit_usd > 0 else 0 %}
+                <div class="budget-bar-fill {% if monthly_pct > 90 %}red{% elif monthly_pct > 60 %}yellow{% else %}green{% endif %}"
+                     style="width: {{ [monthly_pct, 100]|min }}%;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if history|length > 0 %}
+<div class="portal-card" style="margin-top: 20px;">
+    <h3 style="font-size: 16px; font-weight: 600; color: var(--text-bright); margin-bottom: 16px;">Recent Spending</h3>
+    <div class="portal-table-wrap">
+        <table class="portal-table">
+            <thead><tr><th>Time</th><th>Amount</th><th>Description</th></tr></thead>
+            <tbody>
+                {% for h in history %}
+                <tr>
+                    <td style="color: var(--text-dim);">{{ h.timestamp[:19] }}</td>
+                    <td style="color: #34d399; font-weight: 600;">${{ "%.4f"|format(h.amount_usd) }}</td>
+                    <td>{{ h.description or '—' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+{% endif %}
+
+<div class="portal-card" style="margin-top: 20px;">
+    <h3 style="font-size: 16px; font-weight: 600; color: var(--text-bright); margin-bottom: 12px;">How Budget Controls Work</h3>
+    <div style="font-size: 14px; color: var(--text-dim); line-height: 1.8;">
+        <p><strong style="color: var(--text-bright);">Daily Limit</strong> — Resets every day at 00:00 UTC. All API calls by your agents count toward this limit.</p>
+        <p><strong style="color: var(--text-bright);">Per-Call Limit</strong> — Any single API call exceeding this amount is automatically blocked.</p>
+        <p><strong style="color: var(--text-bright);">Monthly Limit</strong> — Resets on the 1st of each month. Acts as a hard cap on total monthly spend.</p>
+        <p style="margin-top: 8px; color: rgba(255,255,255,0.4);">When any limit is reached, your agents receive a 403 response with the reason. They can resume once the limit resets or you increase it.</p>
+    </div>
+</div>
+{% endblock %}

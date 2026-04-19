@@ -1,0 +1,296 @@
+{% extends "public/base.html" %}
+
+{% block title %}{{ t('quality.page_title') or 'Quality Policy — AgenticTrade' }}{% endblock %}
+{% block meta_description %}{{ t('quality.meta_desc') or 'AgenticTrade Quality Policy. How we monitor, score, and enforce service quality standards to ensure a reliable API marketplace for AI agents.' }}{% endblock %}
+{% block og_title %}{{ t('quality.og_title') or 'Quality Policy — AgenticTrade API Marketplace' }}{% endblock %}
+{% block og_description %}{{ t('quality.og_desc') or 'Our quality standards, monitoring process, and enforcement policy for services on AgenticTrade.' }}{% endblock %}
+{% block tw_title %}{{ t('quality.tw_title') or 'AgenticTrade Quality Policy' }}{% endblock %}
+{% block tw_description %}{{ t('quality.tw_desc') or 'Quality standards and enforcement for AgenticTrade API marketplace services.' }}{% endblock %}
+{% block robots %}index, follow{% endblock %}
+{% block canonical %}https://agentictrade.io/quality-policy{% endblock %}
+
+{% block json_ld %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Quality Policy — AgenticTrade",
+    "description": "Service quality monitoring, scoring, and enforcement policy for the AgenticTrade API marketplace.",
+    "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://agentictrade.io/"},
+            {"@type": "ListItem", "position": 2, "name": "Quality Policy", "item": "https://agentictrade.io/quality-policy"}
+        ]
+    }
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        {
+            "@type": "Question",
+            "name": "How does AgenticTrade measure service quality?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Quality is measured using a composite score (0-100) based on uptime (50%), response latency (30%), and error rate (20%). Health checks run every hour, 24/7."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "What happens when my service quality drops?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Below 75: you receive an email warning. Below 60 for 3 consecutive rounds: your service is automatically paused. You can reactivate after fixing the issues."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Does AgenticTrade support multilingual quality notifications?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. Quality notifications are sent in your preferred language. We support English, 繁體中文, 한국어, 日本語, Français, Deutsch, Русский, Español, and Português."
+            }
+        }
+    ]
+}
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .legal-hero { padding: 60px 0 40px; max-width: 800px; }
+    .legal-hero p { color: var(--text-dim); font-size: 16px; line-height: 1.7; }
+
+    .legal-content { max-width: 800px; padding-bottom: 60px; }
+    .legal-content h2 {
+        font-size: 22px;
+        margin-top: 48px;
+        margin-bottom: 16px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border);
+    }
+    .legal-content h2:first-of-type { border-top: none; margin-top: 0; padding-top: 0; }
+    .legal-content h3 { font-size: 17px; margin-top: 24px; margin-bottom: 10px; }
+    .legal-content p, .legal-content li {
+        color: var(--text-dim);
+        font-size: 15px;
+        line-height: 1.8;
+    }
+    .legal-content ul, .legal-content ol {
+        padding-left: 24px;
+        margin-bottom: 16px;
+    }
+    .legal-content li { margin-bottom: 8px; }
+
+    .threshold-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 24px 0;
+    }
+    .threshold-table th, .threshold-table td {
+        text-align: left;
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border);
+        font-size: 14px;
+    }
+    .threshold-table th {
+        background: var(--bg-card);
+        font-weight: 600;
+        color: var(--text);
+    }
+    .threshold-table td { color: var(--text-dim); }
+    .badge-green { background: #D4EDDA; color: #155724; padding: 2px 8px; border-radius: 4px; font-size: 13px; font-weight: 600; }
+    .badge-yellow { background: #FFF3CD; color: #856404; padding: 2px 8px; border-radius: 4px; font-size: 13px; font-weight: 600; }
+    .badge-red { background: #F8D7DA; color: #721C24; padding: 2px 8px; border-radius: 4px; font-size: 13px; font-weight: 600; }
+
+    .scoring-diagram {
+        display: flex;
+        gap: 16px;
+        margin: 24px 0;
+        flex-wrap: wrap;
+    }
+    .scoring-card {
+        flex: 1;
+        min-width: 150px;
+        background: var(--bg-card);
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+    }
+    .scoring-card .weight { font-size: 28px; font-weight: 700; color: #6C63FF; }
+    .scoring-card .label { font-size: 14px; color: var(--text-dim); margin-top: 4px; }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="container" style="padding-top:16px;">
+    <nav aria-label="Breadcrumb" style="font-size:13px; color:var(--text-muted);">
+        <a href="/" style="color:var(--text-dim);">{{ t('breadcrumb.home') or 'Home' }}</a> &rsaquo; Quality Policy
+    </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+
+<section class="section">
+    <div class="container">
+        <div class="legal-hero">
+            <span class="eyebrow">Platform</span>
+            <h1>Quality Policy</h1>
+            <p>AgenticTrade is committed to maintaining a reliable, high-quality marketplace. This policy describes how we monitor, score, and enforce quality standards for all services.</p>
+        </div>
+
+        <div class="legal-content">
+            <div style="display:inline-block; background:var(--bg-card); border-radius:8px; padding:8px 16px; font-size:14px; color:var(--text-dim); box-shadow:var(--ring); margin-bottom:32px;">Last updated: April 2026</div>
+
+    <h2>1. Quality Scoring</h2>
+    <p>Every active service on AgenticTrade receives an automated quality score from 0 to 100, calculated from the past 30 days of health check data. Scores update hourly.</p>
+
+    <div class="scoring-diagram">
+        <div class="scoring-card">
+            <div class="weight">50%</div>
+            <div class="label">Uptime</div>
+        </div>
+        <div class="scoring-card">
+            <div class="weight">30%</div>
+            <div class="label">Latency</div>
+        </div>
+        <div class="scoring-card">
+            <div class="weight">20%</div>
+            <div class="label">Error Rate</div>
+        </div>
+    </div>
+
+    <ul>
+        <li><strong>Uptime (50%)</strong> — Percentage of health checks where your endpoint returned HTTP 2xx–4xx (not 5xx or timeout)</li>
+        <li><strong>Latency (30%)</strong> — Average response time. 0ms = 100 points, 5,000ms = 0 points (linear scale)</li>
+        <li><strong>Error Rate (20%)</strong> — Percentage of checks resulting in HTTP 5xx or connection failure</li>
+    </ul>
+
+    <h2>2. Quality Tiers & Commission</h2>
+    <p>Your quality score determines your marketplace ranking and commission rate:</p>
+
+    <table class="threshold-table">
+        <thead>
+            <tr>
+                <th>Tier</th>
+                <th>Quality Score</th>
+                <th>Commission Rate</th>
+                <th>Benefits</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><span class="badge-green">Premium</span></td>
+                <td>95+</td>
+                <td>6%</td>
+                <td>Top discovery ranking, Premium badge</td>
+            </tr>
+            <tr>
+                <td><span class="badge-green">Verified</span></td>
+                <td>80–94</td>
+                <td>8%</td>
+                <td>Verified badge, priority in search results</td>
+            </tr>
+            <tr>
+                <td><span class="badge-yellow">Standard</span></td>
+                <td>60–79</td>
+                <td>10%</td>
+                <td>Standard listing</td>
+            </tr>
+            <tr>
+                <td><span class="badge-red">At Risk</span></td>
+                <td>Below 60</td>
+                <td>10%</td>
+                <td>Subject to automatic pausing</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>3. Monitoring Process</h2>
+    <p>Our automated health monitoring system runs <strong>24/7</strong> with the following cycle:</p>
+    <ol>
+        <li><strong>Hourly health checks</strong> — Every active service endpoint is tested once per hour</li>
+        <li><strong>HTTP GET request</strong> — We send a GET request to your registered endpoint</li>
+        <li><strong>10-second timeout</strong> — Responses must arrive within 10 seconds</li>
+        <li><strong>Success criteria</strong> — HTTP status code below 500 is considered "reachable"</li>
+        <li><strong>Score recalculation</strong> — Quality scores are recalculated using the most recent 30 days of data</li>
+    </ol>
+
+    <h2>4. Enforcement Actions</h2>
+
+    <h3>4a. Quality Warning (Score below 75)</h3>
+    <ul>
+        <li>You receive an <strong>email notification</strong> in your preferred language</li>
+        <li>Your service remains <strong>active</strong> but may rank lower in discovery results</li>
+        <li>Maximum one warning email per service per day</li>
+    </ul>
+
+    <h3>4b. Automatic Pause (Score below 60 for 3 consecutive rounds)</h3>
+    <ul>
+        <li>Your service is <strong>automatically paused</strong> — it will not appear in the marketplace</li>
+        <li>You receive an <strong>email notification</strong> with instructions for reactivation</li>
+        <li>Existing API calls to your service will receive a 503 response</li>
+        <li>Your service data and configuration are <strong>fully preserved</strong></li>
+        <li>A Telegram alert is sent to our operations team for monitoring</li>
+    </ul>
+
+    <h3>4c. Trend Alert (Score drops 15+ points in 7 days)</h3>
+    <ul>
+        <li>You receive an <strong>early warning email</strong> about the declining trend</li>
+        <li>No immediate action is taken on your service</li>
+        <li>This gives you time to investigate and fix issues before quality drops further</li>
+    </ul>
+
+    <h3>4d. Dead Service Removal (Uptime below 10% after 10+ checks)</h3>
+    <ul>
+        <li>Services that are consistently unreachable are <strong>automatically deactivated</strong></li>
+        <li>This protects marketplace consumers from broken endpoints</li>
+    </ul>
+
+    <h2>5. Reactivation Process</h2>
+    <ol>
+        <li>Fix the underlying issues (downtime, slow response, errors)</li>
+        <li>Verify your endpoint responds consistently: under 5 seconds, HTTP 2xx status</li>
+        <li>Contact us to request a <strong>reactivation review</strong></li>
+        <li>Your service enters a <strong>24-hour observation period</strong></li>
+        <li>If quality remains above 60 during observation, your service is fully reactivated</li>
+    </ol>
+
+    <h2>6. Multilingual Notifications</h2>
+    <p>All quality notifications (warnings, pause notices, trend alerts) are sent in your preferred language. We currently support:</p>
+    <ul>
+        <li>English</li>
+        <li>繁體中文 (Traditional Chinese)</li>
+        <li>한국어 (Korean)</li>
+        <li>日本語 (Japanese)</li>
+        <li>Français (French)</li>
+        <li>Deutsch (German)</li>
+        <li>Русский (Russian)</li>
+        <li>Español (Spanish)</li>
+        <li>Português (Portuguese)</li>
+    </ul>
+    <p>To set your preferred language, use the <code>PUT /api/v1/provider-contact</code> endpoint with your email and preferred locale.</p>
+
+    <h2>7. Provider Best Practices</h2>
+    <ul>
+        <li><strong>Monitor your own endpoint</strong> — Don't rely solely on our checks; set up your own uptime monitoring</li>
+        <li><strong>Respond quickly</strong> — Keep latency under 2 seconds for Premium tier</li>
+        <li><strong>Handle errors gracefully</strong> — Return appropriate HTTP status codes, not 5xx for expected errors</li>
+        <li><strong>Set up notification contact</strong> — Register your email via the API so you receive alerts early</li>
+        <li><strong>Use health check endpoints</strong> — Implement a dedicated <code>/health</code> route for quick checks</li>
+    </ul>
+
+    <h2>8. Appeals</h2>
+    <p>If you believe your service was paused incorrectly, or if external factors (network outage, DDoS) caused temporary quality drops, contact us. We review all appeals within 24 hours and can manually override automatic actions when justified.</p>
+
+    <h2>9. Changes to This Policy</h2>
+    <p>We may update this policy as the platform evolves. Changes will be announced via email to all registered providers and posted on this page. The "Last updated" date above always reflects the current version.</p>
+
+        </div><!-- /.legal-content -->
+    </div><!-- /.container -->
+</section>
+{% endblock %}

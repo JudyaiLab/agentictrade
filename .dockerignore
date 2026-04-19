@@ -1,0 +1,11 @@
+.git/
+__pycache__/
+*.pyc
+.pytest_cache/
+data/
+.internal/
+.env
+.gitignore
+.deliveryignore
+.dockerignore
+tests/

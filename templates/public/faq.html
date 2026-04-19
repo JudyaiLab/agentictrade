@@ -1,0 +1,281 @@
+{% extends "public/base.html" %}
+
+{% block title %}FAQ — AgenticTrade | AI Agents Make Money For You{% endblock %}
+{% block meta_description %}Frequently asked questions about AgenticTrade. Learn how AI agents discover, use, and pay for API services. How to make money with AI, pricing, quality monitoring, and more.{% endblock %}
+{% block og_title %}FAQ — AgenticTrade AI Service Marketplace{% endblock %}
+{% block og_description %}Everything you need to know about making money with AI agents on AgenticTrade.{% endblock %}
+{% block tw_title %}AgenticTrade FAQ{% endblock %}
+{% block tw_description %}How AI agents make money for service providers. FAQ about the AgenticTrade API marketplace.{% endblock %}
+{% block canonical %}https://agentictrade.io/faq{% endblock %}
+
+{% block json_ld %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "name": "AgenticTrade FAQ",
+    "description": "Frequently asked questions about making money with AI agents on AgenticTrade.",
+    "mainEntity": [
+        {
+            "@type": "Question",
+            "name": "How do AI agents make money for me on AgenticTrade?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "You list your API service on AgenticTrade with a per-call price you set. AI agents worldwide automatically discover your service, evaluate it, and pay you every time they use it. No marketing, no invoicing — revenue is fully automated."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Can I really make passive income with AI?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. Once your service is listed, AI agents find and pay for it 24/7 without your involvement. Providers earn from $300/month (at $0.01/call with 1,000 daily calls) to $9,000+/month depending on pricing and demand. It's true passive income powered by AI agent commerce."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "What is AgenticTrade?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "AgenticTrade is an API marketplace where AI agents automatically discover, use, and pay for services. Providers list their APIs, AI agents find them, and payments happen automatically in USDC. Think of it as an app store, but for AI agents instead of humans."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "How much does it cost to join AgenticTrade?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Free to sign up. 0% commission your first month. After that, 5% for months 2-3, capping at 10% from month 4. High-quality providers (95+ health score) earn commission discounts down to 6%."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Do I need to be a developer to sell on AgenticTrade?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "No. Our Provider Agent tool handles the technical setup. Just describe what your service does and set your price. Setup takes 3 minutes. If you do have an existing API, you can register that directly."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "How do AI agents find my service?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "AgenticTrade supports 6 discovery protocols: MCP (Model Context Protocol), OpenAI Plugin, ACDP, AdCP, OpenAPI, and llms.txt. AI agents from Claude, ChatGPT, and custom frameworks all discover services automatically."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "How and when do I get paid?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Every time an AI agent uses your service, payment is automatically credited in USDC (a digital dollar). You can also accept PayPal or 300+ cryptocurrencies. No invoicing needed — money shows up in your dashboard."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "What is the quality score and how does it work?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Every service gets an automated quality score from 0-100, based on uptime (50%), latency (30%), and error rate (20%). Scores update hourly. Score 95+ earns Premium tier (6% commission). Below 75 triggers a warning. Below 60 for 3 consecutive rounds results in automatic pausing."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "What payment methods does AgenticTrade support?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Three payment rails: x402 (USDC on Base blockchain — instant, low fees), PayPal (traditional fiat), and NOWPayments (300+ cryptocurrencies including BTC, ETH, SOL). Providers choose which to accept."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Is AgenticTrade open source?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. AgenticTrade is MIT licensed and fully open source on GitHub. You can audit every line of code, self-host, or contribute."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "How is my data and API key protected?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Your API keys never leave your machine — we use a proxy system so nothing sensitive is ever exposed. The platform includes rate limiting, HSTS, CSP headers, and brute-force protection."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "What happens if my service quality drops?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Below 75: email warning in your preferred language. Below 60 for 3 consecutive rounds: automatic pause with email notification. 7-day decline over 15 points: early warning alert. You can reactivate after fixing issues."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "How can AI agents integrate with AgenticTrade?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Three ways: MCP integration (npx clawhub install agentictrade), Python SDK (pip install agentictrade), or direct HTTP API. Agents can self-register at POST /api/v1/agents/onboard without prior authentication."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "What types of services can I list?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Any API-accessible capability: AI/ML models, data analysis, crypto tools, content generation, code review, security scanning, financial analysis, productivity automation, and more. If an AI agent can call it, you can list it."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "How much can I earn with AI agent services?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "You set the price. Examples: $0.01/call x 1,000 calls/day = $300/month. $0.05/call x 1,000 calls/day = $1,500/month. $0.10/call x 3,000 calls/day = $9,000/month. Demand grows as more AI agents come online."
+            }
+        }
+    ]
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://agentictrade.io/"},
+        {"@type": "ListItem", "position": 2, "name": "FAQ", "item": "https://agentictrade.io/faq"}
+    ]
+}
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .faq-hero { padding: 60px 0 40px; max-width: 700px; }
+    .faq-hero p { color: var(--text-dim); font-size: 17px; line-height: 1.7; }
+    .faq-section { margin-top: 48px; }
+    .faq-section h2 { font-size: 22px; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+    .faq-item { margin-bottom: 28px; }
+    .faq-q { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+    .faq-a { font-size: 15px; color: var(--text-dim); line-height: 1.8; }
+    .faq-a a { color: var(--accent); }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="container" style="padding-top:16px;">
+    <nav aria-label="Breadcrumb" style="font-size:13px; color:var(--text-muted);">
+        <a href="/" style="color:var(--text-dim);">Home</a> &rsaquo; FAQ
+    </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="faq-hero">
+            <span class="eyebrow">FAQ</span>
+            <h1>Frequently Asked Questions</h1>
+            <p>Everything you need to know about making money with AI agents on AgenticTrade — from getting started to getting paid.</p>
+        </div>
+
+        <div class="faq-section">
+            <h2>Making Money with AI Agents</h2>
+
+            <div class="faq-item">
+                <div class="faq-q">How do AI agents make money for me on AgenticTrade?</div>
+                <div class="faq-a">You list your API service on AgenticTrade with a per-call price you set. AI agents worldwide automatically discover your service, evaluate it, and pay you every time they use it. No marketing, no invoicing — revenue is fully automated.</div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-q">Can I really make passive income with AI?</div>
+                <div class="faq-a">Yes. Once your service is listed, AI agents find and pay for it 24/7 without your involvement. Providers earn from $300/month to $9,000+/month depending on pricing and demand. It's true passive income powered by AI agent commerce.</div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-q">How much can I earn with AI agent services?</div>
+                <div class="faq-a">You set the price. Examples: $0.01/call x 1,000 calls/day = <strong>$300/month</strong>. $0.05/call x 1,000 calls/day = <strong>$1,500/month</strong>. $0.10/call x 3,000 calls/day = <strong>$9,000/month</strong>. Demand grows as more AI agents come online.</div>
+            </div>
+        </div>
+
+        <div class="faq-section">
+            <h2>Getting Started</h2>
+
+            <div class="faq-item">
+                <div class="faq-q">What is AgenticTrade?</div>
+                <div class="faq-a">AgenticTrade is an API marketplace where AI agents automatically discover, use, and pay for services. Providers list their APIs, AI agents find them, and payments happen automatically in USDC. Think of it as an app store, but for AI agents instead of humans.</div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-q">Do I need to be a developer to sell on AgenticTrade?</div>
+                <div class="faq-a">No. Our Provider Agent tool handles the technical setup. Just describe what your service does and set your price. Setup takes 3 minutes. If you do have an existing API, you can register that directly.</div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-q">How much does it cost to join?</div>
+                <div class="faq-a">Free to sign up. 0% commission your first month. After that, 5% for months 2-3, capping at 10% from month 4. High-quality providers (95+ health score) earn commission discounts down to 6%. <a href="/pricing">See full pricing</a>.</div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-q">What types of services can I list?</div>
+                <div class="faq-a">Any API-accessible capability: AI/ML models, data analysis, crypto tools, content generation, code review, security scanning, financial analysis, productivity automation, and more. If an AI agent can call it, you can list it.</div>
+            </div>
+        </div>
+
+        <div class="faq-section">
+            <h2>AI Agent Discovery</h2>
+
+            <div class="faq-item">
+                <div class="faq-q">How do AI agents find my service?</div>
+                <div class="faq-a">AgenticTrade supports 6 discovery protocols: MCP (Model Context Protocol), OpenAI Plugin, ACDP, AdCP, OpenAPI, and llms.txt. AI agents from Claude, ChatGPT, and custom frameworks all discover services automatically.</div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-q">How can AI agents integrate with AgenticTrade?</div>
+                <div class="faq-a">Three ways: MCP integration (<code>npx clawhub install agentictrade</code>), Python SDK (<code>pip install agentictrade</code>), or direct HTTP API. Agents can self-register at <code>POST /api/v1/agents/onboard</code> without prior authentication.</div>
+            </div>
+        </div>
+
+        <div class="faq-section">
+            <h2>Payments</h2>
+
+            <div class="faq-item">
+                <div class="faq-q">How and when do I get paid?</div>
+                <div class="faq-a">Every time an AI agent uses your service, payment is automatically credited in USDC (a digital dollar). You can also accept PayPal or 300+ cryptocurrencies. No invoicing needed.</div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-q">What payment methods are supported?</div>
+                <div class="faq-a">Three payment rails: <strong>x402</strong> (USDC on Base — instant, low fees), <strong>PayPal</strong> (traditional fiat), and <strong>NOWPayments</strong> (300+ cryptocurrencies including BTC, ETH, SOL).</div>
+            </div>
+        </div>
+
+        <div class="faq-section">
+            <h2>Quality & Security</h2>
+
+            <div class="faq-item">
+                <div class="faq-q">What is the quality score?</div>
+                <div class="faq-a">Every service gets an automated score from 0-100, based on uptime (50%), latency (30%), and error rate (20%). Updated hourly. Score 95+ = Premium tier (6% commission). <a href="/quality-policy">Full quality policy</a>.</div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-q">What happens if my service quality drops?</div>
+                <div class="faq-a">Below 75: email warning in your preferred language. Below 60 for 3 consecutive rounds: automatic pause with notification. 7-day decline over 15 points: early warning. You can reactivate after fixing issues.</div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-q">Is my data safe?</div>
+                <div class="faq-a">Yes. Your API keys never leave your machine — we use a proxy system. The platform includes rate limiting, HSTS, CSP headers, and brute-force protection. AgenticTrade is MIT licensed and fully open source.</div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin: 48px 0 0;">
+            <h2>Ready to Start Earning with AI?</h2>
+            <p style="color: var(--text-dim); margin-bottom: 24px;">List your service and let AI agents be your customers.</p>
+            <a href="/portal/register" class="btn-primary">Get Started Free</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

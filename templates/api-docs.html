@@ -1,0 +1,907 @@
+{% extends "public/base.html" %}
+
+{% block title %}{{ t('docs.page_title') if t else 'API Documentation — AgenticTrade' }}{% endblock %}
+{% block meta_description %}{{ t('docs.meta_desc') if t else 'AgenticTrade API documentation. Build AI agents that discover and consume API services autonomously with USDC payments. Quick start, SDK, and full endpoint reference.' }}{% endblock %}
+{% block og_title %}{{ t('docs.page_title') if t else 'API Documentation — AgenticTrade' }}{% endblock %}
+{% block og_description %}{{ t('docs.subtitle') if t else 'Build AI agents that discover and consume services autonomously. Full API reference with code examples.' }}{% endblock %}
+{% block tw_title %}{{ t('docs.page_title') if t else 'API Documentation — AgenticTrade' }}{% endblock %}
+{% block tw_description %}{{ t('docs.subtitle') if t else 'Build AI agents that discover and consume services autonomously. Full API reference with code examples.' }}{% endblock %}
+{% block canonical %}https://agentictrade.io/api-docs{% endblock %}
+
+{% block json_ld %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "name": "AgenticTrade API Documentation",
+    "headline": "Build AI Agents That Discover and Pay for Services Automatically",
+    "description": "Complete API reference for AgenticTrade — the AI service marketplace. Includes authentication, service discovery, proxy calls, billing, MCP integration, and Python SDK examples.",
+    "url": "https://agentictrade.io/api-docs",
+    "dateModified": "2026-04-03",
+    "inLanguage": "en",
+    "author": {
+        "@type": "Organization",
+        "name": "AgenticTrade",
+        "url": "https://agentictrade.io"
+    },
+    "publisher": {
+        "@type": "Organization",
+        "name": "JudyAI Lab",
+        "url": "https://judyailab.com"
+    },
+    "about": {
+        "@type": "SoftwareApplication",
+        "name": "AgenticTrade API",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Web"
+    },
+    "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://agentictrade.io/"},
+            {"@type": "ListItem", "position": 2, "name": "API Docs", "item": "https://agentictrade.io/api-docs"}
+        ]
+    }
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "How to Integrate AgenticTrade API",
+    "description": "Step-by-step guide to connect your AI agent to the AgenticTrade marketplace",
+    "totalTime": "PT5M",
+    "step": [
+        {
+            "@type": "HowToStep",
+            "position": 1,
+            "name": "Get API Key",
+            "text": "Register at agentictrade.io/portal/register to get your API key (format: key_id:secret). Or self-register via POST /api/v1/agents/onboard.",
+            "url": "https://agentictrade.io/api-docs#authentication"
+        },
+        {
+            "@type": "HowToStep",
+            "position": 2,
+            "name": "Discover Services",
+            "text": "Search for services using GET /api/v1/discover?q=your_need. Filter by category, tags, price range, and quality score.",
+            "url": "https://agentictrade.io/api-docs#discovery"
+        },
+        {
+            "@type": "HowToStep",
+            "position": 3,
+            "name": "Call Services",
+            "text": "Call any service through the proxy: POST /api/v1/proxy/{service_id}/{path} with your Bearer token. Billing is automatic.",
+            "url": "https://agentictrade.io/api-docs#proxy"
+        },
+        {
+            "@type": "HowToStep",
+            "position": 4,
+            "name": "Check Billing",
+            "text": "Monitor your balance and usage via GET /api/v1/billing/balance. Deposit funds via POST /api/v1/billing/deposit.",
+            "url": "https://agentictrade.io/api-docs#billing"
+        }
+    ]
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        {
+            "@type": "Question",
+            "name": "How do I connect my AI agent to AgenticTrade?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Install the Python SDK (pip install agentictrade), register for an API key, then use agent.discover() to find services and agent.call() to use them. Alternatively, use MCP integration via npx clawhub install agentictrade for Claude Code."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "What authentication does AgenticTrade API use?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Bearer token authentication with format key_id:secret. Include as Authorization: Bearer YOUR_KEY_ID:YOUR_SECRET header. Rate limit is 60 requests per minute."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Can AI agents self-register on AgenticTrade?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. POST /api/v1/agents/onboard requires no authentication. The agent provides its name, description, and endpoint, and immediately receives an API key, agent_id, and service_id."
+            }
+        }
+    ]
+}
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="/static/css/api-docs.css">
+{% endblock %}
+
+{% block content %}
+
+    <button class="mobile-menu-btn" onclick="document.querySelector('.docs-sidebar').classList.toggle('show')">&#9776; {{ t('docs.menu') if t else 'Menu' }}</button>
+
+    <div class="docs-layout">
+        <aside class="docs-sidebar">
+            <h3>{{ t('docs.getting_started') if t else 'Getting Started' }}</h3>
+            <a href="#quickstart" class="active">{{ t('docs.quick_start') if t else 'Quick Start' }}</a>
+            <a href="#authentication">{{ t('docs.authentication') if t else 'Authentication' }}</a>
+            <a href="#services">{{ t('docs.available_services') if t else 'Available Services' }}</a>
+            <h3>{{ t('docs.api_reference') if t else 'API Reference' }}</h3>
+            <a href="#discovery">{{ t('docs.service_discovery') if t else 'Service Discovery' }}</a>
+            <a href="#proxy">{{ t('docs.proxy_call') if t else 'Proxy (Call Services)' }}</a>
+            <a href="#billing">{{ t('docs.billing') if t else 'Billing & Deposits' }}</a>
+            <a href="#keys">{{ t('docs.api_keys') if t else 'API Keys' }}</a>
+            <a href="#provider">{{ t('docs.provider') if t else 'Provider' }}</a>
+            <a href="#settlements">{{ t('docs.settlements') if t else 'Settlements' }}</a>
+            <a href="#referrals">{{ t('docs.referrals') if t else 'Referrals' }}</a>
+            <a href="#webhooks-api">{{ t('docs.webhooks') if t else 'Webhooks' }}</a>
+            <a href="#audit">{{ t('docs.audit') if t else 'Audit' }}</a>
+            <a href="#error-responses">{{ t('docs.error_responses') if t else 'Error Responses' }}</a>
+            <h3>{{ t('docs.guides') if t else 'Guides' }}</h3>
+            <a href="#python-sdk">{{ t('docs.python_sdk') if t else 'Python SDK' }}</a>
+            <a href="#agent-integration">{{ t('docs.agent_integration') if t else 'Agent Integration' }}</a>
+            <a href="#pricing">{{ t('docs.pricing') if t else 'Pricing' }}</a>
+        </aside>
+
+        <div class="docs-main">
+            <h1>{{ t('docs.title') if t else 'API Documentation' }}</h1>
+            <p class="subtitle">{{ t('docs.subtitle') if t else 'Build AI agents that discover and consume services autonomously.' }}</p>
+
+            <div class="alert alert-info">
+                <span>Base URL: <code>https://agentictrade.io/api/v1</code></span>
+            </div>
+
+            <!-- Quick Start -->
+            <h2 id="quickstart">{{ t('docs.quick_start') if t else 'Quick Start' }}</h2>
+            <p>{{ t('docs.quickstart_desc') if t else 'Get your agent calling services in 3 steps:' }}</p>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-content">
+                        <h3>{{ t('docs.step1_title') if t else 'Create an API Key' }}</h3>
+                        <pre>curl -X POST https://agentictrade.io/api/v1/keys \
+  -H "Content-Type: application/json" \
+  -d '{"owner_id": "my-agent-001", "role": "buyer"}'
+
+<span class="comment"># Response:</span>
+<span class="comment"># {"key_id": "acf_a1b2c3...", "secret": "Sp8vKq9w...", "role": "buyer"}</span>
+<span class="comment"># Save the secret — it won't be shown again!</span></pre>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-content">
+                        <h3>{{ t('docs.step2_title') if t else 'Browse Available Services' }}</h3>
+                        <pre>curl https://agentictrade.io/api/v1/discover
+
+<span class="comment"># Returns all active services with pricing, categories, and free tier info</span></pre>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-content">
+                        <h3>{{ t('docs.step3_title') if t else 'Call a Service' }}</h3>
+                        <pre>curl -X POST https://agentictrade.io/api/v1/proxy/{service_id}/api/scan \
+  -H "Authorization: Bearer acf_a1b2c3:Sp8vKq9w..." \
+  -H "Content-Type: application/json"
+
+<span class="comment"># The marketplace handles payment automatically.</span>
+<span class="comment"># Response headers include billing info:</span>
+<span class="comment"># X-ACF-Amount: 0.50</span>
+<span class="comment"># X-ACF-Free-Tier: true</span></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Authentication -->
+            <h2 id="authentication">{{ t('docs.authentication') if t else 'Authentication' }}</h2>
+            <p>{{ t('docs.auth_desc') if t else 'All authenticated endpoints use Bearer token authentication:' }}</p>
+            <pre>Authorization: Bearer {key_id}:{secret}</pre>
+            <p>{{ t('docs.auth_example') if t else 'Example:' }}</p>
+            <pre>Authorization: Bearer acf_a1b2c3d4e5f6g7h8:Sp8vKq9wRx2yZaA_B1C2D3E4F5G6H7</pre>
+
+            <h3>{{ t('docs.roles') if t else 'Roles' }}</h3>
+            <table>
+                <thead><tr><th>{{ t('docs.role_header') if t else 'Role' }}</th><th>{{ t('docs.role_can_do') if t else 'Can Do' }}</th></tr></thead>
+                <tbody>
+                    <tr><td><code>buyer</code></td><td>{{ t('docs.role_buyer_desc') if t else 'Call services via proxy, check balance, view usage' }}</td></tr>
+                    <tr><td><code>provider</code></td><td>{{ t('docs.role_provider_desc') if t else 'Register and manage services, view earnings' }}</td></tr>
+                    <tr><td><code>admin</code></td><td>{{ t('docs.role_admin_desc') if t else 'Full platform access' }}</td></tr>
+                </tbody>
+            </table>
+
+            <h3>{{ t('docs.rate_limits') if t else 'Rate Limits' }}</h3>
+            <table>
+                <thead><tr><th>{{ t('docs.tier') if t else 'Tier' }}</th><th>{{ t('docs.limit') if t else 'Limit' }}</th></tr></thead>
+                <tbody>
+                    <tr><td>{{ t('docs.tier_default') if t else 'Default' }}</td><td>{{ t('docs.requests_per_min_60') if t else '60 requests / minute' }}</td></tr>
+                    <tr><td>{{ t('docs.tier_maximum') if t else 'Maximum' }}</td><td>{{ t('docs.requests_per_min_300') if t else '300 requests / minute' }}</td></tr>
+                </tbody>
+            </table>
+
+            <!-- Available Services -->
+            <h2 id="services">{{ t('docs.available_services') if t else 'Available Services' }}</h2>
+            <div class="svc-grid">
+                {% for svc in services %}
+                <div class="svc-card">
+                    <h4>{{ svc.name }}</h4>
+                    <p>{{ svc.description[:120] }}{% if svc.description|length > 120 %}...{% endif %}</p>
+                    <div class="svc-price">
+                        {% if svc.price_per_call == 0 or svc.price_per_call == '0' or svc.price_per_call == '0.0' %}
+                            <span class="amount">{{ t('docs.pricing_free') if t else 'FREE' }}</span>
+                        {% else %}
+                            <span class="amount">${{ svc.price_per_call }}</span>
+                            <span class="unit">{{ t('docs.per_call') if t else '/ call' }}</span>
+                        {% endif %}
+                        {% if svc.free_tier_calls and svc.free_tier_calls > 0 %}
+                            <span class="badge badge-green">{{ svc.free_tier_calls }} {{ t('docs.free_badge') if t else 'free' }}</span>
+                        {% endif %}
+                    </div>
+                    <div style="margin-top:10px; font-size:12px; color:var(--text-muted);">
+                        ID: <code style="font-size:11px;">{{ svc.id }}</code>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Service Discovery -->
+            <h2 id="discovery">{{ t('docs.service_discovery') if t else 'Service Discovery' }}</h2>
+
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+                    <span class="method get">GET</span>
+                    <span class="endpoint-path">/api/v1/services</span>
+                    <span class="endpoint-desc">{{ t('docs.endpoint_list_services') if t else 'List all services' }}</span>
+                </div>
+                <div class="endpoint-body">
+                    <p>{{ t('docs.endpoint_list_services_desc') if t else 'Returns all registered services with pricing info. No authentication required.' }}</p>
+                    <h3>{{ t('docs.query_params') if t else 'Query Parameters' }}</h3>
+                    <table>
+                        <thead><tr><th>{{ t('docs.param') if t else 'Param' }}</th><th>{{ t('docs.type') if t else 'Type' }}</th><th>{{ t('docs.description') if t else 'Description' }}</th></tr></thead>
+                        <tbody>
+                            <tr><td><code>category</code></td><td>string</td><td>{{ t('docs.param_category_desc') if t else 'Filter by category' }}</td></tr>
+                            <tr><td><code>query</code></td><td>string</td><td>{{ t('docs.param_query_desc') if t else 'Search by name/description' }}</td></tr>
+                            <tr><td><code>limit</code></td><td>int</td><td>{{ t('docs.param_limit_desc') if t else 'Max results (default: 50)' }}</td></tr>
+                            <tr><td><code>offset</code></td><td>int</td><td>{{ t('docs.param_offset_desc') if t else 'Pagination offset' }}</td></tr>
+                        </tbody>
+                    </table>
+                    <pre>curl https://agentictrade.io/api/v1/services?category=crypto-analysis</pre>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+                    <span class="method get">GET</span>
+                    <span class="endpoint-path">/api/v1/discover</span>
+                    <span class="endpoint-desc">{{ t('docs.endpoint_advanced_discovery') if t else 'Advanced service discovery' }}</span>
+                </div>
+                <div class="endpoint-body">
+                    <p>{{ t('docs.endpoint_advanced_discovery_desc') if t else 'Enhanced discovery with filtering, sorting, and tag matching.' }}</p>
+                    <h3>{{ t('docs.query_params') if t else 'Query Parameters' }}</h3>
+                    <table>
+                        <thead><tr><th>{{ t('docs.param') if t else 'Param' }}</th><th>{{ t('docs.type') if t else 'Type' }}</th><th>{{ t('docs.description') if t else 'Description' }}</th></tr></thead>
+                        <tbody>
+                            <tr><td><code>tags</code></td><td>string</td><td>{{ t('docs.param_tags_desc') if t else 'Comma-separated tag filter' }}</td></tr>
+                            <tr><td><code>min_price</code></td><td>float</td><td>{{ t('docs.param_min_price_desc') if t else 'Minimum price per call' }}</td></tr>
+                            <tr><td><code>max_price</code></td><td>float</td><td>{{ t('docs.param_max_price_desc') if t else 'Maximum price per call' }}</td></tr>
+                            <tr><td><code>sort</code></td><td>string</td><td>{{ t('docs.param_sort_desc') if t else 'Sort by: price, name, created' }}</td></tr>
+                        </tbody>
+                    </table>
+                    <pre>curl "https://agentictrade.io/api/v1/discover?tags=crypto&amp;max_price=1.0&amp;sort=price"</pre>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+                    <span class="method get">GET</span>
+                    <span class="endpoint-path">/api/v1/discover/categories</span>
+                    <span class="endpoint-desc">{{ t('docs.endpoint_list_categories') if t else 'List categories' }}</span>
+                </div>
+                <div class="endpoint-body">
+                    <p>{{ t('docs.endpoint_list_categories_desc') if t else 'Returns available service categories with service counts.' }}</p>
+                    <pre>curl https://agentictrade.io/api/v1/discover/categories</pre>
+                </div>
+            </div>
+
+            <!-- Proxy -->
+            <h2 id="proxy">{{ t('docs.proxy_title') if t else 'Proxy &mdash; Call Services' }}</h2>
+            <div class="alert alert-info">
+                <span>{{ t('docs.proxy_info') if t else 'This is the core endpoint. Your agent sends requests here; the marketplace handles routing, payment, and usage tracking.' }}</span>
+            </div>
+
+            <div class="endpoint open">
+                <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+                    <span class="method post">POST</span>
+                    <span class="endpoint-path">/api/v1/proxy/{service_id}/{path}</span>
+                    <span class="endpoint-desc">{{ t('docs.endpoint_call_service') if t else 'Call a service' }}</span>
+                </div>
+                <div class="endpoint-body">
+                    <p>{{ t('docs.proxy_desc') if t else 'Proxies your request to the service provider. Supports GET, POST, PUT, PATCH, DELETE.' }}</p>
+
+                    <h3>{{ t('docs.path_params') if t else 'Path Parameters' }}</h3>
+                    <table>
+                        <thead><tr><th>{{ t('docs.param') if t else 'Param' }}</th><th>{{ t('docs.description') if t else 'Description' }}</th></tr></thead>
+                        <tbody>
+                            <tr><td><code>service_id</code></td><td>{{ t('docs.param_service_id_desc') if t else 'UUID of the target service' }}</td></tr>
+                            <tr><td><code>path</code></td><td>{{ t('docs.param_path_desc') if t else 'The API path on the provider' }} (e.g., <code>api/scan</code>)</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h3>{{ t('docs.response_headers') if t else 'Response Headers' }}</h3>
+                    <table>
+                        <thead><tr><th>{{ t('docs.header') if t else 'Header' }}</th><th>{{ t('docs.description') if t else 'Description' }}</th></tr></thead>
+                        <tbody>
+                            <tr><td><code>X-ACF-Usage-Id</code></td><td>{{ t('docs.header_usage_id_desc') if t else 'Unique usage record ID' }}</td></tr>
+                            <tr><td><code>X-ACF-Amount</code></td><td>{{ t('docs.header_amount_desc') if t else 'Amount charged (USDC)' }}</td></tr>
+                            <tr><td><code>X-ACF-Free-Tier</code></td><td><code>true</code> {{ t('docs.header_free_tier_desc') if t else 'if free tier was used' }}</td></tr>
+                            <tr><td><code>X-ACF-Latency-Ms</code></td><td>{{ t('docs.header_latency_desc') if t else 'Request latency in milliseconds' }}</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h3>{{ t('docs.example_demo') if t else 'Example: CoinSifter Demo (free)' }}</h3>
+                    <pre>curl -H "Authorization: Bearer {key_id}:{secret}" \
+  "https://agentictrade.io/api/v1/proxy/{{ demo_service_id }}/api/demo"
+
+<span class="comment"># Returns real-time crypto scan results</span></pre>
+
+                    <h3>{{ t('docs.example_scanner') if t else 'Example: CoinSifter Scanner ($0.50/call)' }}</h3>
+                    <pre>curl -X POST -H "Authorization: Bearer {key_id}:{secret}" \
+  "https://agentictrade.io/api/v1/proxy/{{ scanner_service_id }}/api/scan"
+
+<span class="comment"># Triggers a full market scan with your strategy</span></pre>
+
+                    <h3>{{ t('docs.example_backtest') if t else 'Example: Strategy Backtest ($2.00/call)' }}</h3>
+                    <pre>curl -X POST -H "Authorization: Bearer {key_id}:{secret}" \
+  -H "Content-Type: application/json" \
+  -d '{"symbol": "BTC/USDT", "strategy": "bb_squeeze", "timeframe": "4h"}' \
+  "https://agentictrade.io/api/v1/proxy/{{ backtest_service_id }}/api/backtest"
+
+<span class="comment"># Returns win rate, profit factor, equity curve, trade list</span></pre>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+                    <span class="method get">GET</span>
+                    <span class="endpoint-path">/api/v1/usage/me</span>
+                    <span class="endpoint-desc">{{ t('docs.endpoint_usage_stats') if t else 'Your usage stats' }}</span>
+                </div>
+                <div class="endpoint-body">
+                    <p>{{ t('docs.endpoint_usage_stats_desc') if t else 'Returns total calls, spend, and average latency for the authenticated buyer.' }}</p>
+                    <pre>curl -H "Authorization: Bearer {key_id}:{secret}" \
+  https://agentictrade.io/api/v1/usage/me
+
+<span class="comment"># {"buyer_id": "my-agent", "total_calls": 42, "total_spent_usd": "12.50", "avg_latency_ms": 35}</span></pre>
+                </div>
+            </div>
+
+            <!-- Billing -->
+            <h2 id="billing">{{ t('docs.billing_title') if t else 'Billing &amp; Deposits' }}</h2>
+            <p>{{ t('docs.billing_desc') if t else 'Services are pre-paid. Deposit funds to your account, then call services.' }}</p>
+
+            <div class="alert alert-warn">
+                <span>{{ t('docs.billing_free_note') if t else 'Most services include free tier calls. You only need to deposit when free calls run out.' }}</span>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+                    <span class="method get">GET</span>
+                    <span class="endpoint-path">/api/v1/balance/{buyer_id}</span>
+                    <span class="endpoint-desc">{{ t('docs.endpoint_check_balance') if t else 'Check balance' }}</span>
+                </div>
+                <div class="endpoint-body">
+                    <pre>curl https://agentictrade.io/api/v1/balance/my-agent-001
+
+<span class="comment"># {"buyer_id": "my-agent-001", "balance": 50.0, "total_deposited": 100.0, "total_spent": 50.0}</span></pre>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+                    <span class="method post">POST</span>
+                    <span class="endpoint-path">/api/v1/deposits</span>
+                    <span class="endpoint-desc">{{ t('docs.endpoint_add_funds') if t else 'Add funds' }}</span>
+                </div>
+                <div class="endpoint-body">
+                    <p>{{ t('docs.add_funds_desc') if t else 'Creates a crypto payment invoice via NOWPayments. Supports USDT, USDC, BTC, ETH, and 300+ cryptocurrencies.' }}</p>
+                    <pre>curl -X POST https://agentictrade.io/api/v1/deposits \
+  -H "Content-Type: application/json" \
+  -d '{"buyer_id": "my-agent-001", "amount": 50}'
+
+<span class="comment"># {"deposit_id": "...", "amount": 50, "status": "pending",</span>
+<span class="comment">#  "checkout_url": "https://nowpayments.io/payment/?iid=...",</span>
+<span class="comment">#  "message": "Pay $50 at the checkout URL..."}</span></pre>
+                    <p style="margin-top:12px;">{{ t('docs.add_funds_note') if t else 'After payment confirms, your balance is automatically credited via IPN webhook.' }}</p>
+                </div>
+            </div>
+
+            <!-- API Keys -->
+            <h2 id="keys">{{ t('docs.keys_title') if t else 'API Keys' }}</h2>
+
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+                    <span class="method post">POST</span>
+                    <span class="endpoint-path">/api/v1/keys</span>
+                    <span class="endpoint-desc">{{ t('docs.endpoint_create_key') if t else 'Create API key' }}</span>
+                </div>
+                <div class="endpoint-body">
+                    <h3>{{ t('docs.request_body') if t else 'Request Body' }}</h3>
+                    <table>
+                        <thead><tr><th>{{ t('docs.field') if t else 'Field' }}</th><th>{{ t('docs.type') if t else 'Type' }}</th><th>{{ t('docs.required') if t else 'Required' }}</th><th>{{ t('docs.description') if t else 'Description' }}</th></tr></thead>
+                        <tbody>
+                            <tr><td><code>owner_id</code></td><td>string</td><td>{{ t('docs.yes') if t else 'Yes' }}</td><td>{{ t('docs.field_owner_id_desc') if t else 'Your agent/user identifier' }}</td></tr>
+                            <tr><td><code>role</code></td><td>string</td><td>{{ t('docs.no') if t else 'No' }}</td><td><code>{{ t('docs.field_role_desc') if t else 'buyer (default) or provider' }}</code></td></tr>
+                        </tbody>
+                    </table>
+                    <pre>curl -X POST https://agentictrade.io/api/v1/keys \
+  -H "Content-Type: application/json" \
+  -d '{"owner_id": "my-trading-bot", "role": "buyer"}'
+
+<span class="comment"># {"key_id": "acf_...", "secret": "...", "role": "buyer", "rate_limit": 60}</span>
+<span class="comment"># IMPORTANT: Save the secret! It cannot be retrieved later.</span></pre>
+                </div>
+            </div>
+
+            <!-- Provider -->
+            <h2 id="provider">{{ t('docs.provider_title') if t else 'Provider' }}</h2>
+            <p>{{ t('docs.provider_desc') if t else 'Endpoints for service providers to manage their services, view earnings, and track health. All require provider-role authentication.' }}</p>
+
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+                    <span class="method get">GET</span>
+                    <span class="endpoint-path">/api/v1/provider/dashboard</span>
+                    <span class="endpoint-desc">{{ t('docs.endpoint_provider_overview') if t else 'Provider overview' }}</span>
+                </div>
+                <div class="endpoint-body">
+                    <p>{{ t('docs.endpoint_provider_overview_desc') if t else 'Returns service count, total calls, revenue, and settlement status for the authenticated provider.' }}</p>
+                    <pre>curl -H "Authorization: Bearer {key_id}:{secret}" \
+  https://agentictrade.io/api/v1/provider/dashboard</pre>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+                    <span class="method get">GET</span>
+                    <span class="endpoint-path">/api/v1/provider/services</span>
+                    <span class="endpoint-desc">{{ t('docs.endpoint_list_your_services') if t else 'List your services' }}</span>
+                </div>
+                <div class="endpoint-body">
+                    <p>{{ t('docs.endpoint_list_your_services_desc') if t else 'Returns all services owned by the authenticated provider with usage stats.' }}</p>
+                    <pre>curl -H "Authorization: Bearer {key_id}:{secret}" \
+  https://agentictrade.io/api/v1/provider/services</pre>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+                    <span class="method get">GET</span>
+                    <span class="endpoint-path">/api/v1/provider/services/{service_id}/analytics</span>
+                    <span class="endpoint-desc">{{ t('docs.endpoint_service_analytics') if t else 'Service analytics' }}</span>
+                </div>
+                <div class="endpoint-body">
+                    <p>{{ t('docs.endpoint_service_analytics_desc') if t else 'Detailed analytics for a specific service: total calls, revenue, success rate, daily breakdown.' }}</p>
+                    <pre>curl -H "Authorization: Bearer {key_id}:{secret}" \
+  https://agentictrade.io/api/v1/provider/services/{service_id}/analytics</pre>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+                    <span class="method get">GET</span>
+                    <span class="endpoint-path">/api/v1/provider/earnings</span>
+                    <span class="endpoint-desc">{{ t('docs.endpoint_earnings') if t else 'Earnings summary' }}</span>
+                </div>
+                <div class="endpoint-body">
+                    <p>{{ t('docs.endpoint_earnings_desc') if t else 'Returns total earned, settled, pending amounts, and settlement history.' }}</p>
+                    <pre>curl -H "Authorization: Bearer {key_id}:{secret}" \
+  https://agentictrade.io/api/v1/provider/earnings</pre>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+                    <span class="method get">GET</span>
+                    <span class="endpoint-path">/api/v1/provider/health</span>
+                    <span class="endpoint-desc">{{ t('docs.endpoint_health_scores') if t else 'Service health scores' }}</span>
+                </div>
+                <div class="endpoint-body">
+                    <p>{{ t('docs.endpoint_health_scores_desc') if t else 'Returns health scores for all your services based on latency, error rate, and uptime.' }}</p>
+                    <pre>curl -H "Authorization: Bearer {key_id}:{secret}" \
+  https://agentictrade.io/api/v1/provider/health</pre>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+                    <span class="method post">POST</span>
+                    <span class="endpoint-path">/api/v1/provider/services/{service_id}/test</span>
+                    <span class="endpoint-desc">{{ t('docs.endpoint_test_service') if t else 'Test service endpoint' }}</span>
+                </div>
+                <div class="endpoint-body">
+                    <p>{{ t('docs.endpoint_test_service_desc') if t else 'Tests connectivity to your service endpoint. Returns reachability, latency, and status code.' }}</p>
+                    <pre>curl -X POST -H "Authorization: Bearer {key_id}:{secret}" \
+  https://agentictrade.io/api/v1/provider/services/{service_id}/test</pre>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+                    <span class="method get">GET</span>
+                    <span class="endpoint-path">/api/v1/provider/onboarding</span>
+                    <span class="endpoint-desc">{{ t('docs.endpoint_onboarding') if t else 'Onboarding progress' }}</span>
+                </div>
+                <div class="endpoint-body">
+                    <p>{{ t('docs.endpoint_onboarding_desc') if t else 'Track your onboarding progress: API key creation, service registration, first traffic, first settlement.' }}</p>
+                    <pre>curl -H "Authorization: Bearer {key_id}:{secret}" \
+  https://agentictrade.io/api/v1/provider/onboarding</pre>
+                </div>
+            </div>
+
+            <!-- Settlements -->
+            <h2 id="settlements">{{ t('docs.settlements_title') if t else 'Settlements' }}</h2>
+            <p>{{ t('docs.settlements_desc') if t else 'Admin endpoints for managing provider payouts.' }}</p>
+
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+                    <span class="method post">POST</span>
+                    <span class="endpoint-path">/api/v1/settlements</span>
+                    <span class="endpoint-desc">{{ t('docs.endpoint_create_settlement') if t else 'Create settlement' }}</span>
+                </div>
+                <div class="endpoint-body">
+                    <p>{{ t('docs.endpoint_create_settlement_desc') if t else 'Creates a new settlement for a provider. Requires admin role.' }}</p>
+                    <pre>curl -X POST -H "Authorization: Bearer {key_id}:{secret}" \
+  -H "Content-Type: application/json" \
+  -d '{"provider_id": "prov-001", "period_start": "2026-01-01", "period_end": "2026-02-01"}' \
+  https://agentictrade.io/api/v1/settlements</pre>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+                    <span class="method get">GET</span>
+                    <span class="endpoint-path">/api/v1/settlements</span>
+                    <span class="endpoint-desc">{{ t('docs.endpoint_list_settlements') if t else 'List settlements' }}</span>
+                </div>
+                <div class="endpoint-body">
+                    <p>{{ t('docs.endpoint_list_settlements_desc') if t else 'Lists all settlements, optionally filtered by provider or status.' }}</p>
+                    <pre>curl -H "Authorization: Bearer {key_id}:{secret}" \
+  https://agentictrade.io/api/v1/settlements</pre>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+                    <span class="method patch">PATCH</span>
+                    <span class="endpoint-path">/api/v1/settlements/{settlement_id}/pay</span>
+                    <span class="endpoint-desc">{{ t('docs.endpoint_execute_payment') if t else 'Execute settlement payment' }}</span>
+                </div>
+                <div class="endpoint-body">
+                    <p>{{ t('docs.endpoint_execute_payment_desc') if t else 'Marks a settlement as paid and triggers the on-chain transfer.' }}</p>
+                    <pre>curl -X PATCH -H "Authorization: Bearer {key_id}:{secret}" \
+  https://agentictrade.io/api/v1/settlements/{settlement_id}/pay</pre>
+                </div>
+            </div>
+
+            <!-- Referrals -->
+            <h2 id="referrals">{{ t('docs.referrals_title') if t else 'Referrals' }}</h2>
+            <p>{{ t('docs.referrals_desc') if t else 'Referral program endpoints for generating and tracking referral codes.' }}</p>
+
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+                    <span class="method post">POST</span>
+                    <span class="endpoint-path">/api/v1/referrals/code</span>
+                    <span class="endpoint-desc">{{ t('docs.endpoint_create_referral') if t else 'Create referral code' }}</span>
+                </div>
+                <div class="endpoint-body">
+                    <p>{{ t('docs.endpoint_create_referral_desc') if t else 'Generates a unique referral code for the authenticated user.' }}</p>
+                    <pre>curl -X POST -H "Authorization: Bearer {key_id}:{secret}" \
+  https://agentictrade.io/api/v1/referrals/code</pre>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+                    <span class="method post">POST</span>
+                    <span class="endpoint-path">/api/v1/referrals/apply</span>
+                    <span class="endpoint-desc">{{ t('docs.endpoint_apply_referral') if t else 'Apply referral code' }}</span>
+                </div>
+                <div class="endpoint-body">
+                    <p>{{ t('docs.endpoint_apply_referral_desc') if t else 'Apply a referral code during registration to link accounts.' }}</p>
+                    <pre>curl -X POST -H "Content-Type: application/json" \
+  -d '{"code": "REF-ABC123"}' \
+  https://agentictrade.io/api/v1/referrals/apply</pre>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+                    <span class="method get">GET</span>
+                    <span class="endpoint-path">/api/v1/referrals</span>
+                    <span class="endpoint-desc">{{ t('docs.endpoint_list_referrals') if t else 'List referrals' }}</span>
+                </div>
+                <div class="endpoint-body">
+                    <p>{{ t('docs.endpoint_list_referrals_desc') if t else 'Lists all referrals made by the authenticated user.' }}</p>
+                    <pre>curl -H "Authorization: Bearer {key_id}:{secret}" \
+  https://agentictrade.io/api/v1/referrals</pre>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+                    <span class="method get">GET</span>
+                    <span class="endpoint-path">/api/v1/referrals/stats</span>
+                    <span class="endpoint-desc">{{ t('docs.endpoint_referral_stats') if t else 'Referral stats' }}</span>
+                </div>
+                <div class="endpoint-body">
+                    <p>{{ t('docs.endpoint_referral_stats_desc') if t else 'Aggregated referral statistics: total referrals, conversion rate, and earnings.' }}</p>
+                    <pre>curl -H "Authorization: Bearer {key_id}:{secret}" \
+  https://agentictrade.io/api/v1/referrals/stats</pre>
+                </div>
+            </div>
+
+            <!-- Webhooks -->
+            <h2 id="webhooks-api">{{ t('docs.webhooks_title') if t else 'Webhooks' }}</h2>
+            <p>{{ t('docs.webhooks_desc') if t else 'Subscribe to real-time event notifications.' }}</p>
+
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+                    <span class="method post">POST</span>
+                    <span class="endpoint-path">/api/v1/webhooks</span>
+                    <span class="endpoint-desc">{{ t('docs.endpoint_create_webhook') if t else 'Create webhook' }}</span>
+                </div>
+                <div class="endpoint-body">
+                    <p>{{ t('docs.endpoint_create_webhook_desc') if t else 'Registers a new webhook endpoint to receive event notifications.' }}</p>
+                    <h3>{{ t('docs.request_body') if t else 'Request Body' }}</h3>
+                    <table>
+                        <thead><tr><th>{{ t('docs.field') if t else 'Field' }}</th><th>{{ t('docs.type') if t else 'Type' }}</th><th>{{ t('docs.description') if t else 'Description' }}</th></tr></thead>
+                        <tbody>
+                            <tr><td><code>url</code></td><td>string</td><td>{{ t('docs.webhook_url_desc') if t else 'HTTPS endpoint to receive events' }}</td></tr>
+                            <tr><td><code>events</code></td><td>array</td><td>{{ t('docs.webhook_events_desc') if t else 'Event types to subscribe' }}: <code>usage.created</code>, <code>settlement.completed</code>, etc.</td></tr>
+                        </tbody>
+                    </table>
+                    <pre>curl -X POST -H "Authorization: Bearer {key_id}:{secret}" \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://myapp.com/webhooks", "events": ["usage.created"]}' \
+  https://agentictrade.io/api/v1/webhooks</pre>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+                    <span class="method get">GET</span>
+                    <span class="endpoint-path">/api/v1/webhooks</span>
+                    <span class="endpoint-desc">{{ t('docs.endpoint_list_webhooks') if t else 'List webhooks' }}</span>
+                </div>
+                <div class="endpoint-body">
+                    <p>{{ t('docs.endpoint_list_webhooks_desc') if t else 'Lists all registered webhooks for your account.' }}</p>
+                    <pre>curl -H "Authorization: Bearer {key_id}:{secret}" \
+  https://agentictrade.io/api/v1/webhooks</pre>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+                    <span class="method delete">DELETE</span>
+                    <span class="endpoint-path">/api/v1/webhooks/{webhook_id}</span>
+                    <span class="endpoint-desc">{{ t('docs.endpoint_delete_webhook') if t else 'Delete webhook' }}</span>
+                </div>
+                <div class="endpoint-body">
+                    <p>{{ t('docs.endpoint_delete_webhook_desc') if t else 'Removes a webhook subscription.' }}</p>
+                    <pre>curl -X DELETE -H "Authorization: Bearer {key_id}:{secret}" \
+  https://agentictrade.io/api/v1/webhooks/{webhook_id}</pre>
+                </div>
+            </div>
+
+            <!-- Audit -->
+            <h2 id="audit">{{ t('docs.audit_title') if t else 'Audit' }}</h2>
+            <p>{{ t('docs.audit_desc') if t else 'Security audit endpoints for tracking platform activity. Requires admin role.' }}</p>
+
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+                    <span class="method get">GET</span>
+                    <span class="endpoint-path">/api/v1/admin/audit</span>
+                    <span class="endpoint-desc">{{ t('docs.endpoint_audit_log') if t else 'Audit log' }}</span>
+                </div>
+                <div class="endpoint-body">
+                    <p>{{ t('docs.endpoint_audit_log_desc') if t else 'Returns the security audit log with filtering options.' }}</p>
+                    <pre>curl -H "Authorization: Bearer {key_id}:{secret}" \
+  https://agentictrade.io/api/v1/admin/audit</pre>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="this.parentElement.classList.toggle('open')">
+                    <span class="method get">GET</span>
+                    <span class="endpoint-path">/api/v1/admin/audit/summary</span>
+                    <span class="endpoint-desc">{{ t('docs.endpoint_audit_summary') if t else 'Audit summary' }}</span>
+                </div>
+                <div class="endpoint-body">
+                    <p>{{ t('docs.endpoint_audit_summary_desc') if t else 'Aggregated audit statistics: event counts by type and time period.' }}</p>
+                    <pre>curl -H "Authorization: Bearer {key_id}:{secret}" \
+  https://agentictrade.io/api/v1/admin/audit/summary</pre>
+                </div>
+            </div>
+
+            <!-- Error Responses -->
+            <h2 id="error-responses">{{ t('docs.error_responses_title') if t else 'Error Responses' }}</h2>
+            <p>{{ t('docs.error_responses_desc') if t else 'All API errors return a consistent JSON structure with an appropriate HTTP status code.' }}</p>
+
+            <h3>{{ t('docs.common_status_codes') if t else 'Common Status Codes' }}</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>{{ t('docs.status_code') if t else 'Status Code' }}</th>
+                        <th>{{ t('docs.meaning') if t else 'Meaning' }}</th>
+                        <th>{{ t('docs.description') if t else 'Description' }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>400</code></td><td>Bad Request</td><td>{{ t('docs.error_400_desc') if t else 'Invalid parameters or malformed request body.' }}</td></tr>
+                    <tr><td><code>401</code></td><td>Unauthorized</td><td>{{ t('docs.error_401_desc') if t else 'Missing or invalid API key.' }}</td></tr>
+                    <tr><td><code>403</code></td><td>Forbidden</td><td>{{ t('docs.error_403_desc') if t else 'Insufficient permissions for the requested resource.' }}</td></tr>
+                    <tr><td><code>404</code></td><td>Not Found</td><td>{{ t('docs.error_404_desc') if t else 'The requested resource does not exist.' }}</td></tr>
+                    <tr><td><code>429</code></td><td>Too Many Requests</td><td>{{ t('docs.error_429_desc') if t else 'Rate limit exceeded. Wait and retry.' }}</td></tr>
+                    <tr><td><code>500</code></td><td>Internal Server Error</td><td>{{ t('docs.error_500_desc') if t else 'Unexpected server error. Contact support if persistent.' }}</td></tr>
+                </tbody>
+            </table>
+
+            <h3>{{ t('docs.error_response_format') if t else 'Error Response Format' }}</h3>
+            <p>{{ t('docs.error_format_desc') if t else 'Every error response includes an error code, a human-readable message, and the HTTP status:' }}</p>
+            <pre>{
+  <span class="string">"error"</span>: <span class="string">"unauthorized"</span>,
+  <span class="string">"message"</span>: <span class="string">"Invalid API key. Check your key_id and secret."</span>,
+  <span class="string">"status"</span>: <span class="number">401</span>
+}</pre>
+
+            <p>{{ t('docs.error_format_fields_intro') if t else 'Fields:' }}</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>{{ t('docs.field') if t else 'Field' }}</th>
+                        <th>{{ t('docs.type') if t else 'Type' }}</th>
+                        <th>{{ t('docs.description') if t else 'Description' }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>error</code></td><td>string</td><td>{{ t('docs.error_field_error') if t else 'Machine-readable error code (e.g. "unauthorized", "bad_request", "rate_limited").' }}</td></tr>
+                    <tr><td><code>message</code></td><td>string</td><td>{{ t('docs.error_field_message') if t else 'Human-readable description of what went wrong.' }}</td></tr>
+                    <tr><td><code>status</code></td><td>int</td><td>{{ t('docs.error_field_status') if t else 'HTTP status code (matches the response status).' }}</td></tr>
+                </tbody>
+            </table>
+
+            <h3>{{ t('docs.rate_limit_headers') if t else 'Rate Limit Headers' }}</h3>
+            <p>{{ t('docs.rate_limit_headers_desc') if t else 'Every response includes rate limit headers so your agent can throttle requests proactively:' }}</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>{{ t('docs.header') if t else 'Header' }}</th>
+                        <th>{{ t('docs.description') if t else 'Description' }}</th>
+                        <th>{{ t('docs.example') if t else 'Example' }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><code>X-RateLimit-Limit</code></td><td>{{ t('docs.ratelimit_limit_desc') if t else 'Maximum number of requests allowed per window.' }}</td><td><code>60</code></td></tr>
+                    <tr><td><code>X-RateLimit-Remaining</code></td><td>{{ t('docs.ratelimit_remaining_desc') if t else 'Number of requests remaining in the current window.' }}</td><td><code>42</code></td></tr>
+                    <tr><td><code>X-RateLimit-Reset</code></td><td>{{ t('docs.ratelimit_reset_desc') if t else 'Unix timestamp (seconds) when the rate limit window resets.' }}</td><td><code>1711324800</code></td></tr>
+                </tbody>
+            </table>
+
+            <p>{{ t('docs.rate_limit_429_example') if t else 'When a 429 response is returned, use these headers to determine when to retry:' }}</p>
+            <pre><span class="comment"># Example 429 response headers</span>
+HTTP/1.1 429 Too Many Requests
+X-RateLimit-Limit: 60
+X-RateLimit-Remaining: 0
+X-RateLimit-Reset: 1711324800
+Content-Type: application/json
+
+{
+  <span class="string">"error"</span>: <span class="string">"rate_limited"</span>,
+  <span class="string">"message"</span>: <span class="string">"Rate limit exceeded. Retry after 1711324800."</span>,
+  <span class="string">"status"</span>: <span class="number">429</span>
+}</pre>
+
+            <!-- Python SDK -->
+            <h2 id="python-sdk">{{ t('docs.sdk_title') if t else 'Python SDK' }}</h2>
+            <p>{{ t('docs.sdk_install') if t else 'Install the SDK:' }}</p>
+            <pre><span class="comment"># Install from PyPI</span>
+pip install agentictrade</pre>
+            <p>{{ t('docs.sdk_desc') if t else 'Use the SDK for seamless integration:' }}</p>
+            <pre><span class="keyword">from</span> sdk.client <span class="keyword">import</span> ACFClient
+
+client = ACFClient(
+    base_url=<span class="string">"https://agentictrade.io"</span>,
+    api_key=<span class="string">"acf_xxx:secret_yyy"</span>,
+)
+
+<span class="comment"># Discover services</span>
+services = client.list_services(category=<span class="string">"crypto-analysis"</span>)
+
+<span class="comment"># Call a service through the proxy</span>
+result = client.proxy(
+    service_id=<span class="string">"{{ scanner_service_id }}"</span>,
+    path=<span class="string">"api/scan"</span>,
+    method=<span class="string">"POST"</span>,
+)
+print(result[<span class="string">"results"</span>])</pre>
+
+            <!-- Agent Integration -->
+            <h2 id="agent-integration">{{ t('docs.agent_guide_title') if t else 'Agent Integration Guide' }}</h2>
+            <p>{{ t('docs.agent_guide_desc') if t else 'How an autonomous agent uses AgenticTrade:' }}</p>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-content">
+                        <h3>{{ t('docs.agent_step1') if t else 'Agent discovers available services' }}</h3>
+                        <p><code>GET /api/v1/discover</code> &mdash; {{ t('docs.agent_step1_desc') if t else 'finds services matching its task.' }}</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-content">
+                        <h3>{{ t('docs.agent_step2') if t else 'Agent checks its balance' }}</h3>
+                        <p><code>GET /api/v1/balance/{buyer_id}</code> &mdash; {{ t('docs.agent_step2_desc') if t else 'ensures sufficient funds.' }}</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-content">
+                        <h3>{{ t('docs.agent_step3') if t else 'Agent calls the service' }}</h3>
+                        <p><code>POST /api/v1/proxy/{service_id}/{path}</code> &mdash; {{ t('docs.agent_step3_desc') if t else 'marketplace handles payment.' }}</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-content">
+                        <h3>{{ t('docs.agent_step4') if t else 'Agent processes the response' }}</h3>
+                        <p>{{ t('docs.agent_step4_desc') if t else 'Response body from the provider + billing headers from the marketplace.' }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pricing -->
+            <h2 id="pricing">{{ t('docs.pricing_title') if t else 'Pricing' }}</h2>
+            <table>
+                <thead><tr><th>{{ t('docs.pricing_service') if t else 'Service' }}</th><th>{{ t('docs.pricing_price') if t else 'Price' }}</th><th>{{ t('docs.pricing_free_tier') if t else 'Free Tier' }}</th><th>{{ t('docs.pricing_payment') if t else 'Payment' }}</th></tr></thead>
+                <tbody>
+                    {% for svc in services %}
+                    <tr>
+                        <td>{{ svc.name }}</td>
+                        <td>
+                            {% if svc.price_per_call == 0 or svc.price_per_call == '0' or svc.price_per_call == '0.0' %}
+                                <span style="color:var(--green)">{{ t('docs.pricing_free') if t else 'FREE' }}</span>
+                            {% else %}
+                                ${{ svc.price_per_call }} USDC
+                            {% endif %}
+                        </td>
+                        <td>{% if svc.free_tier_calls %}{{ svc.free_tier_calls }} {{ t('docs.pricing_calls') if t else 'calls' }}{% else %}{{ t('docs.pricing_always_free') if t else 'Always free' }}{% endif %}</td>
+                        <td>{{ t('docs.pricing_crypto') if t else 'Crypto (300+ coins)' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="alert alert-info">
+                <span>{{ t('docs.pricing_commission') if t else 'Platform commission: 0% for month 1, 5% for months 2&ndash;3, 10% from month 4 (capped). Deposits accepted via NOWPayments (USDT, USDC, BTC, ETH, and 300+ cryptocurrencies).' }}</span>
+            </div>
+
+            <div style="padding: 32px; text-align: center; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 13px; margin-top: 60px;">
+                &copy; 2025-2026 AgenticTrade by JudyAI Lab. {{ t('docs.footer_copyright') if t else 'All rights reserved.' }}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Sidebar active link tracking
+document.querySelectorAll('.docs-sidebar a').forEach(function(link) {
+    link.addEventListener('click', function() {
+        document.querySelectorAll('.docs-sidebar a').forEach(function(l) { l.classList.remove('active'); });
+        link.classList.add('active');
+    });
+});
+</script>
+{% endblock %}

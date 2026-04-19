@@ -1,0 +1,35 @@
+{
+  "description": "ERC-8004 Hackathon — Trading-focused service demo config",
+  "services": [
+    {
+      "name": "Crypto Signal Generator",
+      "description": "Real-time trading signals using ML models on order book and momentum data. Supports BTC, ETH, and top-50 altcoins.",
+      "category": "trading",
+      "tags": ["signals", "crypto", "ml", "real-time"],
+      "price_per_call": "0.05",
+      "endpoint": "https://demo.agentictrade.io/signals",
+      "payment_method": "x402",
+      "free_tier_calls": 10
+    },
+    {
+      "name": "Backtest Engine",
+      "description": "Run strategy backtests with historical OHLCV data. Supports custom indicators, walk-forward optimization, and Monte Carlo simulation.",
+      "category": "trading",
+      "tags": ["backtest", "strategy", "quantitative", "historical-data"],
+      "price_per_call": "0.10",
+      "endpoint": "https://demo.agentictrade.io/backtest",
+      "payment_method": "x402",
+      "free_tier_calls": 5
+    },
+    {
+      "name": "Market Analysis API",
+      "description": "On-chain analytics, whale tracking, and sentiment scoring for crypto assets. Aggregates data from 15+ sources.",
+      "category": "trading",
+      "tags": ["analysis", "on-chain", "sentiment", "whale-tracking"],
+      "price_per_call": "0.03",
+      "endpoint": "https://demo.agentictrade.io/analysis",
+      "payment_method": "x402",
+      "free_tier_calls": 20
+    }
+  ]
+}

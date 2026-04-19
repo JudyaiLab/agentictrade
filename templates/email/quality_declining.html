@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">
+
+<div style="background: #E2E3F1; border-left: 4px solid #6C63FF; padding: 16px; border-radius: 4px; margin-bottom: 24px;">
+  <strong style="color: #3D3A8C;">📉 Quality Trend Alert</strong>
+</div>
+
+<p>Your service <strong>{{service_name}}</strong> has experienced a quality score decline of <strong style="color: #dc3545;">{{decline}} points</strong> over the past 7 days. Current score: <strong>{{quality_score}}/100</strong>.</p>
+
+<h2 style="font-size: 18px; margin-top: 32px;">Why This Matters</h2>
+<ul style="line-height: 2;">
+  <li>A declining trend may indicate emerging infrastructure or performance issues</li>
+  <li>Services below <strong>{{threshold_warn}}</strong> receive quality warnings</li>
+  <li>Services below <strong>{{threshold_pause}}</strong> for 3 consecutive rounds are automatically paused</li>
+  <li>Higher quality scores improve your marketplace ranking and reduce commission rates</li>
+</ul>
+
+<h2 style="font-size: 18px; margin-top: 32px;">Recommended Actions</h2>
+<ol style="line-height: 2;">
+  <li>Review recent changes to your service infrastructure</li>
+  <li>Check for increased response times or intermittent errors</li>
+  <li>Monitor your endpoint health proactively</li>
+  <li>Consider adding redundancy or caching if latency is increasing</li>
+</ol>
+
+<p style="margin: 24px 0;">
+  <a href="{{policy_url}}"
+     style="background: #6C63FF; color: white; padding: 12px 24px;
+            border-radius: 6px; text-decoration: none; font-weight: 600;">
+    View Quality Policy
+  </a>
+</p>
+
+<p style="margin-top: 32px; color: #666; font-size: 14px;">
+  This is an early warning — take action now to prevent service disruption.<br>
+  <a href="https://agentictrade.io" style="color: #6C63FF;">agentictrade.io</a>
+</p>
+
+<hr style="border: none; border-top: 1px solid #eee; margin: 32px 0;">
+<p style="color: #999; font-size: 12px;">
+  Service ID: {{service_id}}<br>
+  You're receiving this because your service quality trend triggered an early warning per our <a href="{{policy_url}}">Quality Policy</a>.
+</p>
+
+</body>
+</html>

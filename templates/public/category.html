@@ -1,0 +1,111 @@
+{% extends "public/base.html" %}
+
+{% block title %}{{ category_name }} API Services — AgenticTrade Marketplace{% endblock %}
+{% block meta_description %}Browse {{ category_name }} API services on AgenticTrade. AI agents automatically discover and pay for these services. Make money with AI by listing your {{ category_name | lower }} service.{% endblock %}
+{% block og_title %}{{ category_name }} Services — AgenticTrade{% endblock %}
+{% block og_description %}{{ category_name }} API services for AI agents. Browse, discover, and integrate.{% endblock %}
+{% block tw_title %}{{ category_name }} — AgenticTrade Marketplace{% endblock %}
+{% block tw_description %}{{ category_name }} API services for AI agents on AgenticTrade.{% endblock %}
+{% block canonical %}https://agentictrade.io/marketplace/category/{{ category }}{% endblock %}
+
+{% block json_ld %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "{{ category_name }} API Services — AgenticTrade",
+    "description": "Browse {{ category_name }} API services available for AI agents on AgenticTrade marketplace.",
+    "url": "https://agentictrade.io/marketplace/category/{{ category }}",
+    "isPartOf": {"@type": "WebSite", "name": "AgenticTrade", "url": "https://agentictrade.io"},
+    "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://agentictrade.io/"},
+            {"@type": "ListItem", "position": 2, "name": "Marketplace", "item": "https://agentictrade.io/marketplace"},
+            {"@type": "ListItem", "position": 3, "name": "{{ category_name }}", "item": "https://agentictrade.io/marketplace/category/{{ category }}"}
+        ]
+    }
+}
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .cat-hero { padding: 60px 0 32px; max-width: 700px; }
+    .cat-hero p { color: var(--text-dim); font-size: 16px; line-height: 1.7; }
+    .cat-nav { display: flex; flex-wrap: wrap; gap: 8px; margin: 24px 0 40px; }
+    .cat-nav a { font-size: 13px; padding: 6px 14px; border-radius: 9999px; border: 1px solid var(--border); color: var(--text-dim); text-decoration: none; transition: all 0.2s; }
+    .cat-nav a:hover, .cat-nav a.active { border-color: var(--accent); color: var(--accent); background: var(--accent-glow); }
+    .svc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+    .svc-card { background: var(--bg-card); border-radius: var(--radius); padding: 24px; box-shadow: var(--ring); transition: all 0.2s; }
+    .svc-card:hover { box-shadow: var(--ring-hover); transform: translateY(-2px); }
+    .svc-card h3 { font-size: 17px; margin-bottom: 8px; }
+    .svc-card h3 a { color: var(--text); text-decoration: none; }
+    .svc-card p { font-size: 14px; color: var(--text-dim); line-height: 1.6; margin-bottom: 12px; }
+    .svc-card-meta { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-muted); }
+    .score-badge { font-weight: 700; }
+    .score-green { color: var(--green); }
+    .score-yellow { color: #FFC107; }
+    .score-red { color: #dc3545; }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="container" style="padding-top:16px;">
+    <nav aria-label="Breadcrumb" style="font-size:13px; color:var(--text-muted);">
+        <a href="/" style="color:var(--text-dim);">Home</a> &rsaquo;
+        <a href="/marketplace" style="color:var(--text-dim);">Marketplace</a> &rsaquo;
+        {{ category_name }}
+    </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="cat-hero">
+            <span class="eyebrow">Marketplace</span>
+            <h1>{{ category_name }} Services</h1>
+            <p>AI-ready {{ category_name | lower }} API services. AI agents automatically discover, use, and pay for these services — let your AI make money by listing here.</p>
+        </div>
+
+        <div class="cat-nav">
+            <a href="/marketplace">All</a>
+            {% for cat_key, cat_label in categories.items() %}
+            <a href="/marketplace/category/{{ cat_key }}" {% if cat_key == category %}class="active"{% endif %}>{{ cat_label }}</a>
+            {% endfor %}
+        </div>
+
+        {% if services %}
+        <div class="svc-grid">
+            {% for item in services %}
+            <div class="svc-card">
+                <h3><a href="/marketplace/{{ item.service.id }}">{{ item.service.name }}</a></h3>
+                <p>{{ (item.service.description or '')[:120] }}{% if (item.service.description or '')|length > 120 %}...{% endif %}</p>
+                <div class="svc-card-meta">
+                    <span>${{ item.service.price_per_call }}/call</span>
+                    {% if item.health %}
+                    <span class="score-badge {% if item.health.quality_score >= 80 %}score-green{% elif item.health.quality_score >= 60 %}score-yellow{% else %}score-red{% endif %}">
+                        {{ item.health.quality_score }}/100
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div style="text-align: center; padding: 60px 0; color: var(--text-dim);">
+            <p style="font-size: 18px; margin-bottom: 16px;">No {{ category_name | lower }} services yet.</p>
+            <p>Be the first to list a {{ category_name | lower }} service and let AI agents pay you.</p>
+            <a href="/providers" class="btn-primary" style="margin-top: 16px;">List Your Service</a>
+        </div>
+        {% endif %}
+
+        <div style="text-align: center; margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--border);">
+            <h2 style="font-size: 20px;">Make Money with AI — List Your {{ category_name }} Service</h2>
+            <p style="color: var(--text-dim); margin: 12px 0 24px;">AI agents need {{ category_name | lower }} services. List yours and earn passive income.</p>
+            <a href="/providers" class="btn-primary">Start Selling Free</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

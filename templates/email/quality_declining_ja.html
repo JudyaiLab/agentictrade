@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">
+
+<div style="background: #E2E3F1; border-left: 4px solid #6C63FF; padding: 16px; border-radius: 4px; margin-bottom: 24px;">
+  <strong style="color: #3D3A8C;">📉 品質トレンドアラート</strong>
+</div>
+
+<p>お客様のサービス <strong>{{service_name}}</strong> の品質スコアが過去7日間で <strong style="color: #dc3545;">{{decline}} ポイント低下</strong>しました。現在のスコア: <strong>{{quality_score}}/100</strong>。</p>
+
+<h2 style="font-size: 18px; margin-top: 32px;">これが重要な理由</h2>
+<ul style="line-height: 2;">
+  <li>低下傾向は、インフラストラクチャやパフォーマンスの問題が発生している可能性を示しています</li>
+  <li><strong>{{threshold_warn}}</strong> を下回るサービ���は品質警告を受けます</li>
+  <li>3回連続で <strong>{{threshold_pause}}</strong> を下回るサービスは自動的に一時停止されます</li>
+  <li>高い品質スコアはマーケットプレイスでのランキングを上げ、手数料率を下げます</li>
+</ul>
+
+<h2 style="font-size: 18px; margin-top: 32px;">推奨アクション</h2>
+<ol style="line-height: 2;">
+  <li>���ービスインフラストラクチャの最近の変更を確認してください</li>
+  <li>レスポンスタイムの増加や断続的なエラーがないか確認してください</li>
+  <li>エンド��イントの健全性を事前にモニタリングしてください</li>
+  <li>レイテンシが増加している場合は、冗長性やキ���ッシュの追加を検討してください</li>
+</ol>
+
+<p style="margin: 24px 0;">
+  <a href="{{policy_url}}" style="background: #6C63FF; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 600;">品質ポリシーを見る</a>
+</p>
+
+<p style="margin-top: 32px; color: #666; font-size: 14px;">
+  これは早期警告です — サービスの中断を防ぐために今すぐ対策を講じてください。<br>
+  <a href="https://agentictrade.io" style="color: #6C63FF;">agentictrade.io</a>
+</p>
+
+<hr style="border: none; border-top: 1px solid #eee; margin: 32px 0;">
+<p style="color: #999; font-size: 12px;">
+  サービスID: {{service_id}}<br>
+  <a href="{{policy_url}}">品質ポリシー</a>の早期警告がトリガーされたため、このメールが送信されました。
+</p>
+
+</body>
+</html>

@@ -1,0 +1,153 @@
+{% extends "public/base.html" %}
+
+{% block title %}Python SDK — AgenticTrade | pip install agentictrade{% endblock %}
+{% block meta_description %}AgenticTrade Python SDK. Install with pip, discover AI services, make authenticated calls, and check balances. Code examples for building agents that make money with AI.{% endblock %}
+{% block og_title %}Python SDK — AgenticTrade{% endblock %}
+{% block og_description %}Build AI agents with the AgenticTrade Python SDK. Discover services, make calls, handle payments.{% endblock %}
+{% block tw_title %}AgenticTrade Python SDK{% endblock %}
+{% block tw_description %}pip install agentictrade. Build agents that discover, call, and pay for AI services.{% endblock %}
+{% block canonical %}https://agentictrade.io/docs/sdk{% endblock %}
+
+{% block json_ld %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "AgenticTrade Python SDK",
+    "description": "Installation, configuration, and usage examples for the AgenticTrade Python SDK. Build AI agents that discover, call, and pay for services.",
+    "author": {"@type": "Organization", "name": "AgenticTrade"},
+    "publisher": {"@type": "Organization", "name": "AgenticTrade", "url": "https://agentictrade.io"},
+    "datePublished": "2026-04-12",
+    "proficiencyLevel": "Intermediate",
+    "programmingLanguage": "Python"
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://agentictrade.io/"},
+        {"@type": "ListItem", "position": 2, "name": "Docs", "item": "https://agentictrade.io/docs"},
+        {"@type": "ListItem", "position": 3, "name": "Python SDK", "item": "https://agentictrade.io/docs/sdk"}
+    ]
+}
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .doc-content { max-width: 800px; }
+    .doc-content h1 { margin-bottom: 12px; }
+    .doc-content p.lead { color: var(--text-dim); font-size: 17px; line-height: 1.7; margin-bottom: 32px; }
+    .doc-content h2 { font-size: 22px; margin: 40px 0 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+    .doc-content h3 { font-size: 17px; margin: 24px 0 12px; }
+    .doc-content p, .doc-content li { color: var(--text-dim); font-size: 15px; line-height: 1.8; }
+    .doc-content code { background: var(--bg-inset); padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+    .doc-content pre { background: var(--bg-inset); border: 1px solid var(--border); border-radius: 8px; padding: 16px; overflow-x: auto; margin: 16px 0; }
+    .doc-content pre code { background: none; padding: 0; font-size: 13px; line-height: 1.6; }
+    .doc-links { margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--border); }
+    .doc-links a { color: var(--accent); margin-right: 20px; font-size: 14px; }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="container" style="padding-top:16px;">
+    <nav aria-label="Breadcrumb" style="font-size:13px; color:var(--text-muted);">
+        <a href="/" style="color:var(--text-dim);">Home</a> &rsaquo;
+        <a href="/docs" style="color:var(--text-dim);">Docs</a> &rsaquo; Python SDK
+    </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="doc-content">
+            <span class="eyebrow">Docs</span>
+            <h1>Python SDK</h1>
+            <p class="lead">Build AI agents that discover, call, and pay for services on AgenticTrade. Install in one command, start making calls in five lines of code.</p>
+
+            <h2>Installation</h2>
+<pre><code>pip install agentictrade</code></pre>
+            <p>Requires Python 3.9+. The SDK has zero required dependencies beyond the standard library and <code>httpx</code>.</p>
+
+            <h2>Quick Start</h2>
+<pre><code>from agentictrade import AgenticTradeClient
+
+client = AgenticTradeClient(api_key="at_live_abc123...")
+
+# Discover services
+services = client.discover(category="analysis", min_quality=80)
+for svc in services:
+    print(f"{svc.name} — ${svc.price_per_call}/call — score {svc.health_score}")
+
+# Call a service
+result = client.call(
+    service_id="svc_abc123",
+    params={"text": "Analyze this market data"}
+)
+print(result.data)
+
+# Check your balance
+balance = client.balance()
+print(f"Balance: ${balance.available} USDC")</code></pre>
+
+            <h2>Async Support</h2>
+            <p>For high-throughput agents, use the async client:</p>
+<pre><code>from agentictrade import AsyncAgenticTradeClient
+import asyncio
+
+async def main():
+    client = AsyncAgenticTradeClient(api_key="at_live_abc123...")
+
+    services = await client.discover(category="code-review")
+    results = await asyncio.gather(*[
+        client.call(svc.id, params={"code": snippet})
+        for svc in services[:3]
+    ])
+    for r in results:
+        print(r.data)
+
+asyncio.run(main())</code></pre>
+
+            <h2>Error Handling</h2>
+<pre><code>from agentictrade.exceptions import (
+    AuthenticationError,
+    RateLimitError,
+    InsufficientFundsError,
+    ServiceUnavailableError,
+)
+
+try:
+    result = client.call("svc_abc123", params={"text": "test"})
+except AuthenticationError:
+    print("Invalid or expired API key")
+except RateLimitError as e:
+    print(f"Rate limited. Retry after {e.retry_after}s")
+except InsufficientFundsError:
+    print("Top up your balance at /portal/billing")
+except ServiceUnavailableError:
+    print("Service is temporarily offline")</code></pre>
+
+            <h2>Configuration</h2>
+            <p>The client accepts optional configuration:</p>
+<pre><code>client = AgenticTradeClient(
+    api_key="at_live_abc123...",
+    base_url="https://agentictrade.io",  # default
+    timeout=30,                           # seconds
+    max_retries=3,                        # automatic retry on 5xx
+)</code></pre>
+            <p>You can also set <code>AGENTICTRADE_API_KEY</code> as an environment variable and omit it from the constructor.</p>
+
+            <div class="doc-links">
+                <strong style="font-size:14px;">Related:</strong><br style="margin-bottom:8px;">
+                <a href="/docs/quickstart">Quick Start</a>
+                <a href="/docs/mcp">MCP Integration</a>
+                <a href="/docs/authentication">Authentication</a>
+                <a href="/api-docs">Full API Reference</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

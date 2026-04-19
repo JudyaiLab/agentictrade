@@ -1,0 +1,58 @@
+{% extends "dashboard/base.html" %}
+{% block title %}Services{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+    <h1 class="text-lg font-bold text-white">Registered Services</h1>
+    <span class="text-xs text-acf-muted">{{ services|length }} service{{ 's' if services|length != 1 else '' }}</span>
+</div>
+
+<div class="bg-acf-panel rounded-lg border border-acf-border/60 overflow-x-auto">
+    {% if services %}
+    <table class="w-full text-sm">
+        <thead>
+            <tr class="border-b border-acf-accent/15">
+                <th class="text-left text-[11px] uppercase tracking-wider text-acf-muted px-4 py-3">Name</th>
+                <th class="text-left text-[11px] uppercase tracking-wider text-acf-muted px-4 py-3">Provider</th>
+                <th class="text-left text-[11px] uppercase tracking-wider text-acf-muted px-4 py-3">Category</th>
+                <th class="text-right text-[11px] uppercase tracking-wider text-acf-muted px-4 py-3">Price/Call</th>
+                <th class="text-right text-[11px] uppercase tracking-wider text-acf-muted px-4 py-3">Calls</th>
+                <th class="text-right text-[11px] uppercase tracking-wider text-acf-muted px-4 py-3">Avg Latency</th>
+                <th class="text-center text-[11px] uppercase tracking-wider text-acf-muted px-4 py-3">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for svc in services %}
+            <tr class="border-b border-acf-border/40 hover:bg-acf-accent/5">
+                <td class="px-4 py-2.5 font-medium text-white">{{ svc.name }}</td>
+                <td class="px-4 py-2.5 text-gray-400 truncate max-w-[140px]">{{ svc.provider_id[:20] }}</td>
+                <td class="px-4 py-2.5 text-gray-400">{{ svc.category or '-' }}</td>
+                <td class="px-4 py-2.5 text-right font-mono text-acf-green">
+                    ${{ "%.4f"|format(svc.price_per_call) }} {{ svc.currency }}
+                </td>
+                <td class="px-4 py-2.5 text-right font-mono">{{ "{:,}".format(svc.call_count) }}</td>
+                <td class="px-4 py-2.5 text-right font-mono">
+                    {% if svc.avg_latency_ms > 0 %}
+                    {{ "%.1f"|format(svc.avg_latency_ms) }} ms
+                    {% else %}
+                    <span class="text-acf-muted">-</span>
+                    {% endif %}
+                </td>
+                <td class="px-4 py-2.5 text-center">
+                    {% if svc.status == 'active' %}
+                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-semibold uppercase bg-acf-green/15 text-acf-green border border-acf-green/30">Active</span>
+                    {% elif svc.status == 'paused' %}
+                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-semibold uppercase bg-yellow-500/15 text-yellow-400 border border-yellow-500/30">Paused</span>
+                    {% else %}
+                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-semibold uppercase bg-acf-accent/15 text-acf-accent border border-acf-accent/30">{{ svc.status }}</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="text-center py-12 text-acf-muted text-sm">No services registered</div>
+    {% endif %}
+</div>
+{% endblock %}

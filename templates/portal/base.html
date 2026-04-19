@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="{{ locale|default('en') }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Provider Portal{% endblock %} — AgenticTrade</title>
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="description" content="{% block meta_description %}AgenticTrade Provider Portal{% endblock %}">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{% block og_title %}{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}{% endblock %}">
+    <link rel="canonical" href="{% block canonical %}https://agentictrade.io{{ request.url.path }}{% endblock %}">
+    <link rel="icon" href="/static/img/favicon.ico" type="image/x-icon">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/img/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/img/apple-touch-icon.png">
+    <link rel="preconnect" href="https://rsms.me">
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <link rel="stylesheet" href="/static/css/public.css">
+
+    {# ── Google Analytics ── #}
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-TLXVKL7P5S"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-TLXVKL7P5S');
+    </script>
+    <style>
+        :root { --text-bright: #f0f4ff; }
+        .portal-nav { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 32px; }
+        .portal-nav-links { display: flex; gap: 24px; align-items: center; }
+        .portal-nav-links a { color: var(--text-dim); text-decoration: none; font-size: 14px; transition: color .15s; }
+        .portal-nav-links a:hover, .portal-nav-links a.active { color: var(--text-bright); }
+        .portal-user { display: flex; align-items: center; gap: 12px; }
+        .portal-user-name { font-size: 14px; color: var(--text-dim); }
+        .portal-user-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; color: #000; }
+        .portal-card { background: rgba(255,255,255,0.02); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06); border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+        .portal-stat { text-align: center; }
+        .portal-stat-value { font-size: 28px; font-weight: 700; color: var(--text-bright); letter-spacing: -0.5px; }
+        .portal-stat-label { font-size: 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; }
+        .portal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
+        .portal-table { width: 100%; border-collapse: collapse; }
+        .portal-table th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim); padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .portal-table td { padding: 12px 16px; font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+        .portal-badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 9999px; font-weight: 600; }
+        .portal-badge-active { background: rgba(52,211,153,0.15); color: #34d399; }
+        .portal-badge-inactive { background: rgba(239,68,68,0.15); color: #ef4444; }
+        .portal-form { max-width: 480px; }
+        .portal-form label { display: block; font-size: 13px; color: var(--text-dim); margin-bottom: 6px; font-weight: 500; }
+        .portal-form input[type="text"], .portal-form input[type="email"], .portal-form input[type="password"] {
+            width: 100%; padding: 10px 14px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px; color: var(--text-bright); font-size: 14px; font-family: inherit; margin-bottom: 16px; box-sizing: border-box;
+        }
+        .portal-form input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(99,102,241,0.2); }
+        .portal-form .btn-primary { width: 100%; }
+        .portal-alert { padding: 12px 16px; border-radius: 8px; font-size: 14px; margin-bottom: 20px; }
+        .portal-alert-error { background: rgba(239,68,68,0.1); color: #ef4444; box-shadow: inset 0 0 0 1px rgba(239,68,68,0.2); }
+        .portal-alert-success { background: rgba(52,211,153,0.1); color: #34d399; box-shadow: inset 0 0 0 1px rgba(52,211,153,0.2); }
+        .portal-empty { text-align: center; padding: 48px 24px; color: var(--text-dim); }
+        .portal-commission-bar { height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden; margin-top: 8px; }
+        .portal-commission-fill { height: 100%; border-radius: 4px; background: var(--accent); transition: width .3s; }
+        .portal-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        @media (max-width: 640px) {
+            .portal-nav { flex-direction: column; gap: 12px; align-items: flex-start; }
+            .portal-nav-links { gap: 16px; flex-wrap: wrap; }
+            .portal-user { align-self: flex-end; }
+            .portal-grid { grid-template-columns: repeat(2, 1fr); }
+            .portal-stat-value { font-size: 22px; }
+        }
+        @media (max-width: 480px) {
+            .portal-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="container" style="max-width: 1100px; margin: 0 auto; padding: 0 24px;">
+        {% if provider is defined and provider %}
+        <nav class="portal-nav">
+            <div style="display: flex; align-items: center; gap: 24px;">
+                <a href="/" style="font-weight: 700; font-size: 18px; color: var(--text-bright); text-decoration: none;">AgenticTrade</a>
+                <div class="portal-nav-links">
+                    <a href="/portal/dashboard" class="{% if request.url.path == '/portal/dashboard' %}active{% endif %}">Dashboard</a>
+                    <a href="/portal/getting-started" class="{% if request.url.path == '/portal/getting-started' %}active{% endif %}">Getting Started</a>
+                    <a href="/portal/services" class="{% if request.url.path == '/portal/services' %}active{% endif %}">Services</a>
+                    <a href="/portal/analytics" class="{% if request.url.path == '/portal/analytics' %}active{% endif %}">Analytics</a>
+                    <a href="/portal/referrals" class="{% if request.url.path == '/portal/referrals' %}active{% endif %}">Referrals</a>
+                    <a href="/portal/settings" class="{% if request.url.path == '/portal/settings' %}active{% endif %}">Settings</a>
+                </div>
+            </div>
+            <div class="portal-user">
+                <span class="portal-user-name">{{ provider.display_name }}</span>
+                <div class="portal-user-avatar">{{ provider.display_name[0]|upper }}</div>
+                <a href="/portal/logout" style="color: var(--text-dim); font-size: 13px; text-decoration: none; margin-left: 8px;">Logout</a>
+            </div>
+        </nav>
+        {% endif %}
+
+        <main>{% block content %}{% endblock %}</main>
+    </div>
+</body>
+</html>

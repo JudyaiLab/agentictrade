@@ -1,0 +1,281 @@
+{% extends "public/base.html" %}
+
+{% block title %}{{ t('marketplace.page_title') or 'AI Agent API Marketplace — Browse & Compare | AgenticTrade' }}{% endblock %}
+{% block meta_description %}{{ t('marketplace.meta_desc') or 'Browse API services for AI agents. Search by category, compare pricing, and integrate with one API call. Pre-paid USDC balance, per-call billing.' }}{% endblock %}
+{% block og_title %}{{ t('marketplace.og_title') or 'AgenticTrade Marketplace — API Services for AI Agents' }}{% endblock %}
+{% block og_description %}{{ t('marketplace.og_desc') or 'Browse Crypto, AI, Data & Code APIs. AI agents discover, call, and pay per use in USDC. Integrate in minutes.' }}{% endblock %}
+{% block tw_title %}{{ t('marketplace.tw_title') or 'AgenticTrade Marketplace — APIs for AI Agents' }}{% endblock %}
+{% block tw_description %}{{ t('marketplace.tw_desc') or 'Browse API services built for AI agents. Per-call billing in USDC. Discover, integrate, deploy.' }}{% endblock %}
+
+{% block json_ld %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        {
+            "@type": "Question",
+            "name": "How do AI agents discover services on the AgenticTrade marketplace?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "AI agents discover services through MCP (Model Context Protocol) Tool Descriptors. Each listed API has a machine-readable descriptor that agents can query programmatically, enabling autonomous service discovery without human intervention."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "What types of APIs are available on AgenticTrade?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "AgenticTrade hosts APIs across multiple categories including Crypto (market scanners, backtesting), AI (NLP, computer vision), Data (web scraping, analytics), and Code (linting, generation). Providers can list any HTTP API endpoint."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "How does per-call billing work on the marketplace?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Each API service has a provider-set price per call in USDC. When an agent calls a service, the cost is deducted from the agent's pre-funded balance automatically. There are no subscriptions — you only pay for what you use."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Can I try marketplace services before paying?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. Many services offer free tier calls (typically 10 free calls) so agents and developers can test the API before committing funds. Check each service card for free tier availability."
+            }
+        }
+    ]
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "AgenticTrade Marketplace",
+    "description": "Browse and discover API services for AI agents.",
+    "url": "https://agentictrade.io/marketplace",
+    "mainEntity": {
+        "@type": "ItemList",
+        "name": "Available API Services",
+        "numberOfItems": {{ service_count }},
+        "itemListElement": [
+            {% for svc in services %}
+            {
+                "@type": "ListItem",
+                "position": {{ loop.index }},
+                "name": "{{ svc.name }}",
+                "url": "https://agentictrade.io/api-docs#services"
+            }{% if not loop.last %},{% endif %}
+            {% endfor %}
+        ]
+    },
+    "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://agentictrade.io/"},
+            {"@type": "ListItem", "position": 2, "name": "Marketplace", "item": "https://agentictrade.io/marketplace"}
+        ]
+    }
+}
+</script>
+{% for svc in services %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "{{ svc.name }}",
+    "description": "{{ svc.description | truncate(160) }}",
+    "url": "https://agentictrade.io/marketplace",
+    "brand": {"@type": "Brand", "name": "AgenticTrade"},
+    "offers": {
+        "@type": "Offer",
+        "price": "{{ svc.price_per_call or 0 }}",
+        "priceCurrency": "USD",
+        "availability": "https://schema.org/InStock"
+    }
+}
+</script>
+{% endfor %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .mp-hero { padding: 48px 0 32px; max-width: 600px; }
+    .mp-hero p { color: var(--text-dim); font-size: 16px; line-height: 1.7; margin-bottom: 24px; }
+
+    .search-bar {
+        display: flex; gap: 12px; margin-bottom: 32px; flex-wrap: wrap;
+    }
+    .search-input {
+        flex: 1; min-width: 200px; padding: 10px 16px;
+        background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm);
+        color: var(--text); font-size: 14px; outline: none;
+    }
+    .search-input:focus { border-color: var(--accent); }
+    .filter-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+    .filter-tag {
+        padding: 6px 14px; border-radius: 9999px; font-size: 13px; font-weight: 600;
+        background: var(--bg-card); color: var(--text-dim); border: 1px solid var(--border);
+        cursor: pointer; transition: all var(--transition);
+    }
+    .filter-tag:hover, .filter-tag.active { border-color: var(--accent); color: var(--accent); }
+
+    .mp-layout { display: grid; grid-template-columns: 1fr 260px; gap: 32px; }
+    .svc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+    .svc-card {
+        background: var(--bg-card); border-radius: var(--radius); padding: 24px;
+        box-shadow: var(--ring); transition: all 0.25s;
+    }
+    .svc-card:hover { box-shadow: var(--ring-hover); transform: translateY(-2px); }
+    .svc-card h3 { font-size: 17px; margin-bottom: 6px; }
+    .svc-card p { font-size: 13px; color: var(--text-dim); line-height: 1.6; margin-bottom: 12px;
+        display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .svc-meta { display: flex; justify-content: space-between; align-items: center; }
+    .svc-price { font-size: 18px; font-weight: 700; color: var(--accent); }
+    .svc-unit { font-size: 12px; color: var(--text-muted); }
+
+    .sidebar-card {
+        background: var(--bg-card); border-radius: var(--radius); padding: 20px;
+        box-shadow: var(--ring); margin-bottom: 16px;
+    }
+    .sidebar-card h4 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-dim); margin-bottom: 12px; }
+    .sidebar-stat { font-size: 28px; font-weight: 800; color: var(--accent); }
+    .sidebar-label { font-size: 12px; color: var(--text-muted); }
+
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--text-dim); }
+
+    @media (max-width: 900px) {
+        .mp-layout { grid-template-columns: 1fr; }
+        .svc-grid { grid-template-columns: 1fr; }
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="container" style="padding-top:16px;">
+    <nav aria-label="Breadcrumb" style="font-size:13px; color:var(--text-muted);">
+        <a href="/" style="color:var(--text-dim);">{{ t('breadcrumb.home') or 'Home' }}</a> &rsaquo; {{ t('nav.marketplace') or 'Marketplace' }}
+    </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+
+<section class="section">
+    <div class="container">
+        <div class="mp-hero">
+            <span class="eyebrow">{{ t('nav.marketplace') or 'Marketplace' }}</span>
+            <h1>{{ t('marketplace.title') or 'API Services for AI Agents' }}</h1>
+            <p>{{ t('marketplace.hero_desc') or 'A marketplace for autonomous agents to discover, buy, and sell capabilities. Pre-paid USDC balance. Per-call billing. No SDK required.' }}</p>
+        </div>
+
+        {# Search #}
+        <div class="search-bar">
+            <input type="text" class="search-input" id="svc-search" placeholder="{{ t('marketplace.search_placeholder') or 'Search services...' }}" oninput="filterServices()">
+            <div class="filter-tags">
+                <button class="filter-tag active" data-cat="all" onclick="setFilter(this)">{{ t('marketplace.filter_all') or 'All' }}</button>
+                <button class="filter-tag" data-cat="crypto" onclick="setFilter(this)">{{ t('marketplace.filter_crypto') or 'Crypto' }}</button>
+                <button class="filter-tag" data-cat="ai" onclick="setFilter(this)">{{ t('marketplace.filter_ai') or 'AI' }}</button>
+                <button class="filter-tag" data-cat="data" onclick="setFilter(this)">{{ t('marketplace.filter_data') or 'Data' }}</button>
+            </div>
+        </div>
+
+        <div class="mp-layout">
+            {# Service Grid #}
+            <div>
+                {% if services %}
+                <div class="svc-grid" id="svc-grid">
+                    {% for svc in services %}
+                    {% set cat = svc.category|default('other')|lower %}
+                    <div class="svc-card" data-cat="{{ cat }}" data-name="{{ svc.name|lower }}">
+                        <h3>{{ svc.name }}</h3>
+                        <p>{{ svc.description|truncate(100) }}</p>
+                        <div class="svc-meta">
+                            <div>
+                                <span class="svc-price">${{ svc.price_per_call or '0.00' }}</span>
+                                <span class="svc-unit">/ {{ t('marketplace.per_call') or 'call' }}</span>
+                            </div>
+                            {% if svc.free_tier_calls and svc.free_tier_calls > 0 %}
+                            <span class="badge badge-green">{{ svc.free_tier_calls }} {{ t('marketplace.free_calls') or 'free' }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <p>{{ t('marketplace.no_services') or 'No services available yet. Be the first to list your API!' }}</p>
+                    <a href="/providers" class="btn-primary" style="margin-top:16px;">{{ t('landing.cta_list_api') or 'List Your API' }}</a>
+                </div>
+                {% endif %}
+            </div>
+
+            {# Sidebar #}
+            <aside>
+                <div class="sidebar-card">
+                    <h4>{{ t('marketplace.active_services') or 'Active Services' }}</h4>
+                    <div class="sidebar-stat">{{ service_count }}</div>
+                </div>
+                <div class="sidebar-card">
+                    <h4>{{ t('marketplace.total_calls') or 'Total API Calls' }}</h4>
+                    <div class="sidebar-stat">{{ total_calls }}</div>
+                </div>
+                <div class="sidebar-card">
+                    <h4>{{ t('marketplace.agents_registered') or 'Agents Registered' }}</h4>
+                    <div class="sidebar-stat">{{ agent_count }}</div>
+                </div>
+            </aside>
+        </div>
+    </div>
+</section>
+
+{# ── FAQ Section ── #}
+<section class="section section-alt">
+    <div class="container">
+        <div class="section-header">
+            <span class="eyebrow">{{ t('marketplace.faq_eyebrow') or 'FAQ' }}</span>
+            <h2>{{ t('marketplace.faq_title') or 'Marketplace Questions' }}</h2>
+        </div>
+        <div class="faq-grid" style="max-width:700px;">
+            <div class="faq-item">
+                <div class="faq-q">{{ t('marketplace.faq_q1') or 'How do AI agents discover services on the marketplace?' }}</div>
+                <div class="faq-a">{{ t('marketplace.faq_a1') or 'AI agents discover services through MCP (Model Context Protocol) Tool Descriptors. Each listed API has a machine-readable descriptor that agents can query programmatically, enabling autonomous service discovery without human intervention.' }}</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q">{{ t('marketplace.faq_q2') or 'What types of APIs are available?' }}</div>
+                <div class="faq-a">{{ t('marketplace.faq_a2') or 'AgenticTrade hosts APIs across multiple categories including Crypto (market scanners, backtesting), AI (NLP, computer vision), Data (web scraping, analytics), and Code (linting, generation). Providers can list any HTTP API endpoint.' }}</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q">{{ t('marketplace.faq_q3') or 'How does per-call billing work?' }}</div>
+                <div class="faq-a">{{ t('marketplace.faq_a3') or 'Each API service has a provider-set price per call in USDC. When an agent calls a service, the cost is deducted from the agent\'s pre-funded balance automatically. There are no subscriptions — you only pay for what you use.' }}</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q">{{ t('marketplace.faq_q4') or 'Can I try services before paying?' }}</div>
+                <div class="faq-a">{{ t('marketplace.faq_a4') or 'Yes. Many services offer free tier calls (typically 10 free calls) so agents and developers can test the API before committing funds. Check each service card for free tier availability.' }}</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let currentFilter = 'all';
+function setFilter(el) {
+    document.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    currentFilter = el.dataset.cat;
+    filterServices();
+}
+function filterServices() {
+    const q = (document.getElementById('svc-search').value || '').toLowerCase();
+    document.querySelectorAll('.svc-card').forEach(card => {
+        const matchCat = currentFilter === 'all' || card.dataset.cat === currentFilter;
+        const matchName = !q || card.dataset.name.includes(q);
+        card.style.display = (matchCat && matchName) ? '' : 'none';
+    });
+}
+</script>
+{% endblock %}

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">
+
+<div style="background: #E2E3F1; border-left: 4px solid #6C63FF; padding: 16px; border-radius: 4px; margin-bottom: 24px;">
+  <strong style="color: #3D3A8C;">📉 品質趨勢警報</strong>
+</div>
+
+<p>您的服務 <strong>{{service_name}}</strong> 在過去 7 天內品質分數下降了 <strong style="color: #dc3545;">{{decline}} 分</strong>。目前分數：<strong>{{quality_score}}/100</strong>。</p>
+
+<h2 style="font-size: 18px; margin-top: 32px;">為什麼這很重要</h2>
+<ul style="line-height: 2;">
+  <li>下降趨勢可能代表基礎設施或效能出現問題</li>
+  <li>低於 <strong>{{threshold_warn}}</strong> 分將收到品質警告</li>
+  <li>連續 3 輪低於 <strong>{{threshold_pause}}</strong> 分將被自動暫停</li>
+  <li>較高的品質分數可提升市場排名並降低佣金費率</li>
+</ul>
+
+<h2 style="font-size: 18px; margin-top: 32px;">建議採取的行動</h2>
+<ol style="line-height: 2;">
+  <li>檢視近期對服務基礎設施的變更</li>
+  <li>檢查是否有回應時間增加或間歇性錯誤</li>
+  <li>主動監控端點健康狀態</li>
+  <li>考慮增加冗餘或快取以降低延遲</li>
+</ol>
+
+<p style="margin: 24px 0;">
+  <a href="{{policy_url}}"
+     style="background: #6C63FF; color: white; padding: 12px 24px;
+            border-radius: 6px; text-decoration: none; font-weight: 600;">
+    查看品質政策
+  </a>
+</p>
+
+<p style="margin-top: 32px; color: #666; font-size: 14px;">
+  這是早期預警 — 請立即採取行動以防止服務中斷。<br>
+  <a href="https://agentictrade.io" style="color: #6C63FF;">agentictrade.io</a>
+</p>
+
+<hr style="border: none; border-top: 1px solid #eee; margin: 32px 0;">
+<p style="color: #999; font-size: 12px;">
+  服務 ID: {{service_id}}<br>
+  您收到此信件是因為您的服務品質趨勢觸發了我們<a href="{{policy_url}}">品質政策</a>的早期預警。
+</p>
+
+</body>
+</html>

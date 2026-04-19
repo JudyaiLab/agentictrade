@@ -1,0 +1,93 @@
+{% extends "portal/base.html" %}
+{% block title %}Settings{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 32px;">
+    <h1 style="font-size: 24px; font-weight: 700; color: var(--text-bright);">Account Settings</h1>
+    <p style="font-size: 14px; color: var(--text-dim); margin-top: 4px;">Manage your provider account details.</p>
+</div>
+
+{% if success %}
+<div class="portal-alert portal-alert-success">{{ success }}</div>
+{% endif %}
+{% if error %}
+<div class="portal-alert portal-alert-error">{{ error }}</div>
+{% endif %}
+
+{# ── Profile ── #}
+<div class="portal-card" style="margin-bottom: 24px;">
+    <h2 style="font-size: 16px; font-weight: 600; color: var(--text-bright); margin-bottom: 16px;">Profile</h2>
+    <form method="POST" action="/portal/settings" class="portal-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <label for="display_name">Display Name</label>
+        <input type="text" id="display_name" name="display_name" value="{{ provider.display_name }}">
+
+        <label for="company_name">Company Name</label>
+        <input type="text" id="company_name" name="company_name" value="{{ provider.company_name }}">
+
+        <button type="submit" class="btn-primary" style="margin-top: 8px;">Save Changes</button>
+    </form>
+</div>
+
+{# ── Account Info ── #}
+<div class="portal-card" style="margin-bottom: 24px;">
+    <h2 style="font-size: 16px; font-weight: 600; color: var(--text-bright); margin-bottom: 16px;">Account Info</h2>
+    <div style="font-size: 14px; color: var(--text-dim); line-height: 2;">
+        <div><span style="display: inline-block; width: 120px;">Email:</span> <span style="color: var(--text-bright);">{{ provider.email }}</span>
+            {% if provider.verified %}
+            <span class="portal-badge portal-badge-active" style="margin-left: 8px;">Verified</span>
+            {% else %}
+            <span class="portal-badge portal-badge-inactive" style="margin-left: 8px;">Unverified</span>
+            {% endif %}
+        </div>
+        <div><span style="display: inline-block; width: 120px;">API Key:</span> <code style="color: var(--accent); font-size: 13px;">{{ provider.api_key_id or 'Not linked' }}</code></div>
+        <div><span style="display: inline-block; width: 120px;">Member Since:</span> <span style="color: var(--text-bright);">{{ provider.created_at[:10] if provider.created_at else 'N/A' }}</span></div>
+    </div>
+</div>
+
+{# ── AI Assistant API Token ── #}
+<div class="portal-card" style="margin-bottom: 24px;">
+    <h2 style="font-size: 16px; font-weight: 600; color: var(--text-bright); margin-bottom: 12px;">AI Assistant API Token</h2>
+    <p style="font-size: 14px; color: var(--text-dim); line-height: 1.7; margin-bottom: 16px;">
+        Generate a token so your AI assistant (Claude, GPT, etc.) can access your provider data via API.
+    </p>
+
+    {% if new_token %}
+    <div class="portal-alert portal-alert-success" style="margin-bottom: 16px; word-break: break-all;">
+        <strong>Token generated:</strong> <code style="color: var(--accent); font-size: 13px;">{{ new_token }}</code>
+        <br><span style="font-size: 13px;">Copy this now — it won't be shown again.</span>
+    </div>
+    {% endif %}
+
+    {% if has_pat %}
+    <div style="font-size: 14px; color: var(--text-dim); line-height: 2; margin-bottom: 12px;">
+        <div><span style="display: inline-block; width: 120px;">Token ID:</span> <code style="color: var(--accent); font-size: 13px;">{{ pat_key_id }}</code></div>
+        <div><span style="display: inline-block; width: 120px;">Created:</span> <span style="color: var(--text-bright);">{{ pat_created }}</span></div>
+    </div>
+    <form method="POST" action="/portal/revoke-api-token">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <button type="submit" class="btn-secondary" style="color: #ef4444; border-color: #ef4444;">Revoke Token</button>
+    </form>
+    {% else %}
+    <form method="POST" action="/portal/api-token">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <button type="submit" class="btn-primary">Generate Token</button>
+    </form>
+    {% endif %}
+
+    <p style="font-size: 13px; color: var(--text-dim); margin-top: 12px; line-height: 1.6;">
+        Your AI can call: <code style="color: var(--accent);">GET /api/v1/provider/dashboard</code>,
+        <code style="color: var(--accent);">/provider/services</code>,
+        <code style="color: var(--accent);">/provider/earnings</code>, and more.
+    </p>
+</div>
+
+{# ── API Key Help ── #}
+<div class="portal-card">
+    <h2 style="font-size: 16px; font-weight: 600; color: var(--text-bright); margin-bottom: 12px;">API Access</h2>
+    <p style="font-size: 14px; color: var(--text-dim); line-height: 1.7;">
+        Your API key was generated when you registered. Use it with the <code style="color: var(--accent);">Authorization: Bearer key_id:secret</code> header
+        to access the AgenticTrade API. See the <a href="/api-docs" style="color: var(--accent);">API documentation</a> for details.
+    </p>
+</div>
+{% endblock %}

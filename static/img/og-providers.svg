@@ -1,0 +1,25 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#060a13"/>
+      <stop offset="100%" stop-color="#0b1120"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#22d3ee"/>
+      <stop offset="100%" stop-color="#a78bfa"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect x="0" y="580" width="1200" height="4" fill="url(#accent)"/>
+  <text x="80" y="200" font-family="Inter, system-ui, sans-serif" font-size="64" font-weight="800" fill="#e8edf5">List Your API</text>
+  <text x="80" y="280" font-family="Inter, system-ui, sans-serif" font-size="36" fill="#7a8ba8">Let AI Agents Discover,</text>
+  <text x="80" y="330" font-family="Inter, system-ui, sans-serif" font-size="36" fill="#22d3ee" font-weight="700">Call, and Pay You Automatically</text>
+  <rect x="80" y="390" width="280" height="80" rx="12" fill="#111827" stroke="#22d3ee" stroke-width="1" opacity="0.8"/>
+  <text x="120" y="425" font-family="Inter, system-ui, sans-serif" font-size="16" fill="#7a8ba8">Commission cap</text>
+  <text x="120" y="455" font-family="Inter, system-ui, sans-serif" font-size="28" font-weight="800" fill="#34d399">10% max</text>
+  <rect x="400" y="390" width="280" height="80" rx="12" fill="#111827" stroke="#a78bfa" stroke-width="1" opacity="0.8"/>
+  <text x="440" y="425" font-family="Inter, system-ui, sans-serif" font-size="16" fill="#7a8ba8">Settlement</text>
+  <text x="440" y="455" font-family="Inter, system-ui, sans-serif" font-size="28" font-weight="800" fill="#a78bfa">USDC / Fiat</text>
+  <text x="80" y="540" font-family="Inter, system-ui, sans-serif" font-size="22" fill="#4a5a72">MCP Tool Descriptors | Proxy Key Protection | Founding Seller Spots Open</text>
+  <text x="80" y="565" font-family="Inter, system-ui, sans-serif" font-size="18" fill="#4a5a72">agentictrade.io/providers</text>
+</svg>

@@ -1,0 +1,23 @@
+{% extends "portal/base.html" %}
+{% block title %}Email Verification{% endblock %}
+
+{% block content %}
+<div style="max-width: 420px; margin: 80px auto; text-align: center;">
+    <a href="/" style="font-weight: 700; font-size: 24px; color: var(--text-bright); text-decoration: none;">AgenticTrade</a>
+
+    {% if success %}
+    <div style="margin-top: 32px;">
+        <div style="font-size: 48px; margin-bottom: 16px;">&#10003;</div>
+        <h1 style="font-size: 20px; font-weight: 600; color: var(--text-bright);">Email Verified</h1>
+        <p style="font-size: 14px; color: var(--text-dim); margin-top: 8px;">Your account has been verified. You can now access all provider features.</p>
+        <a href="/portal/dashboard" class="btn-primary" style="display: inline-block; margin-top: 24px; text-decoration: none;">Go to Dashboard</a>
+    </div>
+    {% else %}
+    <div style="margin-top: 32px;">
+        <h1 style="font-size: 20px; font-weight: 600; color: #ef4444;">Verification Failed</h1>
+        <p style="font-size: 14px; color: var(--text-dim); margin-top: 8px;">This verification link is invalid or has expired.</p>
+        <a href="/portal/login" class="btn-secondary" style="display: inline-block; margin-top: 24px; text-decoration: none;">Back to Login</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

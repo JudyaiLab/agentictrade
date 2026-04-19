@@ -1,0 +1,149 @@
+{% extends "public/base.html" %}
+
+{% block title %}MCP Integration — AgenticTrade | Model Context Protocol{% endblock %}
+{% block meta_description %}Integrate AgenticTrade with Claude and MCP-compatible agents. Install via npx clawhub, configure tools, and let AI agents discover and pay for services automatically.{% endblock %}
+{% block og_title %}MCP Integration — AgenticTrade{% endblock %}
+{% block og_description %}Model Context Protocol setup for AgenticTrade. Connect Claude and MCP agents to the AI service marketplace.{% endblock %}
+{% block tw_title %}AgenticTrade MCP Integration{% endblock %}
+{% block tw_description %}Connect Claude and MCP agents to AgenticTrade. Discover and call AI services natively.{% endblock %}
+{% block canonical %}https://agentictrade.io/docs/mcp{% endblock %}
+
+{% block json_ld %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "AgenticTrade MCP Integration",
+    "description": "Technical guide for integrating AgenticTrade with Model Context Protocol (MCP) agents including Claude Code and compatible frameworks.",
+    "author": {"@type": "Organization", "name": "AgenticTrade"},
+    "publisher": {"@type": "Organization", "name": "AgenticTrade", "url": "https://agentictrade.io"},
+    "datePublished": "2026-04-12",
+    "proficiencyLevel": "Intermediate"
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "How to Connect AgenticTrade via MCP",
+    "description": "Install the AgenticTrade MCP server, configure your API key, and start discovering services from Claude Code.",
+    "step": [
+        {"@type": "HowToStep", "position": 1, "name": "Install", "text": "Run npx clawhub install agentictrade in your terminal."},
+        {"@type": "HowToStep", "position": 2, "name": "Configure", "text": "Set your API key in the MCP config file or via AGENTICTRADE_API_KEY environment variable."},
+        {"@type": "HowToStep", "position": 3, "name": "Discover & Call", "text": "Use MCP tools like agentictrade_discover, agentictrade_call, and agentictrade_balance from within Claude Code."}
+    ]
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://agentictrade.io/"},
+        {"@type": "ListItem", "position": 2, "name": "Docs", "item": "https://agentictrade.io/docs"},
+        {"@type": "ListItem", "position": 3, "name": "MCP Integration", "item": "https://agentictrade.io/docs/mcp"}
+    ]
+}
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .doc-content { max-width: 800px; }
+    .doc-content h1 { margin-bottom: 12px; }
+    .doc-content p.lead { color: var(--text-dim); font-size: 17px; line-height: 1.7; margin-bottom: 32px; }
+    .doc-content h2 { font-size: 22px; margin: 40px 0 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+    .doc-content h3 { font-size: 17px; margin: 24px 0 12px; }
+    .doc-content p, .doc-content li { color: var(--text-dim); font-size: 15px; line-height: 1.8; }
+    .doc-content code { background: var(--bg-inset); padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+    .doc-content pre { background: var(--bg-inset); border: 1px solid var(--border); border-radius: 8px; padding: 16px; overflow-x: auto; margin: 16px 0; }
+    .doc-content pre code { background: none; padding: 0; font-size: 13px; line-height: 1.6; }
+    .tool-list { list-style: none; padding: 0; margin: 16px 0; }
+    .tool-list li { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; margin-bottom: 10px; }
+    .tool-list li strong { display: block; font-size: 14px; margin-bottom: 4px; }
+    .tool-list li span { color: var(--text-dim); font-size: 13px; }
+    .doc-links { margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--border); }
+    .doc-links a { color: var(--accent); margin-right: 20px; font-size: 14px; }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="container" style="padding-top:16px;">
+    <nav aria-label="Breadcrumb" style="font-size:13px; color:var(--text-muted);">
+        <a href="/" style="color:var(--text-dim);">Home</a> &rsaquo;
+        <a href="/docs" style="color:var(--text-dim);">Docs</a> &rsaquo; MCP Integration
+    </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="doc-content">
+            <span class="eyebrow">Docs</span>
+            <h1>MCP Integration</h1>
+            <p class="lead">Connect AgenticTrade to Claude Code and any MCP-compatible agent. Discover, call, and pay for AI services natively from your development environment.</p>
+
+            <h2>Installation</h2>
+            <p>Install the AgenticTrade MCP server with one command:</p>
+<pre><code>npx clawhub install agentictrade</code></pre>
+            <p>This registers AgenticTrade as an MCP server in your Claude Code configuration. No manual config editing needed.</p>
+
+            <h2>Configuration</h2>
+            <p>Set your API key as an environment variable:</p>
+<pre><code>export AGENTICTRADE_API_KEY="at_live_abc123..."</code></pre>
+            <p>Or add it to your MCP config file at <code>~/.claude/mcp_servers.json</code>:</p>
+<pre><code>{
+  "agentictrade": {
+    "command": "npx",
+    "args": ["-y", "agentictrade-mcp"],
+    "env": {
+      "AGENTICTRADE_API_KEY": "at_live_abc123..."
+    }
+  }
+}</code></pre>
+
+            <h2>Available Tools</h2>
+            <p>Once connected, the following MCP tools are available to your agent:</p>
+            <ul class="tool-list">
+                <li>
+                    <strong><code>agentictrade_discover</code></strong>
+                    <span>Search and filter available services by category, price, and quality score.</span>
+                </li>
+                <li>
+                    <strong><code>agentictrade_call</code></strong>
+                    <span>Execute a service call with automatic payment. Pass service ID and parameters.</span>
+                </li>
+                <li>
+                    <strong><code>agentictrade_balance</code></strong>
+                    <span>Check your current account balance and recent transaction history.</span>
+                </li>
+                <li>
+                    <strong><code>agentictrade_list_services</code></strong>
+                    <span>List your own registered services with health scores and call counts.</span>
+                </li>
+                <li>
+                    <strong><code>agentictrade_register_service</code></strong>
+                    <span>Register a new service directly from Claude Code. Set pricing, endpoint, and description.</span>
+                </li>
+            </ul>
+
+            <h2>Example Usage in Claude Code</h2>
+<pre><code># Claude Code will use these tools automatically when asked:
+# "Find a sentiment analysis service under $0.05/call"
+# "Call service svc_abc123 with this text"
+# "Check my AgenticTrade balance"
+# "Register my API as an AgenticTrade service"</code></pre>
+            <p>MCP tools are invoked by the agent autonomously — no manual tool calls required. Your agent discovers services, evaluates quality scores, and makes payments in a single workflow.</p>
+
+            <div class="doc-links">
+                <strong style="font-size:14px;">Related:</strong><br style="margin-bottom:8px;">
+                <a href="/docs/discovery">Service Discovery</a>
+                <a href="/docs/sdk">Python SDK</a>
+                <a href="/docs/authentication">Authentication</a>
+                <a href="/api-docs">Full API Reference</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

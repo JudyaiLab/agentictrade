@@ -1,0 +1,22 @@
+{% extends "public/base.html" %}
+
+{% block title %}404 — Page Not Found | AgenticTrade{% endblock %}
+{% block meta_description %}The page you're looking for doesn't exist or has been moved.{% endblock %}
+{% block robots %}noindex, nofollow{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container" style="text-align:center; padding:80px 0;">
+        <div style="font-size:72px; font-weight:800; color:var(--accent); margin-bottom:8px;">404</div>
+        <h1 style="margin-bottom:16px;">{{ t('error.404_title') if t else 'Page Not Found' }}</h1>
+        <p class="text-dim" style="max-width:45ch; margin:0 auto 32px; font-size:18px; line-height:1.7;">
+            {{ t('error.404_desc') if t else "The page you're looking for doesn't exist or has been moved." }}
+        </p>
+        <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap;">
+            <a href="/" class="btn-primary">{{ t('error.go_home') if t else 'Go to Homepage' }}</a>
+            <a href="/marketplace" class="btn-secondary">{{ t('error.browse_marketplace') if t else 'Browse Marketplace' }}</a>
+            <a href="/api-docs" class="btn-secondary">{{ t('error.view_docs') if t else 'View API Docs' }}</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

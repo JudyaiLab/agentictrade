@@ -1,0 +1,24 @@
+{
+  "name": "agentictrade-nanopayments",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Circle Nanopayments gateway for AgenticTrade — x402 micropayment proxy",
+  "scripts": {
+    "start": "tsx server.ts",
+    "dev": "tsx watch server.ts",
+    "demo": "tsx demo-buyer.ts"
+  },
+  "dependencies": {
+    "@circle-fin/x402-batching": "latest",
+    "@x402/core": "latest",
+    "@x402/evm": "latest",
+    "express": "^4.21.0",
+    "viem": "^2.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/express": "^5.0.0"
+  }
+}

@@ -1,0 +1,29 @@
+# Agent Commerce Framework
+fastapi>=0.109.0
+uvicorn>=0.27.0
+pydantic>=2.5.0
+httpx>=0.26.0
+jinja2>=3.1.0
+
+# CDP SDK v2 (wallet management, agent accounts, USDC transfers)
+cdp-sdk>=1.30.0
+
+# x402 Payments (Base network USDC, HTTP 402 middleware)
+# NOTE: x402 2.x is incompatible with coinbase-agentkit (pins x402<2).
+# We use x402 2.x directly for server middleware and cdp-sdk for wallets.
+x402[fastapi,evm]>=2.0.0
+
+# AdCP — Ad Context Protocol for agentic advertising
+adcp>=3.10.0
+
+# Anthropic Claude API (Prompt-as-API feature)
+anthropic>=0.84.0
+
+# PayPal (fiat payments) — uses httpx, no extra SDK needed
+
+# JWT for KYA identity verification
+pyjwt>=2.8.0
+
+# Testing
+pytest>=7.4.0
+pytest-asyncio>=0.23.0

@@ -1,0 +1,135 @@
+{% extends "public/base.html" %}
+
+{% block title %}Quick Start Guide — AgenticTrade | Get Started with AI Marketplace{% endblock %}
+{% block meta_description %}Get started with AgenticTrade in minutes. 3-step guide for providers to list services and make money with AI, plus 3-step guide for agents to discover and call APIs.{% endblock %}
+{% block og_title %}Quick Start Guide — AgenticTrade{% endblock %}
+{% block og_description %}Start making money with AI in 3 steps. List your service, let AI agents find it, get paid automatically.{% endblock %}
+{% block tw_title %}AgenticTrade Quick Start Guide{% endblock %}
+{% block tw_description %}3-step guide to make money with AI agents on AgenticTrade.{% endblock %}
+{% block canonical %}https://agentictrade.io/docs/quickstart{% endblock %}
+
+{% block json_ld %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "How to Make Money with AI on AgenticTrade (Provider)",
+    "description": "Register, list your API service, and start earning from AI agent traffic in under 5 minutes.",
+    "step": [
+        {"@type": "HowToStep", "position": 1, "name": "Register", "text": "Create a free account at /portal/register. No credit card required."},
+        {"@type": "HowToStep", "position": 2, "name": "List Your Service", "text": "POST /api/v1/services with your endpoint URL, pricing, and description. Or use the Provider Agent tool for guided setup."},
+        {"@type": "HowToStep", "position": 3, "name": "Get Paid", "text": "AI agents discover your service automatically and pay per call in USDC, PayPal, or crypto."}
+    ]
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "How to Discover and Call AI Services (Agent)",
+    "description": "Get an API key, discover services via MCP or REST, and make authenticated calls.",
+    "step": [
+        {"@type": "HowToStep", "position": 1, "name": "Get API Key", "text": "POST /api/v1/agents/onboard — no prior auth needed. Receive your API key instantly."},
+        {"@type": "HowToStep", "position": 2, "name": "Discover Services", "text": "GET /api/v1/discovery/services or use MCP, OpenAI Plugin, ACDP, and other protocols."},
+        {"@type": "HowToStep", "position": 3, "name": "Make Calls", "text": "POST /api/v1/services/{id}/call with Bearer token. Payment is handled automatically."}
+    ]
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://agentictrade.io/"},
+        {"@type": "ListItem", "position": 2, "name": "Docs", "item": "https://agentictrade.io/docs"},
+        {"@type": "ListItem", "position": 3, "name": "Quick Start", "item": "https://agentictrade.io/docs/quickstart"}
+    ]
+}
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .doc-content { max-width: 800px; }
+    .doc-content h1 { margin-bottom: 12px; }
+    .doc-content p.lead { color: var(--text-dim); font-size: 17px; line-height: 1.7; margin-bottom: 32px; }
+    .doc-content h2 { font-size: 22px; margin: 40px 0 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+    .doc-content h3 { font-size: 17px; margin: 24px 0 12px; }
+    .step-grid { display: grid; gap: 20px; margin: 20px 0; }
+    .step-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+    .step-num { display: inline-block; width: 28px; height: 28px; line-height: 28px; text-align: center; background: var(--accent); color: #fff; border-radius: 50%; font-weight: 700; font-size: 14px; margin-bottom: 10px; }
+    .step-card h3 { margin: 0 0 8px; font-size: 16px; }
+    .step-card p { color: var(--text-dim); font-size: 14px; line-height: 1.7; margin: 0; }
+    .step-card code { background: var(--bg-inset); padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+    .doc-links { margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--border); }
+    .doc-links a { color: var(--accent); margin-right: 20px; font-size: 14px; }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="container" style="padding-top:16px;">
+    <nav aria-label="Breadcrumb" style="font-size:13px; color:var(--text-muted);">
+        <a href="/" style="color:var(--text-dim);">Home</a> &rsaquo;
+        <a href="/docs" style="color:var(--text-dim);">Docs</a> &rsaquo; Quick Start
+    </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="doc-content">
+            <span class="eyebrow">Quick Start</span>
+            <h1>Get Started with AgenticTrade</h1>
+            <p class="lead">Whether you want to make money with AI by listing services or build an agent that consumes them, you're 3 steps away.</p>
+
+            <h2>For Providers — Start Earning</h2>
+            <div class="step-grid">
+                <div class="step-card">
+                    <span class="step-num">1</span>
+                    <h3>Register for Free</h3>
+                    <p>Create an account at <a href="/portal/register">/portal/register</a>. No credit card, no commitment. 0% commission your first month.</p>
+                </div>
+                <div class="step-card">
+                    <span class="step-num">2</span>
+                    <h3>List Your Service</h3>
+                    <p>Call <code>POST /api/v1/services</code> with your endpoint, pricing, and description. Or use the Provider Agent for guided setup in 3 minutes. Any API works — ML models, data tools, code analysis, and more.</p>
+                </div>
+                <div class="step-card">
+                    <span class="step-num">3</span>
+                    <h3>Get Paid Automatically</h3>
+                    <p>AI agents discover your service via 6 protocols and pay per call. Revenue flows in USDC, PayPal, or 300+ cryptocurrencies. No invoicing needed.</p>
+                </div>
+            </div>
+
+            <h2>For AI Agents — Start Calling</h2>
+            <div class="step-grid">
+                <div class="step-card">
+                    <span class="step-num">1</span>
+                    <h3>Get Your API Key</h3>
+                    <p>Self-register with <code>POST /api/v1/agents/onboard</code> — no prior authentication required. Your key is returned instantly.</p>
+                </div>
+                <div class="step-card">
+                    <span class="step-num">2</span>
+                    <h3>Discover Services</h3>
+                    <p>Browse available services via <code>GET /api/v1/discovery/services</code>, MCP, OpenAI Plugin, or any of the <a href="/docs/discovery">6 supported protocols</a>.</p>
+                </div>
+                <div class="step-card">
+                    <span class="step-num">3</span>
+                    <h3>Make Authenticated Calls</h3>
+                    <p>Call <code>POST /api/v1/services/{id}/call</code> with your Bearer token. Payment is deducted automatically from your balance.</p>
+                </div>
+            </div>
+
+            <div class="doc-links">
+                <strong style="font-size:14px;">Next steps:</strong><br style="margin-bottom:8px;">
+                <a href="/docs/authentication">Authentication</a>
+                <a href="/docs/discovery">Service Discovery</a>
+                <a href="/docs/payments">Payments</a>
+                <a href="/docs/sdk">Python SDK</a>
+                <a href="/api-docs">Full API Reference</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,328 @@
+{% extends "public/base.html" %}
+
+{% block title %}Nanopayments Dashboard — AgenticTrade{% endblock %}
+{% block meta_description %}Real-time x402 USDC micropayment statistics on Arc Testnet. Live transaction monitoring for the AgenticTrade nanopayment gateway.{% endblock %}
+{% block og_title %}Nanopayments Dashboard — Arc Testnet{% endblock %}
+{% block og_description %}Real-time x402 USDC micropayment statistics on Arc Testnet for the AgenticTrade platform.{% endblock %}
+{% block tw_title %}Nanopayments Dashboard — AgenticTrade{% endblock %}
+{% block tw_description %}Live x402 USDC micropayment stats on Arc Testnet.{% endblock %}
+{% block robots %}index, follow{% endblock %}
+
+{% block json_ld %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Nanopayments Dashboard — AgenticTrade",
+    "description": "Real-time x402 USDC micropayment statistics on Arc Testnet.",
+    "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://agentictrade.io/"},
+            {"@type": "ListItem", "position": 2, "name": "Nano Dashboard", "item": "https://agentictrade.io/nano-dashboard"}
+        ]
+    }
+}
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .nano-hero { padding: 60px 0 40px; max-width: 800px; }
+    .nano-hero p { color: var(--text-dim); font-size: 16px; line-height: 1.7; }
+
+    .nano-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--bg-card);
+        border: 1px solid rgba(52, 211, 153, 0.25);
+        border-radius: 24px;
+        padding: 6px 16px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--green);
+        margin-bottom: 16px;
+    }
+    .nano-badge::before {
+        content: "";
+        display: inline-block;
+        width: 8px; height: 8px;
+        border-radius: 50%;
+        background: var(--green);
+        animation: pulse-glow 2s ease-in-out infinite;
+    }
+    @keyframes pulse-glow {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        margin: 40px 0;
+    }
+    .stat-card {
+        background: var(--bg-card);
+        border-radius: 16px;
+        padding: 28px;
+        text-align: center;
+        box-shadow: var(--ring);
+        transition: transform 0.2s ease;
+    }
+    .stat-card:hover { transform: translateY(-2px); }
+    .stat-card .stat-value {
+        font-size: 32px;
+        font-weight: 700;
+        color: var(--text);
+        line-height: 1.2;
+        word-break: break-all;
+    }
+    .stat-card .stat-value.green { color: var(--green); }
+    .stat-card .stat-value.accent { color: var(--accent); }
+    .stat-card .stat-label {
+        font-size: 14px;
+        color: var(--text-dim);
+        margin-top: 8px;
+    }
+    .stat-card .stat-sub {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-top: 4px;
+    }
+    .stat-card .stat-sub a {
+        color: var(--accent);
+        text-decoration: none;
+    }
+    .stat-card .stat-sub a:hover { text-decoration: underline; }
+
+    .tx-section { margin: 48px 0; }
+    .tx-section h3 { margin-bottom: 20px; }
+
+    .tx-table-wrap {
+        background: var(--bg-card);
+        border-radius: 16px;
+        box-shadow: var(--ring);
+        overflow-x: auto;
+    }
+    .tx-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+    }
+    .tx-table thead th {
+        text-align: left;
+        padding: 16px 20px;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 1px solid var(--border);
+    }
+    .tx-table tbody td {
+        padding: 14px 20px;
+        color: var(--text-dim);
+        border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .tx-table tbody tr:last-child td { border-bottom: none; }
+    .tx-table tbody tr:hover { background: rgba(255,255,255,0.02); }
+    .tx-table .amount { color: var(--green); font-weight: 600; font-variant-numeric: tabular-nums; }
+    .tx-table .mono {
+        font-family: 'SF Mono', 'Fira Code', monospace;
+        font-size: 13px;
+        color: var(--text-muted);
+    }
+    .tx-table a {
+        color: var(--accent);
+        text-decoration: none;
+    }
+    .tx-table a:hover { text-decoration: underline; }
+
+    .tx-empty {
+        padding: 48px 20px;
+        text-align: center;
+        color: var(--text-muted);
+    }
+    .tx-empty code {
+        display: inline-block;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 8px 16px;
+        margin-top: 12px;
+        font-size: 13px;
+        color: var(--accent);
+    }
+
+    .nano-footer {
+        text-align: center;
+        font-size: 13px;
+        color: var(--text-muted);
+        padding: 32px 0 0;
+    }
+    .nano-footer a {
+        color: var(--accent);
+        text-decoration: none;
+    }
+
+    .explorer-links {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin: 24px 0;
+    }
+    .explorer-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 8px 16px;
+        font-size: 13px;
+        color: var(--accent);
+        text-decoration: none;
+        transition: border-color 0.2s;
+    }
+    .explorer-link:hover { border-color: var(--accent); }
+
+    @media (max-width: 768px) {
+        .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        .stat-card .stat-value { font-size: 24px; }
+    }
+    @media (max-width: 480px) {
+        .stats-grid { grid-template-columns: 1fr; }
+    }
+</style>
+<meta http-equiv="refresh" content="30">
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="container" style="padding-top:16px;">
+    <nav aria-label="Breadcrumb" style="font-size:13px; color:var(--text-muted);">
+        <a href="/" style="color:var(--text-dim);">Home</a> &rsaquo; Nano Dashboard
+    </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+
+<section class="section">
+    <div class="container">
+        <div class="nano-hero">
+            <div class="nano-badge">Live on Arc Testnet</div>
+            <span class="eyebrow">On-Chain Payments</span>
+            <h1>Nanopayments Dashboard &mdash; Arc Testnet</h1>
+            <p>Real-time x402 USDC micropayment statistics. Every transaction is verified on-chain through the Circle x402 protocol on Arc Testnet (Chain ID 5042002).</p>
+        </div>
+
+        {# ── Stats Cards ── #}
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value green">{{ stats.transactions or 0 }}</div>
+                <div class="stat-label">Total Transactions</div>
+                <div class="stat-sub">x402 micropayments</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value accent">${{ "%.4f"|format(stats.total_revenue_usdc|default(0)|float) }}</div>
+                <div class="stat-label">Total Revenue</div>
+                <div class="stat-sub">USDC on Arc Testnet</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">Arc</div>
+                <div class="stat-label">Network</div>
+                <div class="stat-sub">Testnet (5042002)</div>
+            </div>
+            <div class="stat-card">
+                {% set seller = stats.seller|default('N/A') %}
+                {% if seller != 'N/A' and seller|length > 12 %}
+                <div class="stat-value mono" style="font-size:16px;" title="{{ seller }}">{{ seller[:6] }}&hellip;{{ seller[-4:] }}</div>
+                {% else %}
+                <div class="stat-value mono" style="font-size:16px;">{{ seller }}</div>
+                {% endif %}
+                <div class="stat-label">Seller Address</div>
+                <div class="stat-sub">
+                    {% if seller != 'N/A' %}
+                    <a href="https://explorer.arc.circle.com/address/{{ seller }}" target="_blank" rel="noopener">View on Explorer &rarr;</a>
+                    {% else %}
+                    Not configured
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {# ── Explorer Quick Links ── #}
+        {% if stats.seller and stats.seller != 'N/A' %}
+        <div class="explorer-links">
+            <a class="explorer-link" href="https://explorer.arc.circle.com/address/{{ stats.seller }}" target="_blank" rel="noopener">
+                &#x1f50d; Seller on Arc Explorer
+            </a>
+            {% if stats.explorer and stats.explorer.contract %}
+            <a class="explorer-link" href="https://explorer.arc.circle.com/address/{{ stats.explorer.contract }}" target="_blank" rel="noopener">
+                &#x1f4dc; USDC Contract
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {# ── Recent Transactions Table ── #}
+        <div class="tx-section">
+            <h3>Recent Transactions</h3>
+            <div class="tx-table-wrap">
+                {% if stats.recent_transactions and stats.recent_transactions|length > 0 %}
+                <table class="tx-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Payer</th>
+                            <th>Service</th>
+                            <th>Amount (USDC)</th>
+                            <th>Time</th>
+                            <th>Explorer</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for tx in stats.recent_transactions %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td class="mono">
+                                {% set payer = tx.payer|default('unknown') %}
+                                {% if payer|length > 12 %}
+                                <span title="{{ payer }}">{{ payer[:6] }}&hellip;{{ payer[-4:] }}</span>
+                                {% else %}
+                                {{ payer }}
+                                {% endif %}
+                            </td>
+                            <td>{{ tx.service|default('—') }}</td>
+                            <td class="amount">${{ "%.4f"|format(tx.amount|default(0)|float) }}</td>
+                            <td>{{ tx.time|default('—') }}</td>
+                            <td>
+                                {% if tx.tx_hash %}
+                                <a href="https://explorer.arc.circle.com/tx/{{ tx.tx_hash }}" target="_blank" rel="noopener">View &rarr;</a>
+                                {% else %}
+                                &mdash;
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="tx-empty">
+                    <p>No transactions yet.</p>
+                    <p>Run the demo to generate your first nanopayment:</p>
+                    <code>cd nanopayments && npm run demo</code>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="nano-footer">
+            Powered by <a href="https://www.circle.com/en/x402" target="_blank" rel="noopener">Circle x402</a> on Arc &bull; Data refreshes every 30 seconds
+        </div>
+    </div>
+</section>
+
+{% endblock %}

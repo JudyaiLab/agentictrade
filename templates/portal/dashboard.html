@@ -1,0 +1,326 @@
+{% extends "portal/base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 32px;">
+    <h1 style="font-size: 24px; font-weight: 700; color: var(--text-bright);">Welcome back, {{ provider.display_name }}</h1>
+    <p style="font-size: 14px; color: var(--text-dim); margin-top: 4px;">Here's your API business overview.</p>
+</div>
+
+{# ── Getting Started Banner ── #}
+<div style="margin-bottom: 32px; padding: 20px 24px; background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.3); border-radius: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+    <div style="display: flex; align-items: center; gap: 14px;">
+        <span style="font-size: 28px; color: var(--accent); line-height: 1;">&#x1F4A1;</span>
+        <div>
+            <h2 style="font-size: 16px; font-weight: 700; color: var(--text-bright); margin: 0;">New here? Learn how to set up your agent in 3 easy steps</h2>
+        </div>
+    </div>
+    <a href="/portal/getting-started" class="btn-primary" style="font-size: 14px; padding: 10px 24px; text-decoration: none; white-space: nowrap;">Getting Started Guide &rarr;</a>
+</div>
+
+{# ── Stats Grid ── #}
+<div class="portal-grid">
+    <div class="portal-card portal-stat">
+        <div class="portal-stat-value">{{ stats.service_count }}</div>
+        <div class="portal-stat-label">Active Services</div>
+    </div>
+    <div class="portal-card portal-stat">
+        <div class="portal-stat-value">{{ "{:,}".format(stats.total_calls) }}</div>
+        <div class="portal-stat-label">Total API Calls</div>
+    </div>
+    <div class="portal-card portal-stat">
+        <div class="portal-stat-value">${{ "%.2f"|format(stats.total_revenue) }}</div>
+        <div class="portal-stat-label">Total Revenue</div>
+    </div>
+    <div class="portal-card portal-stat">
+        <div class="portal-stat-value">${{ "%.2f"|format(stats.pending_settlement) }}</div>
+        <div class="portal-stat-label">Pending Settlement</div>
+    </div>
+</div>
+
+{# ── Quick Actions ── #}
+<div class="portal-card" style="margin-bottom: 32px;">
+    <h2 style="font-size: 16px; font-weight: 600; color: var(--text-bright); margin-bottom: 16px;">Quick Actions</h2>
+    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+        <a href="/portal/services" class="btn-primary" style="font-size: 14px; padding: 10px 20px; text-decoration: none;">Manage Services</a>
+        <a href="/portal/analytics" class="btn-secondary" style="font-size: 14px; padding: 10px 20px; text-decoration: none;">View Analytics</a>
+        <a href="/api-docs" class="btn-secondary" style="font-size: 14px; padding: 10px 20px; text-decoration: none;" target="_blank">API Docs</a>
+    </div>
+</div>
+
+{# ── Services Overview ── #}
+<div class="portal-card">
+    <h2 style="font-size: 16px; font-weight: 600; color: var(--text-bright); margin-bottom: 16px;">Your Services</h2>
+
+    {% if stats.services %}
+    <div class="portal-table-wrap">
+    <table class="portal-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Price/Call</th>
+                <th>Calls</th>
+                <th>Revenue</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for svc in stats.services %}
+            <tr>
+                <td style="color: var(--text-bright); font-weight: 500;">{{ svc.name }}</td>
+                <td>${{ "%.4f"|format(svc.price_per_call) }}</td>
+                <td>{{ "{:,}".format(svc.call_count) }}</td>
+                <td>${{ "%.2f"|format(svc.revenue) }}</td>
+                <td>
+                    <span class="portal-badge {% if svc.status == 'active' %}portal-badge-active{% else %}portal-badge-inactive{% endif %}">
+                        {{ svc.status }}
+                    </span>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+    {% else %}
+    <div class="portal-empty">
+        <p style="font-size: 16px; margin-bottom: 8px;">No services listed yet</p>
+        <p style="font-size: 14px;">Use the API to register your first service, or check the <a href="/api-docs" style="color: var(--accent);">API documentation</a>.</p>
+    </div>
+    {% endif %}
+</div>
+
+{# ── Onboarding Wizard (shown when provider has 0 services) ── #}
+{% if stats.service_count == 0 %}
+<div class="portal-card" id="onboard-wizard" style="border: 1px solid rgba(99,102,241,0.3); background: rgba(99,102,241,0.04);">
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+        <span style="font-size: 28px;">&#x1F680;</span>
+        <div>
+            <h2 style="font-size: 18px; font-weight: 700; color: var(--text-bright); margin: 0;">List Your API in 2 Minutes</h2>
+            <p style="font-size: 13px; color: var(--text-dim); margin: 4px 0 0;">Fill in the form below and your API will be live on the marketplace instantly.</p>
+        </div>
+    </div>
+
+    {# Step indicators #}
+    <div style="display: flex; gap: 8px; margin-bottom: 24px;">
+        <div id="step-ind-1" class="wiz-step-ind wiz-step-active">1. API Info</div>
+        <div id="step-ind-2" class="wiz-step-ind">2. Pricing</div>
+        <div id="step-ind-3" class="wiz-step-ind">3. Confirm</div>
+    </div>
+
+    {% if wizard_error %}
+    <div class="portal-alert portal-alert-error" style="margin-bottom: 16px;">{{ wizard_error }}</div>
+    {% endif %}
+    {% if wizard_success %}
+    <div class="portal-alert portal-alert-success" style="margin-bottom: 16px;">{{ wizard_success }}</div>
+    {% endif %}
+
+    <form method="POST" action="/portal/services/create" class="portal-form" style="max-width: 100%;">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <input type="hidden" id="svc_type_hidden" name="service_type" value="external">
+
+        {# ── Step 1: API Info ── #}
+        <div id="wiz-step-1">
+            <label>Service Type <span style="color:#ef4444;">*</span></label>
+            <div style="display:flex; gap:12px; margin-bottom:16px;">
+                <button type="button" id="type-external" onclick="setServiceType('external')" class="svc-type-btn svc-type-active" style="flex:1;">
+                    <strong style="display:block; margin-bottom:4px;">External API</strong>
+                    <span style="font-size:12px; opacity:0.7;">Connect your own API endpoint</span>
+                </button>
+                <button type="button" id="type-prompt" onclick="setServiceType('prompt')" class="svc-type-btn" style="flex:1;">
+                    <strong style="display:block; margin-bottom:4px;">Prompt-as-API</strong>
+                    <span style="font-size:12px; opacity:0.7;">Create an AI endpoint with just a prompt</span>
+                </button>
+            </div>
+
+            <label for="svc_name">Service Name <span style="color:#ef4444;">*</span></label>
+            <input type="text" id="svc_name" name="name" required placeholder="e.g. Text Summarizer API" maxlength="100">
+
+            <label for="svc_desc">Description <span style="color:#ef4444;">*</span></label>
+            <textarea id="svc_desc" name="description" required placeholder="What does your API do? What inputs/outputs?" rows="3" maxlength="500" style="width:100%; padding:10px; background:var(--bg-card); border:1px solid var(--border); border-radius:8px; color:var(--text-bright); font-size:14px; resize:vertical;"></textarea>
+
+            {# External API fields #}
+            <div id="external-fields">
+                <label for="svc_endpoint">API Endpoint URL <span style="color:#ef4444;">*</span></label>
+                <input type="url" id="svc_endpoint" name="endpoint" placeholder="https://my-api.example.com/predict">
+                <p style="font-size: 12px; color: var(--text-dim); margin: -8px 0 12px;">Must be a publicly accessible URL (https:// preferred).</p>
+            </div>
+
+            {# Prompt-as-API fields #}
+            <div id="prompt-fields" style="display:none;">
+                <label for="svc_system_prompt">System Prompt <span style="color:#ef4444;">*</span></label>
+                <textarea id="svc_system_prompt" name="system_prompt" placeholder="You are an expert at... When the user provides [input], you will..." rows="6" maxlength="50000" style="width:100%; padding:10px; background:var(--bg-card); border:1px solid var(--border); border-radius:8px; color:var(--text-bright); font-size:14px; resize:vertical; font-family:monospace;"></textarea>
+                <p style="font-size: 12px; color: var(--text-dim); margin: -8px 0 12px;">Define how the AI should behave. Buyers will send input via <code>{"input": "..."}</code>.</p>
+
+                <label for="svc_model">AI Model</label>
+                <select id="svc_model" name="prompt_model" style="width:100%; padding:10px; background:var(--bg-card); border:1px solid var(--border); border-radius:8px; color:var(--text-bright); font-size:14px;">
+                    <option value="claude-haiku-4-5">Claude Haiku 4.5 (Fast, $0.005+ per call)</option>
+                    <option value="claude-sonnet-4-6">Claude Sonnet 4.6 (Powerful, $0.02+ per call)</option>
+                </select>
+
+                <div style="display:flex; gap:12px; margin-top:8px;">
+                    <div style="flex:1;">
+                        <label for="svc_temperature">Temperature</label>
+                        <input type="number" id="svc_temperature" name="prompt_temperature" min="0" max="1" step="0.1" value="0.7">
+                    </div>
+                    <div style="flex:1;">
+                        <label for="svc_max_tokens">Max Tokens</label>
+                        <input type="number" id="svc_max_tokens" name="prompt_max_tokens" min="1" max="4096" value="1024">
+                    </div>
+                </div>
+
+                <div style="margin-top:16px; padding:12px; background:rgba(99,102,241,0.06); border:1px solid var(--border); border-radius:8px;">
+                    <p style="font-size:13px; font-weight:600; color:var(--text-bright); margin-bottom:8px;">🔐 Your API Key stays on YOUR machine</p>
+                    <p style="font-size:12px; color:var(--text-dim); margin-bottom:8px;">After creating this service, download and run our <strong>Provider Agent</strong> on your own computer. Your Anthropic API key never leaves your machine.</p>
+                    <label for="svc_agent_url">Provider Agent URL <small style="color:var(--text-dim);">(optional — add after setup)</small></label>
+                    <input type="url" id="svc_agent_url" name="agent_url" placeholder="https://your-agent.ngrok.io" style="width:100%; padding:10px; background:var(--bg-card); border:1px solid var(--border); border-radius:8px; color:var(--text-bright); font-size:14px; font-family:monospace;">
+                    <p style="font-size:11px; color:var(--text-dim); margin-top:4px;">Run <code>provider_agent.py</code> → expose via ngrok/tunnel → paste URL here. Leave blank to set up later.</p>
+                </div>
+            </div>
+
+            <label for="svc_category">Category</label>
+            <select id="svc_category" name="category" style="width:100%; padding:10px; background:var(--bg-card); border:1px solid var(--border); border-radius:8px; color:var(--text-bright); font-size:14px;">
+                <option value="ai">AI / Machine Learning</option>
+                <option value="crypto">Crypto / DeFi</option>
+                <option value="data">Data & Analytics</option>
+                <option value="media">Media & Content</option>
+                <option value="devtools">Developer Tools</option>
+                <option value="other">Other</option>
+            </select>
+
+            <div style="display:flex; justify-content:flex-end; margin-top: 16px;">
+                <button type="button" onclick="wizStep(2)" class="btn-primary" style="padding:10px 28px;">Next &rarr;</button>
+            </div>
+        </div>
+
+        {# ── Step 2: Pricing ── #}
+        <div id="wiz-step-2" style="display:none;">
+            <label for="svc_price">Price per API Call (USDC) <span style="color:#ef4444;">*</span></label>
+            <input type="number" id="svc_price" name="price_per_call" required min="0" max="100" step="0.001" value="0.05" placeholder="0.05">
+            <p style="font-size: 12px; color: var(--text-dim); margin: -8px 0 12px;">Set to 0 for a free service. Typical range: $0.01 — $2.00 per call.</p>
+
+            <label for="svc_free_tier">Free Tier Calls</label>
+            <input type="number" id="svc_free_tier" name="free_tier_calls" min="0" max="10000" value="100" placeholder="100">
+            <p style="font-size: 12px; color: var(--text-dim); margin: -8px 0 12px;">Number of free calls before charging. Helps agents try your API.</p>
+
+            <label for="svc_tags">Tags (comma-separated)</label>
+            <input type="text" id="svc_tags" name="tags" placeholder="nlp, summarization, text" maxlength="200">
+
+            <div style="display:flex; justify-content:space-between; margin-top: 16px;">
+                <button type="button" onclick="wizStep(1)" class="btn-secondary" style="padding:10px 28px;">&larr; Back</button>
+                <button type="button" onclick="wizStep(3)" class="btn-primary" style="padding:10px 28px;">Next &rarr;</button>
+            </div>
+        </div>
+
+        {# ── Step 3: Confirm ── #}
+        <div id="wiz-step-3" style="display:none;">
+            <div class="portal-card" style="background: var(--bg-card); padding: 20px; margin-bottom: 16px;">
+                <h3 style="font-size: 15px; font-weight: 600; color: var(--text-bright); margin-bottom: 12px;">Review Your Service</h3>
+                <table style="width:100%; font-size: 14px;">
+                    <tr><td style="color:var(--text-dim); padding:4px 12px 4px 0; width:120px;">Type</td><td id="rev-type" style="color:var(--text-bright);"></td></tr>
+                    <tr><td style="color:var(--text-dim); padding:4px 12px 4px 0;">Name</td><td id="rev-name" style="color:var(--text-bright);"></td></tr>
+                    <tr id="rev-endpoint-row"><td style="color:var(--text-dim); padding:4px 12px 4px 0;">Endpoint</td><td id="rev-endpoint" style="color:var(--text-bright); word-break:break-all;"></td></tr>
+                    <tr id="rev-model-row" style="display:none;"><td style="color:var(--text-dim); padding:4px 12px 4px 0;">AI Model</td><td id="rev-model" style="color:var(--text-bright);"></td></tr>
+                    <tr id="rev-prompt-row" style="display:none;"><td style="color:var(--text-dim); padding:4px 12px 4px 0;">Prompt</td><td id="rev-prompt" style="color:var(--text-bright); white-space:pre-wrap; max-height:80px; overflow:auto; font-size:12px;"></td></tr>
+                    <tr><td style="color:var(--text-dim); padding:4px 12px 4px 0;">Price</td><td id="rev-price" style="color:var(--text-bright);"></td></tr>
+                    <tr><td style="color:var(--text-dim); padding:4px 12px 4px 0;">Free Tier</td><td id="rev-free" style="color:var(--text-bright);"></td></tr>
+                    <tr><td style="color:var(--text-dim); padding:4px 12px 4px 0;">Category</td><td id="rev-category" style="color:var(--text-bright);"></td></tr>
+                    <tr><td style="color:var(--text-dim); padding:4px 12px 4px 0;">Tags</td><td id="rev-tags" style="color:var(--text-bright);"></td></tr>
+                </table>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-top: 16px;">
+                <button type="button" onclick="wizStep(2)" class="btn-secondary" style="padding:10px 28px;">&larr; Back</button>
+                <button type="submit" class="btn-primary" style="padding:10px 28px; background:#22c55e;">&#x2714; List My Service</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+{# ── Or use the template ── #}
+<div class="portal-card" style="margin-top: 16px;">
+    <h3 style="font-size: 15px; font-weight: 600; color: var(--text-bright); margin-bottom: 8px;">Don't have an API yet?</h3>
+    <p style="font-size: 14px; color: var(--text-dim); margin-bottom: 12px;">
+        Use our <strong>template API</strong> to get started in minutes. Fork the example, deploy it, then list it above.
+    </p>
+    <a href="https://github.com/JudyaiLab/agentictrade/tree/main/examples" target="_blank" class="btn-secondary" style="font-size: 14px; padding: 8px 20px; text-decoration: none;">
+        View Template API &rarr;
+    </a>
+</div>
+
+<style>
+.wiz-step-ind { padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 500; background: var(--bg-card); color: var(--text-dim); border: 1px solid var(--border); transition: all 0.2s; }
+.wiz-step-active { background: rgba(99,102,241,0.15); color: var(--accent); border-color: var(--accent); font-weight: 600; }
+.wiz-step-done { background: rgba(34,197,94,0.1); color: #22c55e; border-color: #22c55e; }
+.svc-type-btn { padding:14px 16px; border-radius:10px; border:2px solid var(--border); background:var(--bg-card); color:var(--text-dim); cursor:pointer; text-align:left; transition:all 0.2s; font-size:14px; }
+.svc-type-btn:hover { border-color: var(--accent); }
+.svc-type-active { border-color: var(--accent); background: rgba(99,102,241,0.08); color: var(--text-bright); }
+</style>
+<script>
+let currentServiceType = 'external';
+
+function setServiceType(type) {
+    currentServiceType = type;
+    document.getElementById('svc_type_hidden').value = type;
+    document.getElementById('type-external').className = 'svc-type-btn' + (type === 'external' ? ' svc-type-active' : '');
+    document.getElementById('type-prompt').className = 'svc-type-btn' + (type === 'prompt' ? ' svc-type-active' : '');
+    document.getElementById('external-fields').style.display = type === 'external' ? 'block' : 'none';
+    document.getElementById('prompt-fields').style.display = type === 'prompt' ? 'block' : 'none';
+    // Update endpoint required attribute
+    const ep = document.getElementById('svc_endpoint');
+    if (type === 'prompt') {
+        ep.removeAttribute('required');
+    } else {
+        ep.setAttribute('required', '');
+    }
+    // Update min price hint for prompt services
+    if (type === 'prompt') {
+        const model = document.getElementById('svc_model').value;
+        const minPrice = model === 'claude-sonnet-4-6' ? '0.02' : '0.005';
+        document.getElementById('svc_price').min = minPrice;
+        document.getElementById('svc_price').value = minPrice;
+    } else {
+        document.getElementById('svc_price').min = '0';
+    }
+}
+
+function wizStep(n) {
+    for (let i = 1; i <= 3; i++) {
+        document.getElementById('wiz-step-' + i).style.display = i === n ? 'block' : 'none';
+        const ind = document.getElementById('step-ind-' + i);
+        ind.className = 'wiz-step-ind' + (i < n ? ' wiz-step-done' : i === n ? ' wiz-step-active' : '');
+    }
+    if (n === 3) {
+        const isPrompt = currentServiceType === 'prompt';
+        document.getElementById('rev-type').textContent = isPrompt ? 'Prompt-as-API' : 'External API';
+        document.getElementById('rev-name').textContent = document.getElementById('svc_name').value || '-';
+        document.getElementById('rev-endpoint-row').style.display = isPrompt ? 'none' : '';
+        document.getElementById('rev-endpoint').textContent = document.getElementById('svc_endpoint').value || '-';
+        document.getElementById('rev-model-row').style.display = isPrompt ? '' : 'none';
+        document.getElementById('rev-model').textContent = document.getElementById('svc_model').value || '-';
+        document.getElementById('rev-prompt-row').style.display = isPrompt ? '' : 'none';
+        const promptText = document.getElementById('svc_system_prompt').value || '-';
+        document.getElementById('rev-prompt').textContent = promptText.length > 200 ? promptText.substring(0, 200) + '...' : promptText;
+        document.getElementById('rev-price').textContent = '$' + (document.getElementById('svc_price').value || '0') + ' USDC/call';
+        document.getElementById('rev-free').textContent = (document.getElementById('svc_free_tier').value || '0') + ' calls';
+        document.getElementById('rev-category').textContent = document.getElementById('svc_category').value;
+        document.getElementById('rev-tags').textContent = document.getElementById('svc_tags').value || 'none';
+    }
+}
+
+// Update min price when model changes
+document.addEventListener('DOMContentLoaded', function() {
+    const modelSelect = document.getElementById('svc_model');
+    if (modelSelect) {
+        modelSelect.addEventListener('change', function() {
+            if (currentServiceType === 'prompt') {
+                const minPrice = this.value === 'claude-sonnet-4-6' ? '0.02' : '0.005';
+                document.getElementById('svc_price').min = minPrice;
+                if (parseFloat(document.getElementById('svc_price').value) < parseFloat(minPrice)) {
+                    document.getElementById('svc_price').value = minPrice;
+                }
+            }
+        });
+    }
+});
+</script>
+{% endif %}
+{% endblock %}

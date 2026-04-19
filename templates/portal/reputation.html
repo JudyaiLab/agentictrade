@@ -1,0 +1,150 @@
+{% extends "portal/base.html" %}
+{% block title %}Reputation & Leaderboard{% endblock %}
+
+{% block extra_css %}
+<style>
+    .rep-score-ring {
+        width: 120px; height: 120px; border-radius: 50%; position: relative;
+        display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;
+    }
+    .rep-score-ring .score-value { font-size: 36px; font-weight: 700; color: var(--text-bright); }
+    .rep-score-ring .score-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em; }
+    .rep-score-ring.excellent { background: conic-gradient(#34d399 calc(var(--pct) * 1%), rgba(255,255,255,0.06) 0); }
+    .rep-score-ring.good { background: conic-gradient(#818cf8 calc(var(--pct) * 1%), rgba(255,255,255,0.06) 0); }
+    .rep-score-ring.average { background: conic-gradient(#fbbf24 calc(var(--pct) * 1%), rgba(255,255,255,0.06) 0); }
+    .rep-score-ring.poor { background: conic-gradient(#ef4444 calc(var(--pct) * 1%), rgba(255,255,255,0.06) 0); }
+    .rep-score-inner { width: 100px; height: 100px; border-radius: 50%; background: var(--bg-card, #0f1117); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .rep-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px; }
+    .rep-metric { text-align: center; padding: 12px; }
+    .rep-metric-value { font-size: 20px; font-weight: 700; color: var(--text-bright); }
+    .rep-metric-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 4px; }
+    .lb-rank { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; }
+    .lb-rank-1 { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #000; }
+    .lb-rank-2 { background: linear-gradient(135deg, #94a3b8, #64748b); color: #000; }
+    .lb-rank-3 { background: linear-gradient(135deg, #d97706, #b45309); color: #000; }
+    .lb-rank-default { background: rgba(255,255,255,0.06); color: var(--text-dim); }
+    .lb-score-bar { height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; flex: 1; overflow: hidden; }
+    .lb-score-fill { height: 100%; border-radius: 3px; background: var(--accent); }
+    .discount-tiers { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 20px; }
+    .discount-tier {
+        text-align: center; padding: 16px 12px; border-radius: 12px;
+        background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06);
+    }
+    .discount-tier.current { border-color: var(--accent); background: rgba(99,102,241,0.08); }
+    .discount-tier-score { font-size: 13px; color: var(--text-dim); margin-bottom: 4px; }
+    .discount-tier-pct { font-size: 22px; font-weight: 700; color: var(--text-bright); }
+    .discount-tier-label { font-size: 11px; color: var(--text-dim); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+    @media (max-width: 640px) {
+        .rep-metrics { grid-template-columns: 1fr; }
+        .discount-tiers { grid-template-columns: repeat(2, 1fr); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 32px;">
+    <h1 style="font-size: 24px; font-weight: 700; color: var(--text-bright); margin-bottom: 8px;">Reputation & Trust</h1>
+    <p style="color: var(--text-dim); font-size: 14px;">Your agent's reputation score is calculated from transaction history, completion rate, and response time. Buyer agents with a score of 70 or above enjoy a 5% discount on all service calls.</p>
+</div>
+
+<!-- My agent's reputation -->
+{% if my_reputation %}
+<div class="portal-card" style="text-align: center; padding: 32px;">
+    <h3 style="font-size: 16px; font-weight: 600; color: var(--text-bright); margin-bottom: 24px;">Your Agent's Reputation</h3>
+    {% set score = my_reputation.overall_score|default(my_reputation.reputation_score|default(0))|float %}
+    {% set tier = 'excellent' if score >= 90 else ('good' if score >= 70 else ('average' if score >= 50 else 'poor')) %}
+    <div class="rep-score-ring {{ tier }}" style="--pct: {{ score }};">
+        <div class="rep-score-inner">
+            <div class="score-value">{{ "%.0f"|format(score) }}</div>
+            <div class="score-label">{{ tier }}</div>
+        </div>
+    </div>
+    <div class="rep-metrics">
+        <div class="rep-metric">
+            <div class="rep-metric-value">{{ my_reputation.call_count|default(0) }}</div>
+            <div class="rep-metric-label">Transactions</div>
+        </div>
+        <div class="rep-metric">
+            <div class="rep-metric-value">{{ "%.0f"|format(my_reputation.reliability_score|default(0)) }}%</div>
+            <div class="rep-metric-label">Reliability</div>
+        </div>
+        <div class="rep-metric">
+            <div class="rep-metric-value">{{ "%.0f"|format(my_reputation.latency_score|default(0)) }}</div>
+            <div class="rep-metric-label">Latency Score</div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Buyer discount -->
+<div class="portal-card">
+    <h3 style="font-size: 16px; font-weight: 600; color: var(--text-bright); margin-bottom: 8px;">Buyer Reputation Discount</h3>
+    <p style="font-size: 13px; color: var(--text-dim); margin-bottom: 16px;">Buyer agents that maintain a strong reputation get rewarded with lower prices on every service call.</p>
+    {% set current_score = my_reputation.overall_score|default(my_reputation.reputation_score|default(0))|float if my_reputation else 0 %}
+    <div style="display: flex; gap: 16px; align-items: center;">
+        <div class="discount-tier {% if current_score >= 70 %}current{% endif %}" style="flex: 1; text-align: center; padding: 24px;">
+            <div class="discount-tier-score">Score ≥ 70</div>
+            <div class="discount-tier-pct" style="color: #34d399; font-size: 28px;">5% OFF</div>
+            <div class="discount-tier-label">on all service calls</div>
+        </div>
+        <div class="discount-tier {% if current_score < 70 %}current{% endif %}" style="flex: 1; text-align: center; padding: 24px;">
+            <div class="discount-tier-score">Score &lt; 70</div>
+            <div class="discount-tier-pct" style="font-size: 28px;">Standard Price</div>
+            <div class="discount-tier-label">keep building reputation</div>
+        </div>
+    </div>
+</div>
+
+<!-- Public leaderboard -->
+<div class="portal-card">
+    <h3 style="font-size: 16px; font-weight: 600; color: var(--text-bright); margin-bottom: 16px;">Leaderboard — Top Agents</h3>
+
+    {% if leaderboard|length == 0 %}
+    <div class="portal-empty">
+        <p>No reputation data yet. Complete transactions to appear on the leaderboard.</p>
+    </div>
+    {% else %}
+    <div class="portal-table-wrap">
+        <table class="portal-table">
+            <thead>
+                <tr>
+                    <th style="width: 60px;">Rank</th>
+                    <th>Agent</th>
+                    <th>Score</th>
+                    <th style="width: 30%;">Rating</th>
+                    <th>Transactions</th>
+                    <th>Discount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for agent in leaderboard %}
+                <tr {% if agent.is_mine|default(false) %}style="background: rgba(99,102,241,0.05);"{% endif %}>
+                    <td>
+                        <div class="lb-rank {% if loop.index == 1 %}lb-rank-1{% elif loop.index == 2 %}lb-rank-2{% elif loop.index == 3 %}lb-rank-3{% else %}lb-rank-default{% endif %}">
+                            {{ loop.index }}
+                        </div>
+                    </td>
+                    <td style="font-weight: {% if agent.is_mine|default(false) %}600{% else %}400{% endif %}; color: var(--text-bright);">
+                        {{ agent.agent_id or agent.provider_id or 'Agent' }}
+                        {% if agent.is_mine|default(false) %}<span style="font-size: 11px; color: var(--accent); margin-left: 6px;">(you)</span>{% endif %}
+                    </td>
+                    <td style="font-weight: 700; color: {% if agent.reputation_score|default(agent.overall_score|default(0)) >= 90 %}#34d399{% elif agent.reputation_score|default(agent.overall_score|default(0)) >= 70 %}#818cf8{% elif agent.reputation_score|default(agent.overall_score|default(0)) >= 50 %}#fbbf24{% else %}#ef4444{% endif %};">
+                        {{ "%.0f"|format(agent.reputation_score|default(agent.overall_score|default(0))) }}
+                    </td>
+                    <td>
+                        <div class="lb-score-bar">
+                            <div class="lb-score-fill" style="width: {{ agent.reputation_score|default(agent.overall_score|default(0)) }}%;"></div>
+                        </div>
+                    </td>
+                    <td>{{ agent.call_count|default(0) }}</td>
+                    <td style="color: #34d399; font-weight: 600;">
+                        {% if agent.reputation_score|default(agent.overall_score|default(0)) >= 70 %}5% OFF{% else %}—{% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-gray-900">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
+    <title>{% block title %}Dashboard{% endblock %} — Agent Commerce Framework</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        acf: {
+                            dark: '#1a1a2e',
+                            panel: '#16213e',
+                            border: '#0f3460',
+                            accent: '#e94560',
+                            green: '#4ecca3',
+                            muted: '#8888a8',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        [x-cloak] { display: none !important; }
+        .nav-link { transition: border-color 0.15s, color 0.15s; }
+    </style>
+</head>
+<body class="h-full text-gray-300">
+
+<!-- Top Navigation -->
+<nav class="bg-acf-panel border-b-2 border-acf-accent">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-14">
+            <div class="flex items-center gap-6">
+                <a href="/dashboard/?key={{ key }}" class="text-white font-bold text-lg tracking-tight">
+                    ACF Dashboard
+                </a>
+                <span class="text-xs text-acf-muted bg-acf-accent/15 px-2 py-0.5 rounded-full border border-acf-accent/30">
+                    v0.4.0
+                </span>
+            </div>
+            <div class="hidden sm:flex items-center gap-1">
+                {% set nav_items = [
+                    ("Overview", "/dashboard/"),
+                    ("Services", "/dashboard/services"),
+                    ("Agents", "/dashboard/agents"),
+                    ("Transactions", "/dashboard/transactions"),
+                    ("Quality", "/dashboard/quality"),
+                    ("Providers", "/dashboard/providers"),
+                ] %}
+                {% for label, path in nav_items %}
+                <a href="{{ path }}?key={{ key }}"
+                   class="nav-link px-3 py-1.5 rounded text-sm
+                          {% if active_page == label %}
+                          bg-acf-accent/20 text-white border border-acf-accent/40
+                          {% else %}
+                          text-acf-muted hover:text-white hover:bg-white/5
+                          {% endif %}">
+                    {{ label }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Mobile Navigation -->
+<div class="sm:hidden bg-acf-panel border-b border-acf-border px-4 py-2 flex gap-2 overflow-x-auto">
+    {% for label, path in [
+        ("Overview", "/dashboard/"),
+        ("Services", "/dashboard/services"),
+        ("Agents", "/dashboard/agents"),
+        ("Txns", "/dashboard/transactions"),
+        ("Quality", "/dashboard/quality"),
+        ("Providers", "/dashboard/providers"),
+    ] %}
+    <a href="{{ path }}?key={{ key }}"
+       class="whitespace-nowrap px-3 py-1 rounded text-xs
+              {% if active_page == label or (active_page == 'Transactions' and label == 'Txns') %}
+              bg-acf-accent/20 text-white
+              {% else %}
+              text-acf-muted
+              {% endif %}">
+        {{ label }}
+    </a>
+    {% endfor %}
+</div>
+
+<!-- Main Content -->
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    {% block content %}{% endblock %}
+</main>
+
+<!-- Footer -->
+<footer class="text-center py-4 text-xs text-gray-600 border-t border-acf-border/40">
+    Agent Commerce Framework v0.4.0
+</footer>
+
+</body>
+</html>

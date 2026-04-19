@@ -1,0 +1,412 @@
+{% extends "public/base.html" %}
+
+{% block title %}{{ t('status.page_title') or 'Platform Status — AgenticTrade' }}{% endblock %}
+{% block meta_description %}{{ t('status.meta_desc') or 'AgenticTrade platform status page. Real-time health monitoring, uptime metrics, and SLA commitment for the AI agent API marketplace.' }}{% endblock %}
+{% block og_title %}{{ t('status.og_title') or 'AgenticTrade Platform Status — Live Health Monitoring' }}{% endblock %}
+{% block og_description %}{{ t('status.og_desc') or 'Real-time platform health, uptime metrics, and SLA commitment for the AgenticTrade API marketplace.' }}{% endblock %}
+{% block tw_title %}{{ t('status.tw_title') or 'AgenticTrade Platform Status' }}{% endblock %}
+{% block tw_description %}{{ t('status.tw_desc') or 'Live platform health and uptime for AgenticTrade, the API marketplace for AI agents.' }}{% endblock %}
+{% block robots %}index, follow{% endblock %}
+
+{% block json_ld %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Platform Status — AgenticTrade",
+    "description": "Real-time platform status and uptime metrics for the AgenticTrade API marketplace.",
+    "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://agentictrade.io/"},
+            {"@type": "ListItem", "position": 2, "name": "Status", "item": "https://agentictrade.io/status"}
+        ]
+    }
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "AgenticTrade",
+    "url": "https://agentictrade.io",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web",
+    "description": "AI service marketplace with 24/7 automated quality monitoring",
+    "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD",
+        "description": "Free to join. 0% commission for the first month."
+    },
+    "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "{{ uptime_pct }}",
+        "bestRating": "100",
+        "worstRating": "0",
+        "ratingCount": "{{ active_services or 1 }}",
+        "description": "30-day platform uptime percentage across {{ active_services }} active services"
+    }
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "MonitorAction",
+    "name": "AgenticTrade Health Monitoring",
+    "description": "24/7 automated quality patrol monitoring uptime, response time, and error rate for all services",
+    "target": "https://agentictrade.io/status",
+    "result": {
+        "@type": "Thing",
+        "name": "Platform Status: {{ platform_status }}",
+        "description": "30-day uptime: {{ uptime_pct }}%, avg latency: {{ avg_latency_ms }}ms, active services: {{ active_services }}"
+    }
+}
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .status-hero { padding: 60px 0 40px; max-width: 800px; }
+    .status-hero p { color: var(--text-dim); font-size: 16px; line-height: 1.7; }
+
+    .status-banner {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 24px 32px;
+        border-radius: 16px;
+        margin-bottom: 40px;
+        box-shadow: var(--ring);
+    }
+    .status-banner.operational {
+        background: linear-gradient(135deg, rgba(52, 211, 153, 0.08), rgba(52, 211, 153, 0.02));
+        border: 1px solid rgba(52, 211, 153, 0.2);
+    }
+    .status-banner.degraded {
+        background: linear-gradient(135deg, rgba(251, 191, 36, 0.08), rgba(251, 191, 36, 0.02));
+        border: 1px solid rgba(251, 191, 36, 0.2);
+    }
+    .status-banner.down {
+        background: linear-gradient(135deg, rgba(248, 113, 113, 0.08), rgba(248, 113, 113, 0.02));
+        border: 1px solid rgba(248, 113, 113, 0.2);
+    }
+    .status-indicator {
+        width: 14px; height: 14px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        animation: pulse-glow 2s ease-in-out infinite;
+    }
+    .status-banner.operational .status-indicator { background: var(--green); box-shadow: 0 0 12px rgba(52, 211, 153, 0.4); }
+    .status-banner.degraded .status-indicator { background: var(--orange); box-shadow: 0 0 12px rgba(251, 191, 36, 0.4); }
+    .status-banner.down .status-indicator { background: var(--red); box-shadow: 0 0 12px rgba(248, 113, 113, 0.4); }
+    @keyframes pulse-glow {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.6; }
+    }
+    .status-banner h2 { font-size: 20px; margin: 0; }
+    .status-banner p { font-size: 14px; color: var(--text-dim); margin: 4px 0 0; }
+
+    .sla-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--bg-card);
+        border: 1px solid rgba(34, 211, 238, 0.2);
+        border-radius: 24px;
+        padding: 8px 20px;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--accent);
+        box-shadow: 0 0 20px rgba(34, 211, 238, 0.06);
+        margin-top: 16px;
+    }
+    .sla-badge::before {
+        content: "";
+        display: inline-block;
+        width: 8px; height: 8px;
+        border-radius: 50%;
+        background: var(--accent);
+    }
+
+    .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+        margin: 40px 0;
+    }
+    .metric-card {
+        background: var(--bg-card);
+        border: none;
+        border-radius: 16px;
+        padding: 28px;
+        text-align: center;
+        box-shadow: var(--ring);
+    }
+    .metric-card .metric-value {
+        font-size: 36px;
+        font-weight: 700;
+        color: var(--text);
+        line-height: 1.2;
+    }
+    .metric-card .metric-value.green { color: var(--green); }
+    .metric-card .metric-value.accent { color: var(--accent); }
+    .metric-card .metric-label {
+        font-size: 14px;
+        color: var(--text-dim);
+        margin-top: 8px;
+    }
+    .metric-card .metric-sub {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-top: 4px;
+    }
+
+    .history-section { margin: 48px 0; }
+    .history-section h3 { margin-bottom: 20px; }
+    .history-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px 24px;
+        background: var(--bg-card);
+        border-radius: 12px;
+        box-shadow: var(--ring);
+    }
+    .history-dots {
+        display: flex;
+        gap: 8px;
+        flex: 1;
+        justify-content: flex-start;
+    }
+    .history-dot {
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
+        position: relative;
+        cursor: default;
+    }
+    .history-dot.up { background: rgba(52, 211, 153, 0.2); border: 1px solid rgba(52, 211, 153, 0.3); }
+    .history-dot.degraded { background: rgba(251, 191, 36, 0.2); border: 1px solid rgba(251, 191, 36, 0.3); }
+    .history-dot.down { background: rgba(248, 113, 113, 0.2); border: 1px solid rgba(248, 113, 113, 0.3); }
+    .history-dot .dot-tooltip {
+        display: none;
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 6px 10px;
+        font-size: 12px;
+        color: var(--text-dim);
+        white-space: nowrap;
+        margin-bottom: 4px;
+        z-index: 10;
+    }
+    .history-dot:hover .dot-tooltip { display: block; }
+    .history-labels {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        color: var(--text-muted);
+    }
+
+    .components-section { margin: 48px 0; }
+    .component-list { display: flex; flex-direction: column; gap: 12px; }
+    .component-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 24px;
+        background: var(--bg-card);
+        border-radius: 12px;
+        box-shadow: var(--ring);
+    }
+    .component-name { font-size: 15px; font-weight: 500; }
+    .component-status {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        font-weight: 500;
+    }
+    .component-status.ok { color: var(--green); }
+    .component-status.degraded { color: var(--orange); }
+    .component-status.down { color: var(--red); }
+    .component-dot {
+        width: 8px; height: 8px;
+        border-radius: 50%;
+    }
+    .component-status.ok .component-dot { background: var(--green); }
+    .component-status.degraded .component-dot { background: var(--orange); }
+    .component-status.down .component-dot { background: var(--red); }
+
+    .support-card {
+        background: var(--bg-card);
+        border-radius: 16px;
+        padding: 32px;
+        margin: 48px 0;
+        box-shadow: var(--ring);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+    }
+    .support-card h3 { margin-bottom: 4px; }
+    .support-card p { color: var(--text-dim); font-size: 14px; margin: 0; }
+
+    .updated-at {
+        text-align: center;
+        font-size: 13px;
+        color: var(--text-muted);
+        padding: 24px 0 0;
+    }
+
+    @media (max-width: 768px) {
+        .metrics-grid { grid-template-columns: 1fr; }
+        .history-dot { width: 24px; height: 24px; }
+        .support-card { flex-direction: column; text-align: center; }
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="container" style="padding-top:16px;">
+    <nav aria-label="Breadcrumb" style="font-size:13px; color:var(--text-muted);">
+        <a href="/" style="color:var(--text-dim);">{{ t('breadcrumb.home') or 'Home' }}</a> &rsaquo; {{ t('breadcrumb.status') or 'Status' }}
+    </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+
+<section class="section">
+    <div class="container">
+        <div class="status-hero">
+            <span class="eyebrow">{{ t('status.eyebrow') or 'Platform Health' }}</span>
+            <h1>{{ t('status.title') or 'System Status' }}</h1>
+            <p>{{ t('status.desc') or 'Real-time operational status for the AgenticTrade platform. We monitor all critical systems continuously to ensure reliable service for AI agents and providers.' }}</p>
+        </div>
+
+        {# ── Overall Status Banner ── #}
+        <div class="status-banner {{ platform_status }}">
+            <div class="status-indicator"></div>
+            <div>
+                {% if platform_status == 'operational' %}
+                <h2>{{ t('status.all_operational') or 'All Systems Operational' }}</h2>
+                <p>{{ t('status.all_operational_desc') or 'All platform services are running normally.' }}</p>
+                {% elif platform_status == 'degraded' %}
+                <h2>{{ t('status.degraded') or 'Degraded Performance' }}</h2>
+                <p>{{ t('status.degraded_desc') or 'Some services may be experiencing slower response times.' }}</p>
+                {% else %}
+                <h2>{{ t('status.disruption') or 'Service Disruption' }}</h2>
+                <p>{{ t('status.disruption_desc') or 'We are investigating issues affecting platform availability.' }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        {# ── SLA Badge ── #}
+        <div style="margin-bottom: 40px;">
+            <div class="sla-badge">{{ t('status.sla_badge') or '99.9% Uptime Guarantee' }}</div>
+            <p style="font-size:13px; color:var(--text-muted); margin-top:8px;">
+                {{ t('status.sla_desc') or 'Backed by our <a href="/terms#sla">Service Level Agreement</a>. Credits issued if monthly uptime falls below 99.9%.' }}
+            </p>
+        </div>
+
+        {# ── Key Metrics ── #}
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-value green">{{ uptime_pct }}%</div>
+                <div class="metric-label">{{ t('status.metric_uptime') or 'API Uptime' }}</div>
+                <div class="metric-sub">{{ t('status.last_30_days') or 'Last 30 days' }}</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value accent">{{ avg_latency_ms }} ms</div>
+                <div class="metric-label">{{ t('status.metric_latency') or 'Avg Response Time' }}</div>
+                <div class="metric-sub">{{ t('status.last_30_days') or 'Last 30 days' }}</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">{{ active_services }}</div>
+                <div class="metric-label">{{ t('status.metric_services') or 'Active Services' }}</div>
+                <div class="metric-sub">{{ t('status.currently_available') or 'Currently available' }}</div>
+            </div>
+        </div>
+
+        {# ── 7-Day History ── #}
+        <div class="history-section">
+            <h3>{{ t('status.last_7_days') or 'Last 7 Days' }}</h3>
+            <div class="history-row">
+                <div class="history-dots">
+                    {% for day in daily_status %}
+                    <div class="history-dot {{ day.status }}">
+                        <div class="dot-tooltip">{{ day.date }} &mdash; {{ day.label }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="history-labels" style="margin-top:8px; padding:0 24px;">
+                <span>{{ daily_status[0].date if daily_status else '' }}</span>
+                <span>{{ t('status.today') or 'Today' }}</span>
+            </div>
+        </div>
+
+        {# ── System Components ── #}
+        <div class="components-section">
+            <h3 style="margin-bottom:16px;">{{ t('status.components_title') or 'System Components' }}</h3>
+            <div class="component-list">
+                <div class="component-item">
+                    <span class="component-name">{{ t('status.comp_gateway') or 'API Gateway' }}</span>
+                    <span class="component-status {{ 'ok' if db_ok else 'degraded' }}">
+                        <span class="component-dot"></span>
+                        {{ (t('status.operational') or 'Operational') if db_ok else (t('status.degraded_label') or 'Degraded') }}
+                    </span>
+                </div>
+                <div class="component-item">
+                    <span class="component-name">{{ t('status.comp_database') or 'Database' }}</span>
+                    <span class="component-status {{ 'ok' if db_ok else 'down' }}">
+                        <span class="component-dot"></span>
+                        {{ (t('status.operational') or 'Operational') if db_ok else (t('status.down_label') or 'Down') }}
+                    </span>
+                </div>
+                <div class="component-item">
+                    <span class="component-name">{{ t('status.comp_proxy') or 'Proxy Key Infrastructure' }}</span>
+                    <span class="component-status {{ 'ok' if db_ok else 'degraded' }}">
+                        <span class="component-dot"></span>
+                        {{ (t('status.operational') or 'Operational') if db_ok else (t('status.degraded_label') or 'Degraded') }}
+                    </span>
+                </div>
+                <div class="component-item">
+                    <span class="component-name">{{ t('status.comp_payment') or 'Payment Processing' }}</span>
+                    <span class="component-status {{ 'ok' if db_ok else 'degraded' }}">
+                        <span class="component-dot"></span>
+                        {{ (t('status.operational') or 'Operational') if db_ok else (t('status.degraded_label') or 'Degraded') }}
+                    </span>
+                </div>
+                <div class="component-item">
+                    <span class="component-name">{{ t('status.comp_marketplace') or 'Marketplace Registry' }}</span>
+                    <span class="component-status {{ 'ok' if active_services > 0 else 'degraded' }}">
+                        <span class="component-dot"></span>
+                        {{ (t('status.operational') or 'Operational') if active_services > 0 else (t('status.degraded_label') or 'Degraded') }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        {# ── Support Card ── #}
+        <div class="support-card">
+            <div>
+                <h3>{{ t('status.support_title') or 'Experiencing issues?' }}</h3>
+                <p>{{ t('status.support_desc') or 'If you\'re experiencing problems that aren\'t reflected on this page, please contact our support team.' }}</p>
+            </div>
+            <a href="mailto:support@agentictrade.io" class="btn-primary" style="flex-shrink:0;">{{ t('status.contact_support') or 'Contact Support' }}</a>
+        </div>
+
+        <div class="updated-at">
+            {{ t('status.last_updated') or 'Last updated' }}: {{ updated_at }}
+        </div>
+    </div>
+</section>
+
+{% endblock %}

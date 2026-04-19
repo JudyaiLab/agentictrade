@@ -1,0 +1,204 @@
+{
+  "persona": "AutoTrader-7 — Autonomous AI Trading Agent",
+  "model": "Claude Sonnet 4.6",
+  "perspective": "agent_buyer",
+  "evaluation_date": "2026-03-24",
+  "sources_reviewed": [
+    "templates/public/landing.html",
+    "templates/public/pricing.html",
+    "templates/api-docs.html",
+    "api/routes/services.py",
+    "api/routes/discovery.py",
+    "api/routes/proxy.py",
+    "api/routes/escrow.py",
+    "api/routes/service_report.py",
+    "api/routes/reputation.py",
+    "api/routes/billing.py",
+    "docs/PRODUCT_SPEC.md"
+  ],
+  "scores": {
+    "api_discoverability": {
+      "score": 7,
+      "reasoning": "Strong foundation. The /api/v1/discover endpoint supports q, category, tags, min_price, max_price, payment_method, has_free_tier, sort_by, limit, offset — that is a solid programmatic filter set. The /discover/categories endpoint lets me enumerate the namespace before searching. /discover/trending gives usage-based ranking. /discover/recommendations/{agent_id} implies personalization based on history, which is useful for iterative agents. HOWEVER: the MCP descriptor's per-service 'input_schema' is dangerously generic — all services expose the same 3-field schema (path, method, body) with no service-specific parameters. That means I cannot determine what to PUT in the body for a specific service without trial and error or reading human docs. The text search is keyword-based, not semantic/capability-based; the FAQ promises 'find me a weather API for Seoul that returns temperature in Celsius' but that is marketing copy — the actual /discover endpoint does a text match against name/description, not a semantic capability query. No full-text score or relevance ranking is exposed. Pagination is correct but total count is present only in /discover, not in /services listing.",
+      "positives": [
+        "Multi-dimensional filters (price range, payment method, free tier)",
+        "Category enumeration endpoint exists",
+        "Trending endpoint with call_count and avg_latency_ms machine-readable",
+        "Recommendations endpoint keyed by agent_id",
+        "MCP descriptor endpoint at /api/v1/mcp/descriptor aggregates all tools"
+      ],
+      "negatives": [
+        "No semantic/embedding-based capability search — keyword matching only",
+        "Per-service input_schema in MCP descriptor is a generic stub, not the real API schema",
+        "No relevance score in search results to rank candidates",
+        "No capability tags standard (e.g. 'returns: OHLCV', 'input: ticker') — only free-form tags"
+      ]
+    },
+    "mcp_integration": {
+      "score": 6,
+      "reasoning": "A genuine MCP Tool Descriptor endpoint exists at GET /api/v1/mcp/descriptor and returns a JSON document with schema_version, base_url, a set of meta-tools (marketplace_search, marketplace_get_service, marketplace_proxy_call), and per-service tool entries. Auth format, rate_limit, and key creation endpoint are machine-readable in the descriptor. This is meaningfully better than zero. HOWEVER: the per-service tool definitions have a critical weakness — input_schema is identical for every service (path: string, method: enum, body: object). There are no service-specific parameter definitions. An MCP-compatible agent will see 'call_coinsifter_crypto_scanner' with the same schema as 'call_weather_api' — it cannot auto-fill parameters without guessing. The descriptor also hard-codes limit=100 for services, so if there are >100 services, agents only see a truncated view without pagination. The 'method: dynamic' on the proxy tool is non-standard and will confuse strict MCP parsers. There is no versioned descriptor URL (e.g. /mcp/descriptor/v1) and no cache-control headers documented, meaning agents cannot efficiently poll for changes.",
+      "positives": [
+        "Descriptor endpoint exists and is publicly accessible (no auth required for read)",
+        "Auth instructions embedded in descriptor (create_key_endpoint, hint, format)",
+        "Rate limit advertised in descriptor (60 req/min)",
+        "Schema version field present (1.0)"
+      ],
+      "negatives": [
+        "Per-service input_schema is a meaningless generic stub — cannot auto-generate API calls",
+        "No OpenAPI/JSON Schema per-endpoint detail for called services",
+        "Truncated at 100 services with no pagination in descriptor",
+        "Non-standard 'method: dynamic' field breaks strict MCP parsers",
+        "No versioned descriptor URL for stable caching",
+        "No 'output_schema' — agent cannot know what response shape to expect"
+      ]
+    },
+    "payment_flow": {
+      "score": 6,
+      "reasoning": "The proxy payment model (pre-fund wallet, deduct per call) is conceptually agent-friendly — no per-call approval needed. Billing is fully automatic once the wallet is topped up. The response headers (X-ACF-Amount, X-ACF-Free-Tier, X-ACF-Usage-Id) let me audit charges programmatically after each call. The /api/v1/balance/{buyer_id} endpoint lets me check balance before committing. GET /api/v1/usage/me gives total spend summary. CRITICAL PROBLEM: the deposit flow (POST /api/v1/deposits) creates a NOWPayments invoice and returns a checkout_url pointing to nowpayments.io. That is a HUMAN-FACING checkout page — an autonomous agent cannot navigate a web UI to complete payment. There is no programmatic USDC direct-transfer or x402 payment path for the DEPOSIT step. The x402 integration appears to be on the PROVIDER side (seller middleware) not on the buyer deposit flow. This breaks autonomous operation: I can call services automatically, but I cannot refill my wallet without human intervention. The minimum deposit is $20 (enforced by DepositRequest Field constraint gt=0, le=10000 with NOWPayments minimum). No webhook/polling endpoint exposed to agents to confirm when a deposit clears.",
+      "positives": [
+        "Fully automatic per-call billing once wallet is funded — no per-call approval",
+        "Balance readable via REST — agent can check funds before calling",
+        "X-ACF-Amount header on every proxy response for real-time charge auditing",
+        "Free tier calls tracked and surfaced in X-ACF-Free-Tier header",
+        "Pricing visible BEFORE calling via /discover or /services/{id} endpoint"
+      ],
+      "negatives": [
+        "Deposit flow returns a human-facing checkout URL — NOT programmatically completable by an agent",
+        "No direct USDC on-chain deposit address for autonomous wallet funding",
+        "No x402 payment path on the buyer deposit step despite x402 being the agent-native standard",
+        "No way to poll deposit confirmation status (only IPN webhook, which needs a public endpoint the agent controls)",
+        "No spend limit or budget cap configurable per-agent to prevent runaway costs",
+        "No pre-call cost estimation endpoint — agent must look up service pricing separately before each call"
+      ]
+    },
+    "quality_signals": {
+      "score": 6,
+      "reasoning": "Several quality signals exist: /api/v1/agents/{agent_id}/reputation and /api/v1/services/{service_id}/reputation with period filtering. /discover/trending exposes call_count and avg_latency_ms. /api/v1/provider/health endpoint (provider-side) returns health scores based on latency, error rate, and uptime. The auto-delist trigger (3 reports) provides a floor quality filter. HOWEVER: from a BUYER perspective, the reputation endpoint returns 'records' — the schema of those records is not defined anywhere in the reviewed code. I cannot tell what fields to expect (score range? component breakdown? sample size?). The /services response does not include reputation_score or uptime_percent inline — I have to make a separate call. There is no SLA contract field, no declared p95 latency, no declared success rate guarantee per service listing. The trending endpoint shows call_count but not error_rate. There is no 'last seen alive' timestamp on services. Services can apparently be listed without any prior verified availability — the automated security review pipeline is Phase 6 (not yet implemented per PRODUCT_SPEC). That means I could call a service that has never been verified reachable.",
+      "positives": [
+        "Reputation endpoint exists per agent and per service",
+        "Trending endpoint exposes avg_latency_ms and call_count",
+        "Report system with auto-delist at 3 reports provides floor quality filter",
+        "Provider health score endpoint exists (latency, error rate, uptime based)"
+      ],
+      "negatives": [
+        "Reputation record schema undocumented in API — agent cannot reliably parse fields",
+        "Service listing response does not inline reputation_score or uptime",
+        "No SLA or guaranteed uptime field on service listings",
+        "Automated security review pipeline not yet live (Phase 6) — services can list without reachability checks",
+        "Trending shows call_count but not error_rate or success_rate",
+        "No 'last_successful_call' or 'last_health_check' timestamp on services",
+        "Reputation leaderboard is for agents (sellers), not useful for buyer evaluating a service"
+      ]
+    },
+    "error_handling": {
+      "score": 7,
+      "reasoning": "HTTP status codes are correctly used throughout: 201 for creates, 400 for validation errors, 401 for auth failures, 403 for permission violations, 404 for missing resources, 429 for rate limiting, 500 for server errors. Error responses return JSON with a 'detail' field. The API docs describe a machine-readable 'error' code field (e.g. 'unauthorized', 'bad_request', 'rate_limited') in the error response schema. Rate limit headers (X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset) are documented in api-docs.html. ProxyError raises 400 — importantly, proxy failures (upstream service down) also return 400 which conflates two very different errors: a bad request from the agent vs an upstream provider failure. An agent cannot distinguish 'I sent bad parameters' from 'the provider is down' without parsing the detail string. X-ACF-Latency-Ms is always present so agents can detect unusually slow responses. The proxy correctly passes through non-hop-by-hop headers from the upstream service, so upstream error payloads are visible to the agent.",
+      "positives": [
+        "Correct HTTP status codes for all error categories",
+        "JSON error responses with detail field — machine parseable",
+        "Rate limit headers documented (X-RateLimit-Limit, Remaining, Reset)",
+        "X-ACF-Latency-Ms header enables latency-based error detection",
+        "ProxyError properly caught and returns HTTP 400 rather than 500",
+        "AuthError returns 401 with descriptive message"
+      ],
+      "negatives": [
+        "Proxy failures (upstream service unavailable) return 400, same as bad agent request — ambiguous",
+        "No X-ACF-Provider-Status header to distinguish upstream vs platform errors",
+        "'detail' field is a human-readable string, not a structured error code — fragile for programmatic parsing",
+        "No retry-after header on 429 responses in proxy route (only documented, implementation unclear)",
+        "EscrowError returns 400 regardless of cause — agent cannot distinguish hold-not-found vs amount-mismatch"
+      ]
+    },
+    "escrow_protection": {
+      "score": 6,
+      "reasoning": "A 7-day escrow system exists with proper CRUD: create hold, get hold, list holds, dispute, release (admin), refund (admin). POST /api/v1/escrow/holds/{id}/dispute lets a buyer agent programmatically freeze a payment without human involvement. Hold status, release_at timestamp, and amounts are returned in structured JSON. CRITICAL LIMITATION: release and refund endpoints require ADMIN authentication — a buyer agent cannot self-serve a refund, even during the 7-day window. The dispute endpoint only freezes the hold — it does not initiate a resolution workflow or return a dispute ticket ID. Once disputed, there is no polling endpoint for dispute resolution status, no deadline for admin response, no escalation path. An autonomous agent cannot complete a dispute lifecycle — it can only file one and wait indefinitely. Furthermore, looking at the escrow route, create_escrow_hold requires the buyer_id, provider_id, service_id, and usage_record_id as explicit inputs — it is not automatically triggered by the proxy call. This means the escrow hold is NOT automatically created for every transaction; it must be manually initiated. For an autonomous agent, this means escrow protection is opt-in, not default.",
+      "positives": [
+        "Dispute endpoint is buyer-accessible (not admin-only) — agent can freeze a hold programmatically",
+        "7-day hold period with machine-readable release_at timestamp",
+        "Structured response with all hold fields for audit trail",
+        "List holds endpoint allows agent to check all outstanding escrow positions",
+        "Escrow summary per provider available"
+      ],
+      "negatives": [
+        "Release and refund require ADMIN auth — buyer agent cannot self-serve refund",
+        "Escrow hold is NOT auto-created by the proxy — must be manually requested by the agent",
+        "No dispute resolution workflow — filing a dispute has no defined SLA or outcome path",
+        "No dispute ticket ID or status polling endpoint",
+        "No automatic escrow for standard (non-agent-provider) services — only documented for Agent Provider system",
+        "Dispute resolution entirely depends on human admin availability — antithetical to autonomous agent operation"
+      ]
+    },
+    "rate_limiting": {
+      "score": 7,
+      "reasoning": "Rate limits are documented at multiple levels. The MCP descriptor advertises 60 requests/minute at the API level. The API docs describe X-RateLimit-Limit, X-RateLimit-Remaining, and X-RateLimit-Reset headers on every response with a 429 example. The proxy route checks per-key rate limits: key_record.get('rate_limit', 60) — the rate limit is embedded in the key record itself, meaning different keys can have different limits. The billing IPN endpoint has its own separate limiter (30 req/min per IP). Rate limit check happens BEFORE the proxy call, so agents are not charged on rate-limited requests. MISSING: there is no pre-call endpoint to query current rate limit state without making a real call. There is no burst/concurrency limit documented separately from the per-minute rate. No per-service rate limit is documented — a provider could have their own upstream rate limit that causes failures the platform does not surface.",
+      "positives": [
+        "Rate limit headers documented and present on all responses",
+        "Rate limit embedded per key-record — supports per-agent limits",
+        "Rate check happens pre-proxy — no charge on rate-limited calls",
+        "429 response includes machine-readable 'rate_limited' error code",
+        "X-RateLimit-Reset provides exact retry timing for agent backoff logic",
+        "IPN endpoint has separate rate limiter to prevent abuse"
+      ],
+      "negatives": [
+        "No endpoint to query current rate limit state without consuming a call",
+        "Burst concurrency limit not documented",
+        "Provider-side rate limits not surfaced to buyer agents — unexpected upstream throttling possible",
+        "Default rate limit (60/min) may be insufficient for high-frequency trading agents",
+        "No rate limit tiering by buyer plan — all buyers capped at same default"
+      ]
+    },
+    "authentication": {
+      "score": 8,
+      "reasoning": "The Proxy Key system (key_id:secret Bearer token) is clean and suitable for autonomous agents. Creating a key requires POST /api/v1/keys — one HTTP call, fully programmatic. The key format (key_id:secret as a single Authorization header) is standard and trivially implemented in any HTTP client. No OAuth flows, no browser redirects, no PKCE challenges. Keys are role-typed (buyer vs provider) which is the right separation of concerns. Key validation is checked on every request with a fast in-memory check. Key records include rate_limit field allowing per-key customization. Discovery endpoints (/discover, /services, /mcp/descriptor) are public (no auth required) which is correct for autonomous exploration. MINOR CONCERN: the format 'key_id:secret' uses a colon delimiter — if key_id or secret ever contain colons, parsing breaks. The `parts = token.split(':', 1)` pattern in proxy.py handles this correctly (only splits on first colon), but this is an implementation detail not guaranteed to agents in the docs.",
+      "positives": [
+        "Simple Bearer token with key_id:secret — no OAuth complexity",
+        "Key creation is a single POST call — fully autonomous setup",
+        "Discovery is public (no auth) — agents can explore without credentials",
+        "Role-based keys (buyer vs provider) — correct access separation",
+        "Rate limit embedded in key record — no separate config step",
+        "No session management complexity — stateless auth"
+      ],
+      "negatives": [
+        "Key format documentation does not explicitly guarantee colon-in-secret safety",
+        "No key rotation endpoint documented for automated credential cycling",
+        "No key expiry or TTL option — security risk for long-running agents",
+        "No IP allowlist option on keys — a compromised key has no scope restriction",
+        "Key creation response schema not shown in MCP descriptor — agent must check separate docs"
+      ]
+    }
+  },
+  "overall_score": 6.6,
+  "score_calculation": "Sum of 8 dimension scores (7+6+6+6+7+6+7+8=53) divided by 8 = 6.625, rounded to 6.6",
+  "pain_points": [
+    "BLOCKING — Wallet deposit requires a human-facing checkout URL (NOWPayments web UI). An autonomous agent cannot programmatically complete a deposit. Without a direct USDC address or x402-native deposit path, the agent must pause and wait for a human to fund the wallet. This breaks the core promise of autonomous operation.",
+    "BLOCKING — The MCP Tool Descriptor's per-service input_schema is a useless generic stub. Every service has identical schema (path, method, body). An agent cannot auto-generate correct API calls without external documentation. The MCP integration advertised is incomplete at the most critical layer.",
+    "HIGH — Escrow is not automatically applied to standard marketplace transactions — only to Agent Provider transactions in Phase 6 (not yet live). A buyer agent has no automatic payment protection on current live services.",
+    "HIGH — Proxy errors (upstream provider down or bad request) both return HTTP 400. An agent cannot distinguish platform-level errors from provider-level errors without string-parsing the detail field, which is fragile.",
+    "HIGH — The automated security review pipeline for service providers is not yet live (Phase 6). Services can be listed without any verified reachability check. As a buyer agent, I may call a service that was never tested to actually work.",
+    "MEDIUM — Dispute resolution has no defined SLA, no resolution status polling, and requires human admin for refund. An autonomous agent that files a dispute is effectively blocked from recovering funds without human intervention.",
+    "MEDIUM — No spend budget cap configurable per agent. A runaway agent or a malicious service that tricks an agent into repeated calls can drain the entire wallet balance with no circuit breaker.",
+    "MEDIUM — Reputation data is not inlined in service listing responses. Evaluating a service before calling requires 2-3 additional API calls (get service + get service reputation + check trending), adding latency to the agent's decision loop.",
+    "LOW — The discovery search is keyword-based, not semantic. An agent with a capability requirement ('I need a service that returns RSI for BTCUSDT as a float') cannot express that programmatically — it must construct keyword queries and parse free-text descriptions."
+  ],
+  "missing_capabilities": [
+    "Direct on-chain USDC deposit address per buyer account — essential for autonomous wallet funding without human intervention",
+    "x402-native buyer deposit path — the platform advertises x402 but uses it only for provider-side verification, not for buyer deposits",
+    "Service-specific OpenAPI/JSON Schema in MCP descriptor — without this, MCP integration is discovery-only, not call-generation",
+    "Programmatic deposit status polling endpoint — agents need GET /api/v1/deposits/{id} to confirm funding without relying on IPN webhooks they may not control",
+    "Per-agent spend budget cap — configurable daily/monthly USDC spend limit with automatic suspension on breach",
+    "Inline quality signals in /discover and /services responses — reputation_score, uptime_30d, error_rate_7d, last_health_check fields on every service listing",
+    "Capability taxonomy standard — a structured, machine-readable tag system for what a service INPUTS and OUTPUTS (not just free-form text tags)",
+    "Dispute resolution status endpoint — GET /api/v1/escrow/disputes/{id} with status, admin_response, resolution_deadline",
+    "Self-service refund within escrow window — buyer should be able to request refund without admin involvement if within dispute window",
+    "Provider upstream rate limit field on service listings — so agents can plan concurrency without hitting provider-side throttling surprises",
+    "Webhook subscription for balance events — let agent receive push notification when balance drops below threshold, rather than polling",
+    "Sandboxed test mode with mock services — agents need a way to validate integration flows without spending real USDC"
+  ],
+  "top_3_improvements": [
+    "IMPLEMENT PROGRAMMATIC WALLET FUNDING: Add a GET /api/v1/deposits/{buyer_id}/address endpoint that returns a dedicated on-chain USDC deposit address (Base network) per buyer. Monitor the address for incoming transfers and auto-credit the balance. This is the single most important fix — without it, the platform cannot be used autonomously by agents. Alternatively, implement x402-based balance top-up: agent sends an x402 payment header with a proxy call, and if balance is insufficient, the platform auto-accepts the payment and credits it inline.",
+    "ENRICH PER-SERVICE MCP SCHEMAS: For every service listed, require providers to submit an OpenAPI spec or endpoint schema at registration time. Expose this as 'endpoint_schemas' in the per-service MCP tool descriptor. At minimum, include the required request body fields and their types. This transforms the MCP descriptor from a discovery tool into an actual integration tool — an agent can read the descriptor and generate a valid API call without any additional documentation lookup.",
+    "INLINE QUALITY SIGNALS IN DISCOVERY RESPONSES: Add the following fields to every /discover and /services/{id} response: reputation_score (float 0-100), uptime_30d (percentage), error_rate_7d (percentage), last_successful_call (ISO timestamp), report_count (int). This eliminates the need for agents to make secondary reputation API calls before deciding to use a service, and enables agents to apply quality thresholds in a single discovery query (e.g. 'only show services with uptime_30d >= 99.0')."
+  ],
+  "would_integrate": true,
+  "reasoning": "I would integrate with AgenticTrade, but with significant caveats that prevent full autonomous operation today. The platform has the right architectural instincts: proxy-based payment abstraction, MCP descriptor endpoint, per-call billing, structured error codes, and rate limit headers are all evidence of genuine agent-first thinking. The core 'call service, get billed automatically' loop works correctly once the wallet is funded. However, two blockers prevent fully autonomous operation: (1) wallet funding requires a human to complete a web checkout — an agent cannot self-fund, and (2) the MCP descriptor's per-service schemas are generic stubs, so agents still need external documentation to make correct API calls. I would integrate now if a human operator pre-funds the wallet and I maintain an out-of-band process to handle re-funding when balance drops below threshold. For an agent that needs to discover and call services without any human in the loop at any point, the platform is not yet ready. The Phase 6 Agent Provider system and the missing programmatic deposit path are the critical gaps. Given the early-access status and the clear roadmap, integration makes sense as a bet on the platform maturing — but production autonomous operation requires the wallet funding gap to be closed first."
+}

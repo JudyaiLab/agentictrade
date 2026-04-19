@@ -1,0 +1,65 @@
+{% extends "portal/base.html" %}
+{% block title %}Register{% endblock %}
+{% block meta_description %}Create your AgenticTrade account. Start listing AI agent APIs or build agents that discover, call, and pay for services in USDC.{% endblock %}
+{% block og_title %}Register — AgenticTrade API Marketplace{% endblock %}
+{% block og_description %}Join AgenticTrade, the marketplace where AI agents discover, call, and pay for API services autonomously. Per-call USDC billing.{% endblock %}
+{% block canonical %}https://agentictrade.io/portal/register{% endblock %}
+
+{% block content %}
+<div style="max-width: 420px; margin: 80px auto;">
+    <div style="text-align: center; margin-bottom: 32px;">
+        <a href="/" style="font-weight: 700; font-size: 24px; color: var(--text-bright); text-decoration: none;">AgenticTrade</a>
+        <h1 style="font-size: 20px; font-weight: 600; margin-top: 16px; color: var(--text-bright);">Create Provider Account</h1>
+        <p style="font-size: 14px; color: var(--text-dim); margin-top: 8px;">List your API and start earning from AI agents worldwide.</p>
+    </div>
+
+    {% if ref_code %}
+    <div class="portal-alert portal-alert-success" style="display:flex; align-items:center; gap:8px;">
+        <span style="font-size:18px;">&#x1F381;</span>
+        <span>You've been referred! Code <strong>{{ ref_code }}</strong> will be applied automatically. You'll get <strong>2 months of 0% commission</strong> instead of 1.</span>
+    </div>
+    {% endif %}
+
+    {% if promo_code|default('', true) and not error %}
+    <div class="portal-alert portal-alert-success" style="display:flex; align-items:center; gap:8px;">
+        <span style="font-size:18px;">&#x1F680;</span>
+        <span>Promo code <strong>{{ promo_code }}</strong> detected! Complete registration to get <strong>3 months of 0% commission</strong>.</span>
+    </div>
+    {% endif %}
+
+    {% if error %}
+    <div class="portal-alert portal-alert-error">{{ error }}</div>
+    {% endif %}
+
+    <div class="portal-card">
+        <form method="POST" action="/portal/register" class="portal-form" style="max-width: 100%;">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <input type="hidden" name="ref_code" value="{{ ref_code|default('', true) }}">
+            <label for="display_name">Display Name</label>
+            <input type="text" id="display_name" name="display_name" placeholder="Your name or company" autocomplete="name">
+
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required placeholder="you@example.com" autocomplete="email">
+
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required minlength="8" placeholder="Minimum 8 characters" autocomplete="new-password">
+
+            <label for="confirm_password">Confirm Password</label>
+            <input type="password" id="confirm_password" name="confirm_password" required minlength="8" placeholder="Confirm your password" autocomplete="new-password">
+
+            <label for="promo_code">Promo Code <span style="font-weight: 400; color: var(--text-dim);">(optional)</span></label>
+            <input type="text" id="promo_code" name="promo_code" placeholder="e.g. PRODUCTHUNT" value="{{ promo_code|default('', true) }}" autocomplete="off" style="text-transform: uppercase;">
+
+            <button type="submit" class="btn-primary" style="margin-top: 8px;">Create Account</button>
+        </form>
+    </div>
+
+    <div style="text-align: center; font-size: 13px; color: var(--text-dim); margin-top: 16px;">
+        <p>First month: <strong style="color: var(--accent);">0% commission</strong>. No credit card required.</p>
+    </div>
+
+    <p style="text-align: center; font-size: 14px; color: var(--text-dim); margin-top: 20px;">
+        Already have an account? <a href="/portal/login" style="color: var(--accent);">Sign in</a>
+    </p>
+</div>
+{% endblock %}

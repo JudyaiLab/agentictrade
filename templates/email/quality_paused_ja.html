@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">
+
+<div style="background: #F8D7DA; border-left: 4px solid #DC3545; padding: 16px; border-radius: 4px; margin-bottom: 24px;">
+  <strong style="color: #721C24;">⛔ サービス一時停止</strong>
+</div>
+
+<p>お客様のサービス <strong>{{service_name}}</strong> は<strong style="color: #dc3545;">自動的に一時停止</strong>されました。品質スコア <strong>{{quality_score}}/100</strong> が3回連続のモニタリングで <strong>{{threshold_pause}}</strong> を下回りました。</p>
+
+<h2 style="font-size: 18px; margin-top: 32px;">現在の状況</h2>
+<ul style="line-height: 2;">
+  <li>サービスはマーケットプレイスに<strong>表示されなくなりました</strong></li>
+  <li>既存のAPIコールには503レスポンスが返されます</li>
+  <li>サービスのデータと設定は<strong>保持</strong>されています</li>
+  <li>問題解決後に再有効化を申請できます</li>
+</ul>
+
+<h2 style="font-size: 18px; margin-top: 32px;">再有効化の方法</h2>
+<ol style="line-height: 2;">
+  <li>ダウンタイムや遅延の原因となっているエンドポイントの問題を修正してください</li>
+  <li>サービスが安定して応答することを確認してください（5秒以内、HTTP 2xx）</li>
+  <li>再有効化レビューについてお問い合わせください</li>
+  <li>完全な再有効化の前に24時間のモニタリング期間があります</li>
+</ol>
+
+<p style="margin: 24px 0;">
+  <a href="{{policy_url}}" style="background: #6C63FF; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 600;">品質ポリシーを見る</a>
+</p>
+
+<p style="margin-top: 32px; color: #666; font-size: 14px;">
+  サポートが必要ですか？このメールに返信してください。<br>
+  <a href="https://agentictrade.io" style="color: #6C63FF;">agentictrade.io</a>
+</p>
+
+<hr style="border: none; border-top: 1px solid #eee; margin: 32px 0;">
+<p style="color: #999; font-size: 12px;">
+  サービスID: {{service_id}}<br>
+  <a href="{{policy_url}}">品質ポリシー</a>に基づきサービスが自動一時停止されたため、このメールが送信されました。
+</p>
+
+</body>
+</html>

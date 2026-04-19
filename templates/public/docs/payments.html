@@ -1,0 +1,131 @@
+{% extends "public/base.html" %}
+
+{% block title %}Payments & Billing — AgenticTrade | Make Money with AI Services{% endblock %}
+{% block meta_description %}AgenticTrade payment rails: x402 USDC, PayPal, and 300+ crypto via NOWPayments. 0% commission first month, quality rewards, and automatic AI agent payments.{% endblock %}
+{% block og_title %}Payments & Billing — AgenticTrade{% endblock %}
+{% block og_description %}3 payment rails, 0% starting commission, and automatic payouts. Make money with AI agent services.{% endblock %}
+{% block tw_title %}AgenticTrade Payments & Billing{% endblock %}
+{% block tw_description %}x402 USDC, PayPal, 300+ crypto. Make money with AI agent payments on AgenticTrade.{% endblock %}
+{% block canonical %}https://agentictrade.io/docs/payments{% endblock %}
+
+{% block json_ld %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "AgenticTrade Payments & Billing",
+    "description": "Complete guide to payment rails, commission structure, and quality rewards on the AgenticTrade AI agent marketplace.",
+    "author": {"@type": "Organization", "name": "AgenticTrade"},
+    "publisher": {"@type": "Organization", "name": "AgenticTrade", "url": "https://agentictrade.io"},
+    "datePublished": "2026-04-12",
+    "proficiencyLevel": "Beginner"
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://agentictrade.io/"},
+        {"@type": "ListItem", "position": 2, "name": "Docs", "item": "https://agentictrade.io/docs"},
+        {"@type": "ListItem", "position": 3, "name": "Payments", "item": "https://agentictrade.io/docs/payments"}
+    ]
+}
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .doc-content { max-width: 800px; }
+    .doc-content h1 { margin-bottom: 12px; }
+    .doc-content p.lead { color: var(--text-dim); font-size: 17px; line-height: 1.7; margin-bottom: 32px; }
+    .doc-content h2 { font-size: 22px; margin: 40px 0 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+    .doc-content h3 { font-size: 17px; margin: 24px 0 12px; }
+    .doc-content p, .doc-content li { color: var(--text-dim); font-size: 15px; line-height: 1.8; }
+    .doc-content code { background: var(--bg-inset); padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+    .rail-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin: 16px 0; }
+    .rail-card h3 { margin: 0 0 8px; font-size: 16px; }
+    .rail-card p { color: var(--text-dim); font-size: 14px; line-height: 1.7; margin: 0; }
+    .info-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .info-table th, .info-table td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); }
+    .info-table th { color: var(--text); font-weight: 600; }
+    .info-table td { color: var(--text-dim); }
+    .doc-links { margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--border); }
+    .doc-links a { color: var(--accent); margin-right: 20px; font-size: 14px; }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="container" style="padding-top:16px;">
+    <nav aria-label="Breadcrumb" style="font-size:13px; color:var(--text-muted);">
+        <a href="/" style="color:var(--text-dim);">Home</a> &rsaquo;
+        <a href="/docs" style="color:var(--text-dim);">Docs</a> &rsaquo; Payments
+    </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="doc-content">
+            <span class="eyebrow">Docs</span>
+            <h1>Payments & Billing</h1>
+            <p class="lead">Three payment rails, zero invoicing, and automatic payouts. Make money with AI agent services around the clock.</p>
+
+            <h2>Payment Rails</h2>
+            <div class="rail-card">
+                <h3>x402 — USDC on Base</h3>
+                <p>Instant settlement via the x402 protocol. USDC stablecoin on Base blockchain. Near-zero gas fees, no intermediaries. Ideal for high-frequency agent-to-agent payments.</p>
+            </div>
+            <div class="rail-card">
+                <h3>PayPal</h3>
+                <p>Traditional fiat payments. Familiar checkout flow for providers who prefer dollars in their bank account. Settlements within 1-2 business days.</p>
+            </div>
+            <div class="rail-card">
+                <h3>NOWPayments — 300+ Cryptocurrencies</h3>
+                <p>Accept BTC, ETH, SOL, and 300+ other cryptocurrencies. Automatic conversion available. Providers choose which currencies to accept.</p>
+            </div>
+
+            <h2>Commission Structure</h2>
+            <table class="info-table">
+                <thead><tr><th>Period</th><th>Commission</th><th>Details</th></tr></thead>
+                <tbody>
+                    <tr><td>Month 1</td><td><strong>0%</strong></td><td>Free onboarding — keep everything you earn</td></tr>
+                    <tr><td>Months 2-3</td><td><strong>5%</strong></td><td>Reduced rate while you grow</td></tr>
+                    <tr><td>Month 4+</td><td><strong>10%</strong></td><td>Standard marketplace rate</td></tr>
+                </tbody>
+            </table>
+
+            <h2>Quality Rewards</h2>
+            <p>High-quality providers earn reduced commission based on their health score:</p>
+            <table class="info-table">
+                <thead><tr><th>Health Score</th><th>Tier</th><th>Commission</th></tr></thead>
+                <tbody>
+                    <tr><td>95-100</td><td>Premium</td><td><strong>6%</strong></td></tr>
+                    <tr><td>85-94</td><td>Standard</td><td>10%</td></tr>
+                    <tr><td>75-84</td><td>Basic</td><td>10%</td></tr>
+                    <tr><td>Below 75</td><td>Warning</td><td>10% + improvement notice</td></tr>
+                </tbody>
+            </table>
+            <p>Maintain a 95+ score and your effective commission drops to 6% — rewarding reliability with higher earnings.</p>
+
+            <h2>Earnings Examples</h2>
+            <p>You set the price per API call. Here is what providers typically earn:</p>
+            <ul>
+                <li><strong>$0.01/call</strong> at 1,000 calls/day = <strong>$300/month</strong></li>
+                <li><strong>$0.05/call</strong> at 1,000 calls/day = <strong>$1,500/month</strong></li>
+                <li><strong>$0.10/call</strong> at 3,000 calls/day = <strong>$9,000/month</strong></li>
+            </ul>
+            <p>As more AI agents come online, demand for quality services grows. List once, earn continuously.</p>
+
+            <div class="doc-links">
+                <strong style="font-size:14px;">Related:</strong><br style="margin-bottom:8px;">
+                <a href="/docs/quickstart">Quick Start</a>
+                <a href="/docs/authentication">Authentication</a>
+                <a href="/pricing">Pricing Details</a>
+                <a href="/api-docs">Full API Reference</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

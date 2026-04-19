@@ -1,0 +1,311 @@
+{% extends "public/base.html" %}
+
+{% block title %}{{ t('terms.page_title') or 'Terms of Service — AgenticTrade' }}{% endblock %}
+{% block meta_description %}{{ t('terms.meta_desc') or 'AgenticTrade Terms of Service. Read our terms governing the use of the AgenticTrade API marketplace for AI agents.' }}{% endblock %}
+{% block og_title %}{{ t('terms.og_title') or 'Terms of Service — AgenticTrade API Marketplace' }}{% endblock %}
+{% block og_description %}{{ t('terms.og_desc') or 'Terms of Service governing the AgenticTrade API marketplace for AI agents.' }}{% endblock %}
+{% block tw_title %}{{ t('terms.tw_title') or 'AgenticTrade Terms of Service' }}{% endblock %}
+{% block tw_description %}{{ t('terms.tw_desc') or 'Terms of Service for AgenticTrade, the API marketplace for AI agents.' }}{% endblock %}
+{% block robots %}index, follow{% endblock %}
+{% block canonical %}https://agentictrade.io/terms{% endblock %}
+
+{% block json_ld %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Terms of Service — AgenticTrade",
+    "description": "Terms of Service governing the use of the AgenticTrade API marketplace.",
+    "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://agentictrade.io/"},
+            {"@type": "ListItem", "position": 2, "name": "Terms of Service", "item": "https://agentictrade.io/terms"}
+        ]
+    }
+}
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .legal-hero { padding: 60px 0 40px; max-width: 800px; }
+    .legal-hero p { color: var(--text-dim); font-size: 16px; line-height: 1.7; }
+
+    .legal-content { max-width: 800px; padding-bottom: 60px; }
+    .legal-content h2 {
+        font-size: 22px;
+        margin-top: 48px;
+        margin-bottom: 16px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border);
+    }
+    .legal-content h2:first-of-type { border-top: none; margin-top: 0; padding-top: 0; }
+    .legal-content h3 { font-size: 17px; margin-top: 24px; margin-bottom: 10px; }
+    .legal-content p, .legal-content li {
+        color: var(--text-dim);
+        font-size: 15px;
+        line-height: 1.8;
+    }
+    .legal-content ul, .legal-content ol {
+        padding-left: 24px;
+        margin-bottom: 16px;
+    }
+    .legal-content li { margin-bottom: 8px; }
+    .legal-content .effective-date {
+        display: inline-block;
+        background: var(--bg-card);
+        border-radius: 8px;
+        padding: 8px 16px;
+        font-size: 14px;
+        color: var(--text-dim);
+        box-shadow: var(--ring);
+        margin-bottom: 32px;
+    }
+
+    .legal-toc {
+        background: var(--bg-card);
+        border-radius: 12px;
+        padding: 24px 28px;
+        margin-bottom: 40px;
+        box-shadow: var(--ring);
+    }
+    .legal-toc h3 { margin-top: 0; margin-bottom: 12px; font-size: 15px; }
+    .legal-toc ol { padding-left: 20px; margin-bottom: 0; }
+    .legal-toc li { margin-bottom: 4px; }
+    .legal-toc a { color: var(--accent); text-decoration: none; font-size: 14px; }
+    .legal-toc a:hover { text-decoration: underline; }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="container" style="padding-top:16px;">
+    <nav aria-label="Breadcrumb" style="font-size:13px; color:var(--text-muted);">
+        <a href="/" style="color:var(--text-dim);">{{ t('breadcrumb.home') or 'Home' }}</a> &rsaquo; Terms of Service
+    </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+
+<section class="section">
+    <div class="container">
+        <div class="legal-hero">
+            <span class="eyebrow">Legal</span>
+            <h1>Terms of Service</h1>
+            <p>These Terms of Service govern your use of the AgenticTrade platform operated by JudyAI Lab. By accessing or using AgenticTrade, you agree to be bound by these terms.</p>
+        </div>
+
+        <div class="legal-content">
+            <div class="effective-date">Last updated: March 2026</div>
+
+            {# Table of Contents #}
+            <div class="legal-toc">
+                <h3>Table of Contents</h3>
+                <ol>
+                    <li><a href="#acceptance">Acceptance of Terms</a></li>
+                    <li><a href="#service-description">Service Description</a></li>
+                    <li><a href="#accounts">Accounts and Registration</a></li>
+                    <li><a href="#provider-terms">Provider Terms</a></li>
+                    <li><a href="#buyer-agent-terms">Buyer and Agent Terms</a></li>
+                    <li><a href="#payment-terms">Payment Terms</a></li>
+                    <li><a href="#commission-structure">Commission Structure</a></li>
+                    <li><a href="#intellectual-property">Intellectual Property</a></li>
+                    <li><a href="#prohibited-use">Prohibited Use</a></li>
+                    <li><a href="#limitation-of-liability">Limitation of Liability</a></li>
+                    <li><a href="#indemnification">Indemnification</a></li>
+                    <li><a href="#termination">Termination</a></li>
+                    <li><a href="#governing-law">Governing Law</a></li>
+                    <li><a href="#changes">Changes to Terms</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="#sla">Service Level Agreement</a></li>
+                </ol>
+            </div>
+
+            {# 1. Acceptance of Terms #}
+            <h2 id="acceptance">1. Acceptance of Terms</h2>
+            <p>By accessing, browsing, or using the AgenticTrade platform ("Platform"), including its APIs, website (agentictrade.io), and related services, you ("User") agree to be bound by these Terms of Service ("Terms"). If you do not agree, you must not use the Platform.</p>
+            <p>If you are using the Platform on behalf of an organization, you represent and warrant that you have the authority to bind that organization to these Terms. References to "you" include both you as an individual and any such organization.</p>
+            <p>These Terms also apply to AI agents, bots, or automated systems that interact with the Platform on your behalf or under your account credentials. You are responsible for all activity conducted through your account, whether initiated by a human operator or an automated agent.</p>
+
+            {# 2. Service Description #}
+            <h2 id="service-description">2. Service Description</h2>
+            <p>AgenticTrade is an API marketplace that enables AI agents to discover, call, and pay for API services autonomously. The Platform connects API providers ("Providers") with API consumers, including AI agents and their operators ("Buyers").</p>
+            <p>Core Platform features include:</p>
+            <ul>
+                <li>A searchable marketplace of API services with machine-readable MCP Tool Descriptors</li>
+                <li>Proxy Key infrastructure that routes API requests without exposing provider credentials</li>
+                <li>Automated payment processing via USDC on Base (x402 protocol), PayPal, and cryptocurrency (NOWPayments)</li>
+                <li>Usage analytics, billing dashboards, and commission management</li>
+                <li>Agent identity registration and wallet management</li>
+            </ul>
+            <p>AgenticTrade acts as an intermediary marketplace. We do not own, operate, or guarantee the quality of third-party API services listed on the Platform. Providers are solely responsible for the functionality, availability, and accuracy of their services.</p>
+
+            {# 3. Accounts and Registration #}
+            <h2 id="accounts">3. Accounts and Registration</h2>
+            <p>To use certain features of the Platform, you must create an account. You agree to provide accurate, current, and complete information during registration and to keep your account information updated.</p>
+            <p>You are responsible for maintaining the confidentiality of your account credentials, API keys, and Proxy Keys. You must notify us immediately at partners@agentictrade.io if you suspect any unauthorized use of your account.</p>
+            <p>You may not create multiple accounts to circumvent commission schedules, usage limits, or other Platform policies. AgenticTrade reserves the right to suspend or terminate accounts that violate this provision.</p>
+
+            {# 4. Provider Terms #}
+            <h2 id="provider-terms">4. Provider Terms</h2>
+            <p>As a Provider, you agree to the following additional terms:</p>
+            <ul>
+                <li><strong>Accuracy:</strong> You will provide accurate descriptions of your API services, including capabilities, parameters, pricing, rate limits, and any usage restrictions.</li>
+                <li><strong>Availability:</strong> You will make commercially reasonable efforts to maintain the uptime and performance of your listed services. The Platform may display health scores based on response time, error rate, and uptime metrics.</li>
+                <li><strong>Compliance:</strong> Your API services must comply with all applicable laws and regulations. You must not list services that facilitate illegal activities, distribute malicious content, or violate third-party intellectual property rights.</li>
+                <li><strong>Pricing:</strong> You set your own per-call pricing. AgenticTrade does not dictate prices but reserves the right to remove services with deceptive or misleading pricing practices.</li>
+                <li><strong>Data handling:</strong> If your API processes data submitted by Buyers or their agents, you must handle such data in accordance with your published privacy policy and all applicable data protection laws.</li>
+                <li><strong>Proxy Keys:</strong> Your real API credentials are stored encrypted and never exposed to consuming agents. You may rotate your credentials at any time through the Provider dashboard.</li>
+            </ul>
+
+            {# 5. Buyer and Agent Terms #}
+            <h2 id="buyer-agent-terms">5. Buyer and Agent Terms</h2>
+            <p>As a Buyer or operator of AI agents using the Platform, you agree to the following:</p>
+            <ul>
+                <li><strong>Authorized use:</strong> You will only use API services for lawful purposes and in accordance with each Provider's stated terms of use.</li>
+                <li><strong>Agent responsibility:</strong> You are fully responsible for all actions taken by AI agents operating under your account, including API calls made, data submitted, and payments initiated.</li>
+                <li><strong>Rate limits:</strong> You will respect per-client rate limits (default: 60 requests/minute, 300 burst) and any additional limits set by individual Providers.</li>
+                <li><strong>Wallet funding:</strong> You are responsible for maintaining sufficient USDC balance or other valid payment method to cover API call costs. Failed payments may result in service interruption.</li>
+                <li><strong>No reverse engineering:</strong> You may not attempt to reverse-engineer, extract, or reconstruct Provider API keys or credentials from Proxy Key interactions.</li>
+            </ul>
+
+            {# 6. Payment Terms #}
+            <h2 id="payment-terms">6. Payment Terms</h2>
+            <p>AgenticTrade supports the following payment methods:</p>
+            <ul>
+                <li><strong>USDC on Base:</strong> Primary payment method using the x402 HTTP-native payment protocol. Payments settle on the Base blockchain (Ethereum L2) and are verifiable on-chain.</li>
+                <li><strong>Cryptocurrency:</strong> 300+ cryptocurrencies supported via NOWPayments integration.</li>
+                <li><strong>PayPal:</strong> Fiat currency payments processed through PayPal.</li>
+            </ul>
+            <p>All API call prices are denominated in USD equivalent (USDC). Prices are set by Providers and displayed on each service listing. The price at the time of the API call is the price charged.</p>
+            <p>Provider payouts are processed according to the settlement schedule associated with your account tier. AgenticTrade deducts the applicable commission before disbursing funds to Providers.</p>
+            <p>Refunds are handled on a case-by-case basis. If an API call fails due to a Provider-side error and the call was charged, you may request a review through the Platform dashboard. AgenticTrade does not guarantee refunds for third-party service failures.</p>
+
+            {# 7. Commission Structure #}
+            <h2 id="commission-structure">7. Commission Structure</h2>
+            <p>AgenticTrade charges a commission on each successful API call processed through the Platform. The commission rate is determined by the Provider's tenure on the Platform:</p>
+            <ul>
+                <li><strong>Month 1:</strong> 0% commission &mdash; Providers keep 100% of revenue during their first month.</li>
+                <li><strong>Months 2&ndash;3:</strong> 5% commission.</li>
+                <li><strong>Month 4 onward:</strong> 10% commission (capped &mdash; the commission rate will never exceed 10%).</li>
+            </ul>
+            <p>Providers with high health scores may qualify for reduced commission rates through the Quality Rewards program. Providers with a health score of 80 or above may receive an 8% rate; those at 95 or above may receive a 6% rate. The Platform applies whichever rate is lower: the time-based rate or the quality-based rate.</p>
+            <p>AgenticTrade reserves the right to modify the commission structure with 30 days' advance notice to active Providers. Any changes will be communicated via email and the Provider dashboard.</p>
+
+            {# 8. Intellectual Property #}
+            <h2 id="intellectual-property">8. Intellectual Property</h2>
+            <p>The AgenticTrade Platform, including its website, APIs, branding, documentation, and MCP Tool Descriptor format, is the intellectual property of JudyAI Lab. You may not reproduce, distribute, or create derivative works from Platform materials without prior written consent.</p>
+            <p>Providers retain all intellectual property rights to their API services, documentation, and underlying technology. By listing a service on AgenticTrade, Providers grant the Platform a non-exclusive, worldwide license to display service descriptions, generate MCP Tool Descriptors, and route API requests through Proxy Key infrastructure.</p>
+            <p>Buyers and agents do not acquire any intellectual property rights to Provider services through API calls. Usage rights are limited to the scope defined by each Provider's terms.</p>
+
+            {# 9. Prohibited Use #}
+            <h2 id="prohibited-use">9. Prohibited Use</h2>
+            <p>You may not use the Platform to:</p>
+            <ul>
+                <li>Violate any applicable law, regulation, or third-party rights</li>
+                <li>List or consume services that facilitate illegal activities, fraud, or money laundering</li>
+                <li>Attempt to bypass Proxy Key infrastructure to access Provider credentials directly</li>
+                <li>Conduct denial-of-service attacks, scraping, or other abusive behavior against the Platform or listed services</li>
+                <li>Create multiple accounts to manipulate commission schedules, reviews, or marketplace rankings</li>
+                <li>Distribute malware, exploits, or malicious payloads through API calls</li>
+                <li>Misrepresent the capabilities, performance, or pricing of a listed API service</li>
+            </ul>
+
+            {# 10. Limitation of Liability #}
+            <h2 id="limitation-of-liability">10. Limitation of Liability</h2>
+            <p>TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, AGENTICTRADE AND JUDYAI LAB SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING BUT NOT LIMITED TO LOSS OF PROFITS, DATA, REVENUE, OR BUSINESS OPPORTUNITIES, ARISING OUT OF OR IN CONNECTION WITH YOUR USE OF THE PLATFORM.</p>
+            <p>AgenticTrade's total aggregate liability to you for any claims arising from these Terms or your use of the Platform shall not exceed the total amount of commissions you have paid to AgenticTrade in the twelve (12) months preceding the claim.</p>
+            <p>AgenticTrade does not guarantee the availability, accuracy, quality, or performance of third-party API services listed on the Platform. Provider services are offered "as is" by their respective Providers. Your use of any Provider service is at your own risk.</p>
+            <p>AgenticTrade is not responsible for losses arising from blockchain network congestion, smart contract failures, wallet compromises, or cryptocurrency price fluctuations.</p>
+
+            {# 11. Indemnification #}
+            <h2 id="indemnification">11. Indemnification</h2>
+            <p>You agree to indemnify, defend, and hold harmless AgenticTrade, JudyAI Lab, and their officers, directors, employees, and agents from and against any claims, liabilities, damages, losses, and expenses (including reasonable legal fees) arising from:</p>
+            <ul>
+                <li>Your use of the Platform or any Provider service</li>
+                <li>Your violation of these Terms</li>
+                <li>Actions taken by AI agents operating under your account</li>
+                <li>Your violation of any third-party rights, including intellectual property rights</li>
+            </ul>
+
+            {# 12. Termination #}
+            <h2 id="termination">12. Termination</h2>
+            <p>You may terminate your account at any time by contacting us at partners@agentictrade.io. Upon termination, your access to the Platform will be revoked and any pending payouts will be processed within 30 days, minus applicable commissions.</p>
+            <p>AgenticTrade may suspend or terminate your account at any time, with or without notice, if we reasonably believe you have violated these Terms, engaged in fraudulent activity, or pose a security risk to the Platform or its users.</p>
+            <p>Upon termination: (a) all licenses granted to you under these Terms will cease immediately; (b) you must stop all use of the Platform; (c) Providers must cease representing their services as available through AgenticTrade; (d) provisions of these Terms that by their nature should survive termination will survive, including but not limited to intellectual property, limitation of liability, indemnification, and governing law.</p>
+
+            {# 13. Governing Law #}
+            <h2 id="governing-law">13. Governing Law</h2>
+            <p>These Terms shall be governed by and construed in accordance with the laws applicable to international commercial transactions. Any disputes arising from these Terms shall first be subject to good-faith negotiation between the parties for a period of thirty (30) days.</p>
+            <p>If negotiation fails, disputes shall be resolved through binding arbitration administered in accordance with internationally recognized arbitration rules. The language of arbitration shall be English.</p>
+            <p>Nothing in this section prevents either party from seeking injunctive or other equitable relief from a court of competent jurisdiction where necessary to prevent irreparable harm.</p>
+
+            {# 14. Changes to Terms #}
+            <h2 id="changes">14. Changes to Terms</h2>
+            <p>AgenticTrade reserves the right to modify these Terms at any time. We will notify you of material changes by posting the updated Terms on the Platform and, where possible, sending notice to the email address associated with your account.</p>
+            <p>Continued use of the Platform after the effective date of any changes constitutes your acceptance of the updated Terms. If you do not agree with the changes, you must stop using the Platform and close your account.</p>
+
+            {# 15. Contact #}
+            <h2 id="contact">15. Contact</h2>
+            <p>If you have questions or concerns about these Terms of Service, please contact us:</p>
+            <ul>
+                <li><strong>Email:</strong> <a href="mailto:partners@agentictrade.io">partners@agentictrade.io</a></li>
+                <li><strong>Operator:</strong> JudyAI Lab</li>
+                <li><strong>Website:</strong> <a href="https://agentictrade.io">agentictrade.io</a></li>
+            </ul>
+
+            {# 16. Service Level Agreement #}
+            <h2 id="sla">16. Service Level Agreement</h2>
+            <p>AgenticTrade commits to maintaining high availability for all platform services. This Service Level Agreement ("SLA") defines our uptime commitment and the remedies available if we fall short.</p>
+
+            <h3>16.1 Uptime Commitment</h3>
+            <p>AgenticTrade guarantees <strong>99.9% monthly uptime</strong> for the following core platform services:</p>
+            <ul>
+                <li>API Gateway (request routing and Proxy Key infrastructure)</li>
+                <li>Marketplace Registry (service discovery and MCP Tool Descriptor delivery)</li>
+                <li>Payment Processing (x402 settlement, wallet operations, and payout initiation)</li>
+                <li>Authentication and Agent Identity services</li>
+            </ul>
+            <p>"Monthly Uptime" is calculated as: <em>(Total Minutes in Month &minus; Downtime Minutes) / Total Minutes in Month &times; 100%</em>. Downtime is measured from the moment AgenticTrade detects or is notified of a service outage until the affected service is restored.</p>
+
+            <h3>16.2 Planned Maintenance</h3>
+            <p>Planned maintenance windows are <strong>excluded</strong> from uptime calculations. AgenticTrade will:</p>
+            <ul>
+                <li>Provide at least <strong>72 hours advance notice</strong> for scheduled maintenance via the <a href="/status">Status Page</a> and email to registered users.</li>
+                <li>Schedule maintenance during low-traffic periods (typically 06:00&ndash;10:00 UTC on weekdays) whenever possible.</li>
+                <li>Limit planned maintenance to a maximum of <strong>4 hours per month</strong>.</li>
+            </ul>
+
+            <h3>16.3 Service Credits</h3>
+            <p>If AgenticTrade fails to meet the 99.9% monthly uptime commitment, affected users are eligible for service credits according to the following schedule:</p>
+            <ul>
+                <li><strong>99.0%&ndash;99.9% uptime:</strong> 10% credit on that month's platform commission fees.</li>
+                <li><strong>95.0%&ndash;99.0% uptime:</strong> 25% credit on that month's platform commission fees.</li>
+                <li><strong>Below 95.0% uptime:</strong> 50% credit on that month's platform commission fees.</li>
+            </ul>
+            <p>To request a service credit, users must submit a written request to <a href="mailto:support@agentictrade.io">support@agentictrade.io</a> within <strong>30 days</strong> of the end of the affected month. Credits are applied to future invoices and are not redeemable for cash. The maximum credit for any single month shall not exceed 50% of that month's commission fees.</p>
+
+            <h3>16.4 Force Majeure Exclusions</h3>
+            <p>The uptime commitment does not apply to service disruptions caused by events beyond AgenticTrade's reasonable control, including but not limited to:</p>
+            <ul>
+                <li>Natural disasters, acts of war, terrorism, or government actions</li>
+                <li>Internet backbone failures, DDoS attacks, or third-party infrastructure outages (including cloud hosting providers and blockchain networks)</li>
+                <li>Failures of third-party Provider APIs (Provider service availability is the responsibility of the respective Provider, not AgenticTrade)</li>
+                <li>Scheduled maintenance windows as described in Section 16.2</li>
+                <li>Actions or omissions by the user, their agents, or their authorized representatives</li>
+                <li>Blockchain network congestion, hard forks, or protocol-level incidents on Base or Ethereum</li>
+            </ul>
+
+            <h3>16.5 Monitoring and Reporting</h3>
+            <p>AgenticTrade provides real-time platform health information on our <a href="/status">Status Page</a>. The Status Page displays current system status, historical uptime data, and incident notifications. Users are encouraged to subscribe to status updates for proactive awareness of any service disruptions.</p>
+
+            <div class="text-center" style="padding:48px 0 0;">
+                <a href="/privacy" class="btn-primary" style="margin-right:12px;">Read Privacy Policy</a>
+                <a href="/" class="btn-outline">Back to Home</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

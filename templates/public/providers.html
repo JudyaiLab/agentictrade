@@ -1,0 +1,296 @@
+{% extends "public/base.html" %}
+
+{% block title %}{{ t('providers.page_title') or 'Sell Your AI Service — AI Agents Pay You | AgenticTrade' }}{% endblock %}
+{% block meta_description %}{{ t('providers.meta_desc') or 'List your AI service on AgenticTrade. AI agents automatically discover your service, use it, and pay you. 3-minute setup, no code needed, 0% commission month 1.' }}{% endblock %}
+{% block og_title %}{{ t('providers.og_title') or 'Sell Your AI Service on AgenticTrade' }}{% endblock %}
+{% block og_description %}{{ t('providers.og_desc') or 'List your service. AI agents find you, use it, pay automatically. No marketing needed, no invoicing. 0% commission month 1.' }}{% endblock %}
+{% block tw_title %}{{ t('providers.tw_title') or 'Sell Your AI Service — AgenticTrade' }}{% endblock %}
+{% block tw_description %}{{ t('providers.tw_desc') or 'List your AI service in 3 minutes. AI agents find you and pay automatically. No code needed. 0% commission month 1.' }}{% endblock %}
+
+{% block json_ld %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        {
+            "@type": "Question",
+            "name": "Do I need to be a developer to sell on AgenticTrade?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "No. You can list a service in 3 minutes without writing any code. Our Provider Agent tool handles the technical setup. If you do have an existing API, you can register that directly."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "How do I get paid on AgenticTrade?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Every time an AI agent uses your service, you get paid automatically in USDC. No invoicing, no payment chasing. Money appears in your dashboard and you can withdraw anytime."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "How do AI agents find my service?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "When you list your service, AgenticTrade automatically makes it discoverable to AI agents worldwide. Agents search the marketplace, evaluate services, and choose yours based on capability and pricing — all automatically."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Is my data safe on AgenticTrade?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. Your API keys and credentials never leave your machine. AgenticTrade uses a proxy system so your real credentials are never exposed. The platform also includes rate limiting and security protections."
+            }
+        }
+    ]
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "How to Sell AI Services on AgenticTrade",
+    "description": "List your AI service and let AI agents find you, use your service, and pay you automatically.",
+    "step": [
+        {"@type": "HowToStep", "position": 1, "name": "Sign up and describe your service", "text": "Create an account, describe what your service does, and set your price. Takes 3 minutes."},
+        {"@type": "HowToStep", "position": 2, "name": "AI agents discover your service", "text": "Your service becomes automatically discoverable to AI agents worldwide. No marketing needed."},
+        {"@type": "HowToStep", "position": 3, "name": "Get paid automatically", "text": "Every time an agent uses your service, you get paid in USDC. No invoicing, no chasing payments."}
+    ]
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://agentictrade.io/"},
+        {"@type": "ListItem", "position": 2, "name": "Sell Services", "item": "https://agentictrade.io/providers"}
+    ]
+}
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .provider-hero { padding: 60px 0 40px; max-width: 640px; }
+    .provider-hero p { color: var(--text-dim); font-size: 17px; line-height: 1.7; margin-bottom: 24px; }
+
+    .path-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .path-card {
+        background: var(--bg-card); border-radius: var(--radius); padding: 32px;
+        box-shadow: var(--ring); transition: all 0.25s;
+    }
+    .path-card:hover { box-shadow: var(--ring-hover); transform: translateY(-2px); }
+    .path-card.recommended { box-shadow: 0 0 0 1px rgba(52,211,153,0.3), 0 0 30px rgba(52,211,153,0.06); }
+    .path-card h3 { margin-bottom: 12px; }
+    .path-card p { color: var(--text-dim); font-size: 14px; line-height: 1.7; margin-bottom: 16px; }
+    .path-tag {
+        display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 0.08em; padding: 3px 10px; border-radius: 9999px; margin-bottom: 14px;
+    }
+    .path-tag-green { background: rgba(52,211,153,0.1); color: var(--green); }
+    .path-tag-blue { background: var(--accent-glow); color: var(--accent); }
+
+    .benefit-list { list-style: none; padding: 0; margin: 0; }
+    .benefit-list li {
+        font-size: 14px; color: var(--text-dim); padding: 8px 0;
+        border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; gap: 10px;
+    }
+    .benefit-list li:last-child { border-bottom: none; }
+    .benefit-list .check { color: var(--green); font-weight: 700; flex-shrink: 0; }
+
+    .steps-section { margin-top: 48px; }
+    .step-row { display: flex; gap: 16px; margin-bottom: 24px; align-items: flex-start; }
+    .step-row h4 { margin-bottom: 4px; }
+    .step-row p { color: var(--text-dim); font-size: 14px; margin: 0; line-height: 1.6; }
+
+    .earnings-box {
+        background: linear-gradient(135deg, rgba(52,211,153,0.06), rgba(34,211,238,0.04));
+        border: 1px solid rgba(52,211,153,0.2);
+        border-radius: var(--radius); padding: 32px; margin: 40px 0; text-align: center;
+    }
+    .earnings-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 24px 0; }
+    .earnings-item { padding: 16px; }
+    .earnings-val { font-size: 28px; font-weight: 800; color: var(--green); }
+    .earnings-label { font-size: 13px; color: var(--text-dim); margin-top: 4px; }
+
+    .security-box {
+        background: var(--bg-card); border-radius: var(--radius); padding: 28px;
+        box-shadow: var(--ring); margin: 40px 0;
+    }
+    .security-box h3 { margin-bottom: 16px; }
+
+    @media (max-width: 900px) {
+        .path-grid { grid-template-columns: 1fr; }
+        .earnings-grid { grid-template-columns: 1fr; }
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="container" style="padding-top:16px;">
+    <nav aria-label="Breadcrumb" style="font-size:13px; color:var(--text-muted);">
+        <a href="/" style="color:var(--text-dim);">{{ t('breadcrumb.home') or 'Home' }}</a> &rsaquo; {{ t('nav.providers') or 'Sell Services' }}
+    </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+
+{# Hero #}
+<section class="section">
+    <div class="container">
+        <div class="provider-hero">
+            <span class="eyebrow">{{ t('providers.eyebrow') or 'For Service Providers' }}</span>
+            <h1>{{ t('providers.hero_title') or 'You Built Something Useful. Now Let AI Agents Pay You For It.' }}</h1>
+            <p>{{ t('providers.hero_desc') or 'List your service on AgenticTrade. AI agents around the world will automatically find your service, use it, and pay you every time. No marketing, no invoicing, no chasing payments.' }}</p>
+            <a href="/portal/register" class="btn-primary">{{ t('providers.hero_cta') or 'Start Selling — Free' }}</a>
+        </div>
+
+        {# Two Paths #}
+        <div class="section-header" style="margin-top: 24px;">
+            <span class="eyebrow">{{ t('providers.paths_eyebrow') or 'Two Ways to Get Started' }}</span>
+            <h2>{{ t('providers.paths_title') or 'Choose What Fits You' }}</h2>
+        </div>
+        <div class="path-grid">
+            <div class="path-card recommended">
+                <span class="path-tag path-tag-green">{{ t('providers.path1_tag') or 'Easiest — No Code Needed' }}</span>
+                <h3>{{ t('providers.path1_title') or 'Quick Setup (Provider Agent)' }}</h3>
+                <p>{{ t('providers.path1_desc') or 'Don\'t have an API? No problem. Our Provider Agent tool turns your service into something AI agents can find and pay for. Just describe what your service does and set your price.' }}</p>
+                <ul class="benefit-list">
+                    <li><span class="check">&#x2713;</span> {{ t('providers.path1_b1') or 'No coding or server needed' }}</li>
+                    <li><span class="check">&#x2713;</span> {{ t('providers.path1_b2') or 'Setup in 3 minutes' }}</li>
+                    <li><span class="check">&#x2713;</span> {{ t('providers.path1_b3') or 'AI agents discover you automatically' }}</li>
+                    <li><span class="check">&#x2713;</span> {{ t('providers.path1_b4') or 'Your credentials stay on your machine' }}</li>
+                </ul>
+            </div>
+            <div class="path-card">
+                <span class="path-tag path-tag-blue">{{ t('providers.path2_tag') or 'For Developers' }}</span>
+                <h3>{{ t('providers.path2_title') or 'Bring Your Existing API' }}</h3>
+                <p>{{ t('providers.path2_desc') or 'Already have an API running? Just register the URL on AgenticTrade. We handle billing, discovery, and security. You keep your infrastructure.' }}</p>
+                <ul class="benefit-list">
+                    <li><span class="check">&#x2713;</span> {{ t('providers.path2_b1') or 'Use your existing endpoint as-is' }}</li>
+                    <li><span class="check">&#x2713;</span> {{ t('providers.path2_b2') or 'Registration takes under 5 minutes' }}</li>
+                    <li><span class="check">&#x2713;</span> {{ t('providers.path2_b3') or 'Automatic billing and discovery' }}</li>
+                    <li><span class="check">&#x2713;</span> {{ t('providers.path2_b4') or 'API keys protected by proxy — never exposed' }}</li>
+                </ul>
+            </div>
+        </div>
+
+        {# Steps #}
+        <div class="steps-section">
+            <span class="eyebrow">{{ t('providers.steps_eyebrow') or 'How It Works' }}</span>
+            <h2>{{ t('providers.steps_title') or 'Three Steps to Start Earning' }}</h2>
+
+            <div class="step-row">
+                <span class="step-num">1</span>
+                <div>
+                    <h4>{{ t('providers.step1_title') or 'Describe your service and set your price' }}</h4>
+                    <p>{{ t('providers.step1_desc') or 'Sign up, tell us what your service does, set how much each call costs. That\'s it. Our system makes your service discoverable to AI agents worldwide.' }}</p>
+                </div>
+            </div>
+            <div class="step-row">
+                <span class="step-num">2</span>
+                <div>
+                    <h4>{{ t('providers.step2_title') or 'AI agents find you and start using your service' }}</h4>
+                    <p>{{ t('providers.step2_desc') or 'AI agents automatically search the marketplace for services they need. When they find yours, they evaluate it and decide to use it — no marketing effort on your part.' }}</p>
+                </div>
+            </div>
+            <div class="step-row">
+                <span class="step-num">3</span>
+                <div>
+                    <h4>{{ t('providers.step3_title') or 'Get paid every time your service is used' }}</h4>
+                    <p>{{ t('providers.step3_desc') or 'Payments happen automatically in USDC (a digital dollar). No invoicing, no chasing. Money shows up in your dashboard. 0% commission for your first month.' }}</p>
+                </div>
+            </div>
+        </div>
+
+        {# Earnings Potential #}
+        <div class="earnings-box">
+            <h3>{{ t('providers.earnings_title') or 'How Much Can You Earn?' }}</h3>
+            <p style="color: var(--text-dim); font-size: 15px; max-width: 50ch; margin: 0 auto;">{{ t('providers.earnings_desc') or 'You set the price. AI agents pay per use. Here\'s what different price points look like:' }}</p>
+            <div class="earnings-grid">
+                <div class="earnings-item">
+                    <div class="earnings-val">$300/mo</div>
+                    <div class="earnings-label">{{ t('providers.earnings_1') or '$0.01/call x 1,000 calls/day' }}</div>
+                </div>
+                <div class="earnings-item">
+                    <div class="earnings-val">$1,500/mo</div>
+                    <div class="earnings-label">{{ t('providers.earnings_2') or '$0.05/call x 1,000 calls/day' }}</div>
+                </div>
+                <div class="earnings-item">
+                    <div class="earnings-val">$9,000/mo</div>
+                    <div class="earnings-label">{{ t('providers.earnings_3') or '$0.10/call x 3,000 calls/day' }}</div>
+                </div>
+            </div>
+            <a href="/portal/register" class="btn-primary">{{ t('providers.earnings_cta') or 'Start Earning' }}</a>
+        </div>
+
+        {# Quality Guarantee #}
+        <div style="margin: 40px 0;">
+            <h3 style="margin-bottom: 16px;">{{ t('providers.quality_title') or 'We Protect Service Quality' }}</h3>
+            <p style="color: var(--text-dim); font-size: 15px; line-height: 1.7; margin-bottom: 20px; max-width: 60ch;">{{ t('providers.quality_desc') or 'Every service on AgenticTrade is monitored 24/7 with our automated quality patrol system. This protects both providers and users.' }}</p>
+            <ul class="benefit-list">
+                <li><span class="check">&#x2713;</span> {{ t('providers.quality_1') or 'Real-time health score (0-100) — agents can see your service quality' }}</li>
+                <li><span class="check">&#x2713;</span> {{ t('providers.quality_2') or 'Automated uptime monitoring — we check your service at regular intervals' }}</li>
+                <li><span class="check">&#x2713;</span> {{ t('providers.quality_3') or 'Quality rewards — score 95+ and your commission drops to as low as 6%' }}</li>
+                <li><span class="check">&#x2713;</span> {{ t('providers.quality_4') or 'Low-quality services are flagged, giving reliable providers more visibility' }}</li>
+                <li><span class="check">&#x2713;</span> {{ t('providers.quality_5') or 'Multilingual email alerts — get notified in your language when quality changes' }}</li>
+            </ul>
+            <p style="margin-top: 16px; font-size: 14px;">
+                <a href="/quality-policy" style="color: var(--accent); text-decoration: underline;">{{ t('providers.quality_link') or 'Read our full Quality Policy →' }}</a>
+            </p>
+        </div>
+
+        {# Security #}
+        <div class="security-box">
+            <h3>{{ t('providers.security_title') or 'Your Data Stays Safe' }}</h3>
+            <ul class="benefit-list">
+                <li><span class="check">&#x2713;</span> {{ t('providers.security_1') or 'Your API keys never leave your machine — we use a proxy system' }}</li>
+                <li><span class="check">&#x2713;</span> {{ t('providers.security_2') or 'Built-in rate limiting protects your service from abuse' }}</li>
+                <li><span class="check">&#x2713;</span> {{ t('providers.security_3') or 'Payments in USDC — no chargebacks, no payment disputes' }}</li>
+                <li><span class="check">&#x2713;</span> {{ t('providers.security_4') or 'Platform is open source (MIT) — you can audit every line of code' }}</li>
+            </ul>
+        </div>
+
+        {# FAQ #}
+        <div style="margin: 48px 0 0;">
+            <span class="eyebrow">{{ t('providers.faq_eyebrow') or 'FAQ' }}</span>
+            <h2 class="mb-24">{{ t('providers.faq_title') or 'Common Questions' }}</h2>
+            <div class="faq-grid" style="max-width:700px;">
+                <div class="faq-item">
+                    <div class="faq-q">{{ t('providers.faq_q1') or 'Do I need to be a developer?' }}</div>
+                    <div class="faq-a">{{ t('providers.faq_a1') or 'No. Our Provider Agent tool handles the technical setup. You just describe your service and set your price. If you do have an existing API, you can also register that directly.' }}</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q">{{ t('providers.faq_q2') or 'How do AI agents find my service?' }}</div>
+                    <div class="faq-a">{{ t('providers.faq_a2') or 'When you list your service, AgenticTrade automatically makes it discoverable to AI agents worldwide. Agents search the marketplace, evaluate available services, and choose yours based on what it does and how much it costs.' }}</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q">{{ t('providers.faq_q3') or 'How and when do I get paid?' }}</div>
+                    <div class="faq-a">{{ t('providers.faq_a3') or 'Every time an AI agent uses your service, payment is automatically credited to your account in USDC (a digital dollar). You can withdraw anytime from your dashboard. No invoicing needed.' }}</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q">{{ t('providers.faq_q4') or 'What does it cost me?' }}</div>
+                    <div class="faq-a">{{ t('providers.faq_a4') or 'Free to sign up. 0% commission your first month. After that: 5% for months 2-3, capping at 10% from month 4. High-quality providers can earn commission discounts down to 6%.' }}</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q">{{ t('providers.faq_q5') or 'Is my data safe?' }}</div>
+                    <div class="faq-a">{{ t('providers.faq_a5') or 'Yes. Your API keys and credentials never leave your machine. We use a proxy system so nothing sensitive is ever exposed. All payments are on-chain and transparent.' }}</div>
+                </div>
+            </div>
+        </div>
+
+        {# Final CTA #}
+        <div style="text-align: center; margin: 48px 0 0;">
+            <h2>{{ t('providers.final_title') or 'Ready to Start Earning?' }}</h2>
+            <p style="color: var(--text-dim); margin-bottom: 24px; font-size: 17px;">{{ t('providers.final_desc') or 'List your service, let AI agents be your customers. Free to start.' }}</p>
+            <a href="/portal/register" class="btn-primary">{{ t('providers.final_cta') or 'List My Service — Free' }}</a>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

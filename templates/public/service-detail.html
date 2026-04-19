@@ -1,0 +1,147 @@
+{% extends "public/base.html" %}
+
+{% set svc_name = service.name if service else 'Service' %}
+{% set svc_desc = service.description if service else '' %}
+{% set svc_price = service.price_per_call if service else '0' %}
+{% set svc_category = service.category if service else '' %}
+{% set health_score = health.quality_score if health else 0 %}
+{% set uptime = health.uptime_pct if health else 0 %}
+{% set latency = health.avg_latency_ms if health else 0 %}
+
+{% block title %}{{ svc_name }} — AI Agent API Service | AgenticTrade{% endblock %}
+{% block meta_description %}{{ svc_desc[:150] or svc_name }} — Available on AgenticTrade marketplace. Quality score: {{ health_score }}/100. AI agents can discover, use, and pay for this service automatically.{% endblock %}
+{% block og_title %}{{ svc_name }} — AgenticTrade Marketplace{% endblock %}
+{% block og_description %}{{ svc_desc[:200] or 'AI agent API service on AgenticTrade marketplace.' }}{% endblock %}
+{% block tw_title %}{{ svc_name }} on AgenticTrade{% endblock %}
+{% block tw_description %}{{ svc_desc[:200] or 'API service for AI agents.' }}{% endblock %}
+{% block canonical %}https://agentictrade.io/marketplace/{{ service.id }}{% endblock %}
+
+{% block json_ld %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "{{ svc_name }}",
+    "description": "{{ svc_desc | replace('"', '\\"') }}",
+    "url": "https://agentictrade.io/marketplace/{{ service.id }}",
+    "category": "{{ svc_category }}",
+    "brand": {
+        "@type": "Organization",
+        "name": "{{ service.provider_id }}"
+    },
+    "offers": {
+        "@type": "Offer",
+        "price": "{{ svc_price }}",
+        "priceCurrency": "USD",
+        "availability": "https://schema.org/InStock",
+        "seller": {
+            "@type": "Organization",
+            "name": "AgenticTrade"
+        }
+    }{% if health %},
+    "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "{{ health_score }}",
+        "bestRating": "100",
+        "worstRating": "0",
+        "ratingCount": "{{ health.check_count }}",
+        "reviewCount": "{{ health.check_count }}"
+    }{% endif %}
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://agentictrade.io/"},
+        {"@type": "ListItem", "position": 2, "name": "Marketplace", "item": "https://agentictrade.io/marketplace"},
+        {"@type": "ListItem", "position": 3, "name": "{{ svc_name }}", "item": "https://agentictrade.io/marketplace/{{ service.id }}"}
+    ]
+}
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .svc-hero { padding: 60px 0 40px; max-width: 800px; }
+    .svc-badge { display: inline-block; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 9999px; text-transform: uppercase; letter-spacing: 0.06em; }
+    .badge-premium { background: rgba(52,211,153,0.15); color: var(--green); }
+    .badge-verified { background: rgba(108,99,255,0.15); color: var(--accent); }
+    .badge-standard { background: rgba(255,255,255,0.08); color: var(--text-dim); }
+    .svc-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 32px 0; }
+    .svc-stat { background: var(--bg-card); border-radius: var(--radius); padding: 20px; text-align: center; box-shadow: var(--ring); }
+    .svc-stat .val { font-size: 28px; font-weight: 800; }
+    .svc-stat .label { font-size: 13px; color: var(--text-dim); margin-top: 4px; }
+    .svc-desc { color: var(--text-dim); font-size: 16px; line-height: 1.8; margin: 24px 0; max-width: 700px; }
+    .svc-meta { display: flex; gap: 24px; flex-wrap: wrap; margin: 24px 0; font-size: 14px; color: var(--text-dim); }
+    .svc-meta span { display: flex; align-items: center; gap: 6px; }
+    @media (max-width: 600px) { .svc-stats { grid-template-columns: 1fr 1fr; } }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="container" style="padding-top:16px;">
+    <nav aria-label="Breadcrumb" style="font-size:13px; color:var(--text-muted);">
+        <a href="/" style="color:var(--text-dim);">Home</a> &rsaquo;
+        <a href="/marketplace" style="color:var(--text-dim);">Marketplace</a> &rsaquo;
+        {{ svc_name }}
+    </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="svc-hero">
+            {% if svc_category %}<span class="eyebrow">{{ svc_category }}</span>{% endif %}
+            <h1>{{ svc_name }}</h1>
+
+            {% if health_score >= 95 %}
+            <span class="svc-badge badge-premium">Premium</span>
+            {% elif health_score >= 80 %}
+            <span class="svc-badge badge-verified">Verified</span>
+            {% else %}
+            <span class="svc-badge badge-standard">Standard</span>
+            {% endif %}
+        </div>
+
+        <div class="svc-stats">
+            <div class="svc-stat">
+                <div class="val" style="color: {% if health_score >= 80 %}var(--green){% elif health_score >= 60 %}#FFC107{% else %}#dc3545{% endif %};">{{ health_score }}</div>
+                <div class="label">Quality Score</div>
+            </div>
+            <div class="svc-stat">
+                <div class="val">${{ svc_price }}</div>
+                <div class="label">Per Call</div>
+            </div>
+            <div class="svc-stat">
+                <div class="val">{{ uptime }}%</div>
+                <div class="label">Uptime (30d)</div>
+            </div>
+            <div class="svc-stat">
+                <div class="val">{{ latency | int }}ms</div>
+                <div class="label">Avg Latency</div>
+            </div>
+        </div>
+
+        <div class="svc-desc">{{ svc_desc or 'No description provided.' }}</div>
+
+        <div class="svc-meta">
+            <span>Provider: <strong>{{ service.provider_id }}</strong></span>
+            <span>Payment: <strong>{{ service.payment_method or 'USDC' }}</strong></span>
+            {% if service.free_tier_calls %}<span>Free tier: <strong>{{ service.free_tier_calls }} calls</strong></span>{% endif %}
+        </div>
+
+        <div style="margin: 32px 0; display: flex; gap: 12px; flex-wrap: wrap;">
+            <a href="/api-docs" class="btn-primary">Integration Guide</a>
+            <a href="/marketplace" class="btn-secondary">Browse More Services</a>
+        </div>
+
+        <div style="margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--border);">
+            <h2 style="font-size: 20px; margin-bottom: 16px;">Let AI Agents Make Money For You</h2>
+            <p style="color: var(--text-dim); font-size: 15px; line-height: 1.7; max-width: 60ch;">Have an API or capability? List it on AgenticTrade and AI agents will discover, use, and pay for it automatically. <a href="/providers" style="color: var(--accent);">Start selling</a> — it's free.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

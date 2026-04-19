@@ -1,0 +1,46 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.eggs/
+*.db
+*.db-shm
+*.db-wal
+*.db-journal
+*.db.bak*
+.env
+.venv/
+data/marketplace.db
+.x402_wallet
+
+# Internal docs — never public
+.internal/
+
+# Test and cache artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Node
+node_modules/
+
+# MCP server build artifacts
+mcp-server/.venv/
+mcp-server/.pytest_cache/
+mcp-server/dist/
+tools/
+
+# Moltbook agent secrets and logs
+moltbook-agent/.env
+moltbook-agent/interactions.jsonl

@@ -1,0 +1,8 @@
+# Files to exclude from customer delivery packaging
+.internal/
+.deliveryignore
+.git/
+__pycache__/
+*.pyc
+.pytest_cache/
+data/

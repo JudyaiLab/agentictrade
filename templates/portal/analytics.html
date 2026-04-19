@@ -1,0 +1,89 @@
+{% extends "portal/base.html" %}
+{% block title %}Analytics{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 32px;">
+    <h1 style="font-size: 24px; font-weight: 700; color: var(--text-bright);">Revenue Analytics</h1>
+    <p style="font-size: 14px; color: var(--text-dim); margin-top: 4px;">Track your earnings, commissions, and settlements.</p>
+</div>
+
+{# ── Revenue Stats ── #}
+<div class="portal-grid">
+    <div class="portal-card portal-stat">
+        <div class="portal-stat-value">${{ "%.2f"|format(stats.total_revenue) }}</div>
+        <div class="portal-stat-label">Gross Revenue</div>
+    </div>
+    <div class="portal-card portal-stat">
+        <div class="portal-stat-value">${{ "%.2f"|format(stats.total_settled) }}</div>
+        <div class="portal-stat-label">Settled</div>
+    </div>
+    <div class="portal-card portal-stat">
+        <div class="portal-stat-value">${{ "%.2f"|format(stats.pending_settlement) }}</div>
+        <div class="portal-stat-label">Pending</div>
+    </div>
+    <div class="portal-card portal-stat">
+        <div class="portal-stat-value">{{ "{:,}".format(stats.total_calls) }}</div>
+        <div class="portal-stat-label">Total Calls</div>
+    </div>
+</div>
+
+{# ── Commission Info ── #}
+<div class="portal-card" style="margin-bottom: 32px;">
+    <h2 style="font-size: 16px; font-weight: 600; color: var(--text-bright); margin-bottom: 16px;">Commission Structure</h2>
+    <div style="display: flex; gap: 24px; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 200px;">
+            <div style="font-size: 13px; color: var(--text-dim); margin-bottom: 4px;">Your Current Tier</div>
+            <div style="font-size: 20px; font-weight: 700; color: var(--accent);">{{ commission_tier }}</div>
+            <div style="font-size: 13px; color: var(--text-dim); margin-top: 4px;">Month {{ months_active }} of your account</div>
+        </div>
+        <div style="flex: 2; min-width: 300px;">
+            <div style="display: flex; justify-content: space-between; font-size: 13px; color: var(--text-dim); margin-bottom: 8px;">
+                <span>Month 1: 0%</span>
+                <span>Months 2-3: 5%</span>
+                <span>Month 4+: 10%</span>
+            </div>
+            <div class="portal-commission-bar">
+                <div class="portal-commission-fill" style="width: {{ [months_active * 8, 100]|min }}%;"></div>
+            </div>
+            <div style="font-size: 12px; color: var(--text-dim); margin-top: 8px;">
+                AgenticTrade charges significantly less than competitors (RapidAPI: 25%, App Stores: 30%).
+            </div>
+        </div>
+    </div>
+</div>
+
+{# ── Per-Service Revenue ── #}
+<div class="portal-card">
+    <h2 style="font-size: 16px; font-weight: 600; color: var(--text-bright); margin-bottom: 16px;">Revenue by Service</h2>
+    {% if stats.services %}
+    <div class="portal-table-wrap">
+    <table class="portal-table">
+        <thead>
+            <tr>
+                <th>Service</th>
+                <th>Calls</th>
+                <th>Gross Revenue</th>
+                <th>Commission ({{ commission_rate }}%)</th>
+                <th>Net Revenue</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for svc in stats.services %}
+            <tr>
+                <td style="color: var(--text-bright); font-weight: 500;">{{ svc.name }}</td>
+                <td>{{ "{:,}".format(svc.call_count) }}</td>
+                <td>${{ "%.2f"|format(svc.revenue) }}</td>
+                <td style="color: #ef4444;">${{ "%.2f"|format(svc.revenue * commission_rate / 100) }}</td>
+                <td style="color: #34d399; font-weight: 500;">${{ "%.2f"|format(svc.revenue * (100 - commission_rate) / 100) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+    {% else %}
+    <div class="portal-empty">
+        <p>No revenue data yet. List your first API to start earning.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

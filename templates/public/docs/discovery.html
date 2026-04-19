@@ -1,0 +1,149 @@
+{% extends "public/base.html" %}
+
+{% block title %}Service Discovery — AgenticTrade | How AI Agents Find Services{% endblock %}
+{% block meta_description %}6 discovery protocols for AI agents: MCP, OpenAI Plugin, ACDP, AdCP, OpenAPI, and llms.txt. Learn how agents automatically find and evaluate API services on AgenticTrade.{% endblock %}
+{% block og_title %}Service Discovery — AgenticTrade{% endblock %}
+{% block og_description %}How AI agents discover services across 6 protocols including MCP, OpenAI Plugin, and ACDP.{% endblock %}
+{% block tw_title %}AgenticTrade Service Discovery{% endblock %}
+{% block tw_description %}6 discovery protocols so every AI agent can find your service and make money for you.{% endblock %}
+{% block canonical %}https://agentictrade.io/docs/discovery{% endblock %}
+
+{% block json_ld %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "AgenticTrade Service Discovery",
+    "description": "Technical guide to 6 discovery protocols for AI agent service marketplaces: MCP, OpenAI Plugin, ACDP, AdCP, OpenAPI, and llms.txt.",
+    "author": {"@type": "Organization", "name": "AgenticTrade"},
+    "publisher": {"@type": "Organization", "name": "AgenticTrade", "url": "https://agentictrade.io"},
+    "datePublished": "2026-04-12",
+    "proficiencyLevel": "Intermediate"
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "How to Discover AI Services on AgenticTrade",
+    "description": "Query the discovery API to find, filter, and evaluate AI services by category, price, and quality score.",
+    "step": [
+        {"@type": "HowToStep", "position": 1, "name": "Authenticate", "text": "Include your Bearer token in the Authorization header."},
+        {"@type": "HowToStep", "position": 2, "name": "Query Services", "text": "GET /api/v1/discovery/services with optional filters for category, price_max, and min_quality."},
+        {"@type": "HowToStep", "position": 3, "name": "Evaluate Results", "text": "Review quality scores, pricing, and supported protocols. Each service includes a health_score from 0-100."},
+        {"@type": "HowToStep", "position": 4, "name": "Call the Service", "text": "POST /api/v1/services/{id}/call with required parameters. Payment is automatic."}
+    ]
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://agentictrade.io/"},
+        {"@type": "ListItem", "position": 2, "name": "Docs", "item": "https://agentictrade.io/docs"},
+        {"@type": "ListItem", "position": 3, "name": "Service Discovery", "item": "https://agentictrade.io/docs/discovery"}
+    ]
+}
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .doc-content { max-width: 800px; }
+    .doc-content h1 { margin-bottom: 12px; }
+    .doc-content p.lead { color: var(--text-dim); font-size: 17px; line-height: 1.7; margin-bottom: 32px; }
+    .doc-content h2 { font-size: 22px; margin: 40px 0 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+    .doc-content p, .doc-content li { color: var(--text-dim); font-size: 15px; line-height: 1.8; }
+    .doc-content code { background: var(--bg-inset); padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+    .doc-content pre { background: var(--bg-inset); border: 1px solid var(--border); border-radius: 8px; padding: 16px; overflow-x: auto; margin: 16px 0; }
+    .doc-content pre code { background: none; padding: 0; font-size: 13px; line-height: 1.6; }
+    .protocol-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; margin: 20px 0; }
+    .protocol-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 18px; }
+    .protocol-card h3 { font-size: 15px; margin: 0 0 8px; }
+    .protocol-card p { color: var(--text-dim); font-size: 13px; line-height: 1.6; margin: 0; }
+    .doc-links { margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--border); }
+    .doc-links a { color: var(--accent); margin-right: 20px; font-size: 14px; }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="container" style="padding-top:16px;">
+    <nav aria-label="Breadcrumb" style="font-size:13px; color:var(--text-muted);">
+        <a href="/" style="color:var(--text-dim);">Home</a> &rsaquo;
+        <a href="/docs" style="color:var(--text-dim);">Docs</a> &rsaquo; Service Discovery
+    </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="doc-content">
+            <span class="eyebrow">Docs</span>
+            <h1>Service Discovery</h1>
+            <p class="lead">AgenticTrade supports 6 discovery protocols so every AI framework — Claude, ChatGPT, LangChain, and custom agents — can find services and make money for providers automatically.</p>
+
+            <h2>Supported Protocols</h2>
+            <div class="protocol-grid">
+                <div class="protocol-card">
+                    <h3>MCP</h3>
+                    <p>Model Context Protocol. Native integration with Claude and compatible agents. Install via <code>npx clawhub install agentictrade</code>.</p>
+                </div>
+                <div class="protocol-card">
+                    <h3>OpenAI Plugin</h3>
+                    <p>Standard <code>/.well-known/ai-plugin.json</code> manifest. Works with ChatGPT, GPT agents, and OpenAI-compatible frameworks.</p>
+                </div>
+                <div class="protocol-card">
+                    <h3>ACDP</h3>
+                    <p>Agent Commerce Discovery Protocol. Purpose-built for agent-to-agent commerce with pricing and quality metadata.</p>
+                </div>
+                <div class="protocol-card">
+                    <h3>AdCP</h3>
+                    <p>Agent-driven Commerce Protocol. Enables agents to negotiate terms, compare prices, and select services programmatically.</p>
+                </div>
+                <div class="protocol-card">
+                    <h3>OpenAPI</h3>
+                    <p>Standard OpenAPI 3.0 spec at <code>/openapi.json</code>. Compatible with any HTTP client or code generator.</p>
+                </div>
+                <div class="protocol-card">
+                    <h3>llms.txt</h3>
+                    <p>Plain-text service manifest at <code>/llms.txt</code>. Lightweight discovery for LLM-native agents that parse text directly.</p>
+                </div>
+            </div>
+
+            <h2>REST Discovery API</h2>
+            <p>Query services with filters for category, price, and quality:</p>
+<pre><code>GET /api/v1/discovery/services?category=analysis&price_max=0.05&min_quality=80
+Authorization: Bearer at_live_abc123...
+
+Response:
+{
+  "services": [
+    {
+      "id": "svc_abc123",
+      "name": "Sentiment Analyzer",
+      "price_per_call": 0.02,
+      "health_score": 94,
+      "protocols": ["mcp", "openapi"],
+      "endpoint": "https://example.com/analyze"
+    }
+  ],
+  "total": 1,
+  "page": 1
+}</code></pre>
+
+            <h2>How Agents Evaluate Services</h2>
+            <p>Each discovered service includes a <strong>health_score</strong> (0-100) computed from uptime (50%), latency (30%), and error rate (20%). Agents can sort by score, price, or category to select the best provider. High-quality providers (95+) earn Premium tier benefits and reduced commission — a direct incentive to maintain reliable services.</p>
+
+            <div class="doc-links">
+                <strong style="font-size:14px;">Related:</strong><br style="margin-bottom:8px;">
+                <a href="/docs/mcp">MCP Integration</a>
+                <a href="/docs/authentication">Authentication</a>
+                <a href="/docs/payments">Payments</a>
+                <a href="/api-docs">Full API Reference</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

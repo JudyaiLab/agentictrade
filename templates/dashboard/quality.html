@@ -1,0 +1,98 @@
+{% extends "dashboard/base.html" %}
+{% block title %}Quality Monitor{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+    <h1 class="text-lg font-bold text-white">Service Quality Monitor</h1>
+    <span class="text-xs text-acf-muted">{{ services|length }} active service{{ 's' if services|length != 1 else '' }}</span>
+</div>
+
+<!-- Summary Cards -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+    <div class="bg-acf-panel rounded-lg p-4 border border-acf-border/60">
+        <div class="text-[11px] uppercase tracking-wider text-acf-muted mb-1">Avg SLA Compliance</div>
+        <div class="text-2xl font-bold {% if summary.avg_sla >= 95 %}text-acf-green{% elif summary.avg_sla >= 80 %}text-yellow-400{% else %}text-acf-accent{% endif %}">
+            {{ "%.1f"|format(summary.avg_sla) }}%
+        </div>
+    </div>
+    <div class="bg-acf-panel rounded-lg p-4 border border-acf-border/60">
+        <div class="text-[11px] uppercase tracking-wider text-acf-muted mb-1">Avg Error Rate</div>
+        <div class="text-2xl font-bold {% if summary.avg_error_rate <= 1 %}text-acf-green{% elif summary.avg_error_rate <= 5 %}text-yellow-400{% else %}text-acf-accent{% endif %}">
+            {{ "%.1f"|format(summary.avg_error_rate) }}%
+        </div>
+    </div>
+    <div class="bg-acf-panel rounded-lg p-4 border border-acf-border/60">
+        <div class="text-[11px] uppercase tracking-wider text-acf-muted mb-1">P50 Latency</div>
+        <div class="text-2xl font-bold text-white">{{ "%.0f"|format(summary.p50_latency) }} ms</div>
+    </div>
+    <div class="bg-acf-panel rounded-lg p-4 border border-acf-border/60">
+        <div class="text-[11px] uppercase tracking-wider text-acf-muted mb-1">P95 Latency</div>
+        <div class="text-2xl font-bold {% if summary.p95_latency <= 2000 %}text-white{% elif summary.p95_latency <= 5000 %}text-yellow-400{% else %}text-acf-accent{% endif %}">
+            {{ "%.0f"|format(summary.p95_latency) }} ms
+        </div>
+    </div>
+</div>
+
+<!-- Per-Service Quality Table -->
+<h2 class="text-sm font-semibold uppercase tracking-wider text-gray-400 mb-4 pb-2 border-b border-acf-accent/20">
+    Per-Service Metrics
+</h2>
+<div class="bg-acf-panel rounded-lg border border-acf-border/60 overflow-x-auto">
+    {% if services %}
+    <table class="w-full text-sm">
+        <thead>
+            <tr class="border-b border-acf-accent/15">
+                <th class="text-left text-[11px] uppercase tracking-wider text-acf-muted px-4 py-3">Service</th>
+                <th class="text-right text-[11px] uppercase tracking-wider text-acf-muted px-4 py-3">Total Calls</th>
+                <th class="text-right text-[11px] uppercase tracking-wider text-acf-muted px-4 py-3">Success Rate</th>
+                <th class="text-right text-[11px] uppercase tracking-wider text-acf-muted px-4 py-3">Error Rate</th>
+                <th class="text-right text-[11px] uppercase tracking-wider text-acf-muted px-4 py-3">Avg Latency</th>
+                <th class="text-right text-[11px] uppercase tracking-wider text-acf-muted px-4 py-3">P95 Latency</th>
+                <th class="text-center text-[11px] uppercase tracking-wider text-acf-muted px-4 py-3">SLA Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for svc in services %}
+            <tr class="border-b border-acf-border/40 hover:bg-acf-accent/5">
+                <td class="px-4 py-2.5 font-medium text-white">{{ svc.name }}</td>
+                <td class="px-4 py-2.5 text-right font-mono">{{ "{:,}".format(svc.total_calls) }}</td>
+                <td class="px-4 py-2.5 text-right">
+                    <span class="font-mono font-semibold
+                        {% if svc.success_rate >= 99 %}text-acf-green
+                        {% elif svc.success_rate >= 95 %}text-yellow-400
+                        {% else %}text-acf-accent
+                        {% endif %}">
+                        {{ "%.1f"|format(svc.success_rate) }}%
+                    </span>
+                </td>
+                <td class="px-4 py-2.5 text-right">
+                    <span class="font-mono
+                        {% if svc.error_rate == 0 %}text-acf-green
+                        {% elif svc.error_rate < 5 %}text-yellow-400
+                        {% else %}text-acf-accent
+                        {% endif %}">
+                        {{ "%.1f"|format(svc.error_rate) }}%
+                    </span>
+                </td>
+                <td class="px-4 py-2.5 text-right font-mono">{{ "%.0f"|format(svc.avg_latency) }} ms</td>
+                <td class="px-4 py-2.5 text-right font-mono">{{ "%.0f"|format(svc.p95_latency) }} ms</td>
+                <td class="px-4 py-2.5 text-center">
+                    {% if svc.sla_status == 'compliant' %}
+                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-semibold uppercase bg-acf-green/15 text-acf-green border border-acf-green/30">Compliant</span>
+                    {% elif svc.sla_status == 'warning' %}
+                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-semibold uppercase bg-yellow-500/15 text-yellow-400 border border-yellow-500/30">Warning</span>
+                    {% elif svc.sla_status == 'no_data' %}
+                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-semibold uppercase bg-gray-500/15 text-gray-400 border border-gray-500/30">No Data</span>
+                    {% else %}
+                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-semibold uppercase bg-acf-accent/15 text-acf-accent border border-acf-accent/30">Violation</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="text-center py-12 text-acf-muted text-sm">No active services to monitor</div>
+    {% endif %}
+</div>
+{% endblock %}

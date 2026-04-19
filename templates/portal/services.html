@@ -1,0 +1,49 @@
+{% extends "portal/base.html" %}
+{% block title %}Services{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 32px;">
+    <h1 style="font-size: 24px; font-weight: 700; color: var(--text-bright);">Your Services</h1>
+    <p style="font-size: 14px; color: var(--text-dim); margin-top: 4px;">Manage your API listings on AgenticTrade.</p>
+</div>
+
+{% if services %}
+{% for svc in services %}
+<div class="portal-card" style="margin-bottom: 16px;">
+    <div style="display: flex; justify-content: space-between; align-items: start;">
+        <div>
+            <h3 style="font-size: 16px; font-weight: 600; color: var(--text-bright); margin-bottom: 4px;">{{ svc.name }}</h3>
+            <p style="font-size: 13px; color: var(--text-dim); word-break: break-all;">{{ svc.endpoint }}</p>
+        </div>
+        <span class="portal-badge {% if svc.status == 'active' %}portal-badge-active{% else %}portal-badge-inactive{% endif %}">
+            {{ svc.status }}
+        </span>
+    </div>
+    <div style="display: flex; gap: 16px; margin-top: 16px; font-size: 14px; flex-wrap: wrap;">
+        <div>
+            <span style="color: var(--text-dim);">Price:</span>
+            <span style="color: var(--text-bright); font-weight: 500;">${{ "%.4f"|format(svc.price_per_call) }}/call</span>
+        </div>
+        <div>
+            <span style="color: var(--text-dim);">Calls:</span>
+            <span style="color: var(--text-bright); font-weight: 500;">{{ "{:,}".format(svc.call_count) }}</span>
+        </div>
+        <div>
+            <span style="color: var(--text-dim);">Revenue:</span>
+            <span style="color: var(--text-bright); font-weight: 500;">${{ "%.2f"|format(svc.revenue) }}</span>
+        </div>
+        <div>
+            <span style="color: var(--text-dim);">Listed:</span>
+            <span style="color: var(--text-bright);">{{ svc.created_at[:10] }}</span>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% else %}
+<div class="portal-card portal-empty">
+    <p style="font-size: 18px; margin-bottom: 12px; color: var(--text-bright);">No services yet</p>
+    <p style="font-size: 14px; margin-bottom: 20px;">Register your first API to start earning from AI agents.</p>
+    <a href="/api-docs" class="btn-primary" style="text-decoration: none; font-size: 14px; padding: 10px 24px;">Read API Documentation</a>
+</div>
+{% endif %}
+{% endblock %}

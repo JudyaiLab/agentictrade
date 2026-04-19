@@ -1,0 +1,129 @@
+{% extends "public/base.html" %}
+
+{% block title %}AI Trading Agents — Make Money with Automated Trading Services | AgenticTrade{% endblock %}
+{% block meta_description %}Build AI trading agents that earn money automatically. List crypto analysis, backtesting, signal detection, and portfolio management APIs on AgenticTrade. AI agents discover and pay for your service 24/7.{% endblock %}
+{% block og_title %}AI Trading Agents — AgenticTrade{% endblock %}
+{% block og_description %}Make money with AI trading agents. List your trading APIs and let AI agents pay automatically.{% endblock %}
+{% block tw_title %}AI Trading Agents — Make Money with AI{% endblock %}
+{% block tw_description %}Automated trading services for AI agents on AgenticTrade.{% endblock %}
+{% block canonical %}https://agentictrade.io/use-cases/trading-agents{% endblock %}
+
+{% block json_ld %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "How to Make Money with AI Trading Agents",
+    "description": "List your trading analysis API on AgenticTrade and let AI agents pay you automatically for market data, signals, and backtesting.",
+    "step": [
+        {"@type": "HowToStep", "position": 1, "name": "Build a trading analysis API", "text": "Create an API that provides market data, technical analysis, trading signals, backtesting, or portfolio management. Any trading capability works."},
+        {"@type": "HowToStep", "position": 2, "name": "List it on AgenticTrade", "text": "Register your API on AgenticTrade. Set your price per call (e.g., $0.05 for a market scan, $0.50 for a full backtest). Takes 3 minutes."},
+        {"@type": "HowToStep", "position": 3, "name": "AI trading agents discover your service", "text": "AI trading agents from hedge funds, retail platforms, and autonomous trading bots automatically discover your service through MCP, OpenAPI, and other protocols."},
+        {"@type": "HowToStep", "position": 4, "name": "Earn passive income 24/7", "text": "Every time an AI agent calls your API, you get paid automatically. Trading runs 24/7, so your service earns around the clock."}
+    ]
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://agentictrade.io/"},
+        {"@type": "ListItem", "position": 2, "name": "Use Cases", "item": "https://agentictrade.io/use-cases/trading-agents"},
+        {"@type": "ListItem", "position": 3, "name": "Trading Agents", "item": "https://agentictrade.io/use-cases/trading-agents"}
+    ]
+}
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .uc-hero { padding: 60px 0 40px; max-width: 700px; }
+    .uc-hero p { color: var(--text-dim); font-size: 17px; line-height: 1.7; }
+    .uc-section { margin-top: 48px; max-width: 750px; }
+    .uc-section h2 { font-size: 22px; margin-bottom: 16px; }
+    .uc-section p, .uc-section li { color: var(--text-dim); font-size: 15px; line-height: 1.8; }
+    .uc-section ul { padding-left: 24px; margin: 16px 0; }
+    .uc-section li { margin-bottom: 8px; }
+    .uc-examples { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0; }
+    .uc-example { background: var(--bg-card); border-radius: var(--radius); padding: 20px; box-shadow: var(--ring); }
+    .uc-example h4 { font-size: 15px; margin-bottom: 6px; }
+    .uc-example p { font-size: 13px; margin: 0; }
+    .uc-example .price { color: var(--green); font-weight: 700; font-size: 14px; margin-top: 8px; }
+    @media (max-width: 600px) { .uc-examples { grid-template-columns: 1fr; } }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="container" style="padding-top:16px;">
+    <nav aria-label="Breadcrumb" style="font-size:13px; color:var(--text-muted);">
+        <a href="/" style="color:var(--text-dim);">Home</a> &rsaquo; Use Cases &rsaquo; Trading Agents
+    </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="uc-hero">
+            <span class="eyebrow">Use Case</span>
+            <h1>AI Trading Agents</h1>
+            <p>AI trading agents need real-time market data, technical analysis, and backtesting. List your trading APIs and earn passive income as AI agents pay you 24/7.</p>
+        </div>
+
+        <div class="uc-section">
+            <h2>How AI Trading Agents Make Money For You</h2>
+            <p>The AI trading ecosystem is growing fast. Autonomous trading agents need reliable data and analysis services. When you list your trading API on AgenticTrade:</p>
+            <ul>
+                <li>AI agents from hedge funds, quant shops, and retail platforms <strong>discover your service automatically</strong></li>
+                <li>Every API call earns you money — <strong>trading runs 24/7</strong>, so income is around the clock</li>
+                <li>You set the price: $0.01 for simple data, $0.50+ for complex analysis</li>
+                <li>Payments happen instantly in USDC — no invoicing, no waiting</li>
+            </ul>
+        </div>
+
+        <div class="uc-section">
+            <h2>Service Ideas That AI Trading Agents Need</h2>
+            <div class="uc-examples">
+                <div class="uc-example">
+                    <h4>Market Scanner</h4>
+                    <p>Scan markets for patterns, volume anomalies, or momentum signals</p>
+                    <div class="price">$0.02-0.10/call</div>
+                </div>
+                <div class="uc-example">
+                    <h4>Backtesting Engine</h4>
+                    <p>Run strategy backtests on historical data with walk-forward validation</p>
+                    <div class="price">$0.50-2.00/call</div>
+                </div>
+                <div class="uc-example">
+                    <h4>Sentiment Analysis</h4>
+                    <p>Analyze news, social media, and on-chain data for market sentiment</p>
+                    <div class="price">$0.05-0.20/call</div>
+                </div>
+                <div class="uc-example">
+                    <h4>Risk Calculator</h4>
+                    <p>Position sizing, drawdown analysis, portfolio risk metrics</p>
+                    <div class="price">$0.03-0.15/call</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uc-section">
+            <h2>Why AgenticTrade for Trading Services</h2>
+            <ul>
+                <li><strong>6 discovery protocols</strong> — MCP, OpenAI Plugin, ACDP, and more ensure maximum visibility</li>
+                <li><strong>24/7 quality monitoring</strong> — your uptime and latency are tracked, earning you Premium tier benefits</li>
+                <li><strong>Multi-rail payments</strong> — USDC, PayPal, or 300+ cryptocurrencies</li>
+                <li><strong>0% commission</strong> your first month, capping at 10% (or 6% for Premium services)</li>
+            </ul>
+        </div>
+
+        <div style="text-align: center; margin: 48px 0 0; padding-top: 32px; border-top: 1px solid var(--border);">
+            <h2 style="font-size: 22px;">Start Earning from AI Trading Agents</h2>
+            <p style="color: var(--text-dim); margin: 12px 0 24px;">List your trading API in 3 minutes. AI agents pay you around the clock.</p>
+            <a href="/providers" class="btn-primary">List Your Trading Service</a>
+            <p style="margin-top: 16px;"><a href="/marketplace/category/crypto" style="color: var(--accent);">Browse existing crypto services</a></p>
+        </div>
+    </div>
+</section>
+{% endblock %}

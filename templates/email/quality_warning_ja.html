@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">
+
+<div style="background: #FFF3CD; border-left: 4px solid #FFC107; padding: 16px; border-radius: 4px; margin-bottom: 24px;">
+  <strong style="color: #856404;">⚠️ サービス品質アラート</strong>
+</div>
+
+<p>お客様のサービス <strong>{{service_name}}</strong> の品質スコアは <strong style="color: #dc3545;">{{quality_score}}/100</strong> で、プラットフォーム基準の <strong>{{threshold_warn}}</strong> を下回っています。</p>
+
+<h2 style="font-size: 18px; margin-top: 32px;">これが意味すること</h2>
+<ul style="line-height: 2;">
+  <li>サービスは現在も<strong>アクティブ</strong>ですが、検索結果でのランキングが低下する可能性があります</li>
+  <li>品質が <strong>{{threshold_pause}}</strong> を3回連続で下回ると、サービスは<strong>自動的に一時停止</strong>されます</li>
+  <li>品質の測定基準：稼働率（50%）、レスポンス遅延（30%）、エラー率（20%）</li>
+</ul>
+
+<h2 style="font-size: 18px; margin-top: 32px;">推奨アクション</h2>
+<ol style="line-height: 2;">
+  <li>サービスエンドポイントが正常かつ迅速に応答しているか確認してください</li>
+  <li>サーバーログでエラーやタイムアウトを確認してください</li>
+  <li>エンドポイントが5秒以内に応答することを確認してください</li>
+  <li>サービスがHTTP 2xxステータスコードを返しているか確認してください</li>
+</ol>
+
+<p style="margin: 24px 0;">
+  <a href="{{policy_url}}"
+     style="background: #6C63FF; color: white; padding: 12px 24px;
+            border-radius: 6px; text-decoration: none; font-weight: 600;">
+    品質ポリシーを見る
+  </a>
+</p>
+
+<p style="margin-top: 32px; color: #666; font-size: 14px;">
+  ご質問がありましたら、このメールに返信してください。改善のお手伝いをいたします。<br>
+  <a href="https://agentictrade.io" style="color: #6C63FF;">agentictrade.io</a>
+</p>
+
+<hr style="border: none; border-top: 1px solid #eee; margin: 32px 0;">
+<p style="color: #999; font-size: 12px;">
+  サービスID: {{service_id}}<br>
+  AgenticTradeに登録されたサービスプロバイダーのため、このメールが送信されました。
+</p>
+
+</body>
+</html>

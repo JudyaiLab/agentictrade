@@ -1,0 +1,91 @@
+{% extends "dashboard/base.html" %}
+{% block title %}Overview{% endblock %}
+
+{% block content %}
+<!-- Stats Cards -->
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
+    {% for stat in stats %}
+    <div class="bg-acf-panel rounded-lg p-4 border border-acf-border/60 hover:border-acf-accent transition-colors">
+        <div class="text-[11px] uppercase tracking-wider text-acf-muted mb-1">{{ stat.label }}</div>
+        <div class="text-2xl font-bold {% if stat.is_revenue %}text-acf-green{% else %}text-white{% endif %}">
+            {{ stat.value }}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Revenue by Provider -->
+<h2 class="text-sm font-semibold uppercase tracking-wider text-gray-400 mb-4 pb-2 border-b border-acf-accent/20">
+    Revenue by Payment Provider
+</h2>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+    {% for pm in payment_methods %}
+    <div class="bg-acf-panel rounded-lg p-4 border border-acf-border/60">
+        <div class="flex items-center justify-between mb-2">
+            <span class="text-sm font-medium text-gray-300">{{ pm.method }}</span>
+            <span class="text-xs text-acf-muted">{{ pm.count }} txns</span>
+        </div>
+        <div class="text-xl font-bold text-acf-green">${{ "%.2f"|format(pm.total_usd) }}</div>
+        {% if pm.pct > 0 %}
+        <div class="mt-2 w-full bg-acf-border/50 rounded-full h-1.5">
+            <div class="bg-acf-accent h-1.5 rounded-full" style="width: {{ pm.pct|int }}%"></div>
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+    {% if not payment_methods %}
+    <div class="col-span-3 text-center py-8 text-acf-muted text-sm">No payment data available</div>
+    {% endif %}
+</div>
+
+<!-- Recent Transactions -->
+<h2 class="text-sm font-semibold uppercase tracking-wider text-gray-400 mb-4 pb-2 border-b border-acf-accent/20">
+    Recent Transactions (Last 20)
+</h2>
+<div class="bg-acf-panel rounded-lg border border-acf-border/60 overflow-x-auto mb-4">
+    {% if recent_transactions %}
+    <table class="w-full text-sm">
+        <thead>
+            <tr class="border-b border-acf-accent/15">
+                <th class="text-left text-[11px] uppercase tracking-wider text-acf-muted px-4 py-3">Timestamp</th>
+                <th class="text-left text-[11px] uppercase tracking-wider text-acf-muted px-4 py-3">Service</th>
+                <th class="text-left text-[11px] uppercase tracking-wider text-acf-muted px-4 py-3">Buyer</th>
+                <th class="text-right text-[11px] uppercase tracking-wider text-acf-muted px-4 py-3">Amount</th>
+                <th class="text-left text-[11px] uppercase tracking-wider text-acf-muted px-4 py-3">Method</th>
+                <th class="text-right text-[11px] uppercase tracking-wider text-acf-muted px-4 py-3">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for tx in recent_transactions %}
+            <tr class="border-b border-acf-border/40 hover:bg-acf-accent/5">
+                <td class="px-4 py-2.5 text-gray-400 text-xs font-mono">{{ tx.timestamp[:19] }}</td>
+                <td class="px-4 py-2.5 truncate max-w-[160px]">{{ tx.service_id[:16] }}</td>
+                <td class="px-4 py-2.5 truncate max-w-[120px] text-gray-400">{{ tx.buyer_id[:16] }}</td>
+                <td class="px-4 py-2.5 text-right font-mono text-acf-green">${{ "%.4f"|format(tx.amount_usd) }}</td>
+                <td class="px-4 py-2.5">
+                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-semibold uppercase
+                        {% if tx.payment_method == 'x402' %}bg-blue-500/15 text-blue-400 border border-blue-500/30
+                        {% elif tx.payment_method == 'paypal' %}bg-purple-500/15 text-purple-400 border border-purple-500/30
+                        {% else %}bg-gray-500/15 text-gray-400 border border-gray-500/30
+                        {% endif %}">
+                        {{ tx.payment_method }}
+                    </span>
+                </td>
+                <td class="px-4 py-2.5 text-right">
+                    {% if tx.status_code < 400 %}
+                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-semibold bg-acf-green/15 text-acf-green border border-acf-green/30">{{ tx.status_code }}</span>
+                    {% elif tx.status_code < 500 %}
+                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-semibold bg-yellow-500/15 text-yellow-400 border border-yellow-500/30">{{ tx.status_code }}</span>
+                    {% else %}
+                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-semibold bg-acf-accent/15 text-acf-accent border border-acf-accent/30">{{ tx.status_code }}</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="text-center py-8 text-acf-muted text-sm">No transactions yet</div>
+    {% endif %}
+</div>
+{% endblock %}

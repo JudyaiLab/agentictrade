@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="{% block lang %}{{ locale|default('en') }}{% endblock %}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    {# ── SEO Meta ── #}
+    <title>{% block title %}AgenticTrade — AI Service Marketplace | List Your Service, AI Agents Pay You{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}AgenticTrade is an AI service marketplace. List your service and AI agents automatically find you, use it, and pay you. Or connect your AI agent to hundreds of services with one integration.{% endblock %}">
+    <meta name="robots" content="{% block robots %}index, follow{% endblock %}">
+    <meta name="author" content="JudyAI Lab">
+    <meta name="theme-color" content="#060a13">
+    <link rel="canonical" href="{% block canonical %}https://agentictrade.io{{ request.url.path }}{% endblock %}">
+
+    {# ── Open Graph ── #}
+    <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}AgenticTrade — AI Service Marketplace{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}List your service, AI agents find you and pay automatically. Or give your agent access to hundreds of services with one integration.{% endblock %}">
+    <meta property="og:image" content="{% block og_image %}https://agentictrade.io/static/img/og-default.jpg{% endblock %}">
+    <meta property="og:url" content="{% block og_url %}https://agentictrade.io{{ request.url.path }}{% endblock %}">
+    <meta property="og:site_name" content="AgenticTrade">
+    {% set og_locale_map = {'en': 'en_US', 'zh-tw': 'zh_TW', 'ko': 'ko_KR', 'ja': 'ja_JP', 'fr': 'fr_FR', 'de': 'de_DE', 'ru': 'ru_RU', 'es': 'es_ES', 'pt': 'pt_BR'} %}
+    <meta property="og:locale" content="{{ og_locale_map.get(locale, 'en_US') }}">
+    {% for loc, og_loc in og_locale_map.items() if loc != locale %}
+    <meta property="og:locale:alternate" content="{{ og_loc }}">
+    {% endfor %}
+
+    {# ── Twitter Card ── #}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@JudyAILab">
+    <meta name="twitter:title" content="{% block tw_title %}AgenticTrade — AI Service Marketplace{% endblock %}">
+    <meta name="twitter:description" content="{% block tw_description %}List your service, AI agents find you and pay automatically. Free to start, 0% commission month 1.{% endblock %}">
+    <meta name="twitter:image" content="{% block tw_image %}https://agentictrade.io/static/img/og-default.jpg{% endblock %}">
+
+    {# ── hreflang alternates ── #}
+    {% set hreflang_map = {'en': 'en', 'zh-tw': 'zh-Hant-TW', 'ko': 'ko', 'ja': 'ja', 'fr': 'fr', 'de': 'de', 'ru': 'ru', 'es': 'es', 'pt': 'pt-BR'} %}
+    {% for loc, hl in hreflang_map.items() %}
+    <link rel="alternate" hreflang="{{ hl }}" href="https://agentictrade.io{{ request.url.path }}?lang={{ loc }}">
+    {% endfor %}
+    <link rel="alternate" hreflang="x-default" href="https://agentictrade.io{{ request.url.path }}">
+    {% block hreflang %}{% endblock %}
+
+    {# ── Favicon ── #}
+    <link rel="icon" href="/static/img/favicon.ico" type="image/x-icon">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/img/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/img/apple-touch-icon.png">
+
+    {# ── Preload ── #}
+    <link rel="preload" href="/static/css/public.css" as="style">
+    <link rel="preload" href="/static/img/logo.webp" as="image" type="image/webp">
+
+    {# ── Font: Inter Variable ── #}
+    <link rel="preconnect" href="https://rsms.me" crossorigin>
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://rsms.me/inter/inter.css"></noscript>
+
+    {# ── CSS ── #}
+    <link rel="stylesheet" href="/static/css/public.css">
+    {% block extra_css %}{% endblock %}
+
+    {# ── Google Analytics ── #}
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-TLXVKL7P5S"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-TLXVKL7P5S');
+    </script>
+
+    {# ── JSON-LD: Organization ── #}
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "AgenticTrade",
+        "url": "https://agentictrade.io",
+        "logo": "https://agentictrade.io/static/img/logo.jpg",
+        "description": "AI service marketplace. List your service, AI agents find you and pay automatically.",
+        "sameAs": ["https://github.com/JudyaiLab/agentictrade"],
+        "parentOrganization": {
+            "@type": "Organization",
+            "name": "JudyAI Lab",
+            "url": "https://judyailab.com"
+        }
+    }
+    </script>
+
+    {# ── JSON-LD: WebSite + SearchAction ── #}
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "AgenticTrade",
+        "url": "https://agentictrade.io",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://agentictrade.io/marketplace?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+        }
+    }
+    </script>
+
+    {% block json_ld %}{% endblock %}
+</head>
+<body>
+
+<a href="#main-content" class="skip-link" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;z-index:9999;padding:8px 16px;background:var(--accent);color:#000;font-weight:700;text-decoration:none;border-radius:0 0 8px 0;" onfocus="this.style.cssText='position:fixed;left:0;top:0;z-index:9999;padding:8px 16px;background:var(--accent);color:#000;font-weight:700;text-decoration:none;border-radius:0 0 8px 0;'" onblur="this.style.cssText='position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;'">Skip to content</a>
+
+<div class="bg-effects"></div>
+<div class="page-content">
+
+{# ── Navigation ── #}
+<nav class="topnav" role="navigation" aria-label="Main navigation">
+    <a href="/" class="brand">
+        <img src="/static/img/logo.webp" alt="AgenticTrade" class="brand-icon" width="36" height="36" fetchpriority="high">
+        <span>AgenticTrade</span>
+    </a>
+    <button class="nav-toggle" aria-label="Toggle menu" onclick="document.querySelector('.nav-links').classList.toggle('show')">&#9776;</button>
+    <div class="nav-links">
+        <a href="/marketplace"{% if request.url.path == '/marketplace' %} class="active"{% endif %}>{{ t('nav.marketplace') or 'Marketplace' }}</a>
+        <a href="/pricing"{% if request.url.path == '/pricing' %} class="active"{% endif %}>{{ t('nav.pricing') or 'Pricing' }}</a>
+        <a href="/providers"{% if request.url.path == '/providers' %} class="active"{% endif %}>{{ t('nav.providers') or 'Sell Services' }}</a>
+        <a href="/faq" class="hide-mobile{% if request.url.path == '/faq' %} active{% endif %}">FAQ</a>
+        <a href="/api-docs" class="hide-mobile{% if request.url.path == '/api-docs' %} active{% endif %}">{{ t('nav.api_docs') or 'Docs' }}</a>
+        <a href="/portal/register" class="nav-cta">{{ t('nav.get_started') or 'Get Started' }}</a>
+    </div>
+</nav>
+
+{# ── Breadcrumbs ── #}
+{% block breadcrumbs %}{% endblock %}
+
+{# ── Main Content ── #}
+<main id="main-content">
+    {% block content %}{% endblock %}
+</main>
+
+{# ── Footer ── #}
+<footer class="site-footer" role="contentinfo">
+    <div class="footer-grid">
+        <div>
+            <div class="footer-brand">
+                <img src="/static/img/logo.webp" alt="" width="24" height="24" style="border-radius:6px;" loading="lazy">
+                AgenticTrade
+            </div>
+            <p class="footer-desc">{{ t('footer.desc') or 'AI service marketplace — list your service, AI agents find you and pay automatically. Built by JudyAI Lab.' }}</p>
+        </div>
+        <div>
+            <div class="footer-heading">{{ t('footer.platform') or 'Platform' }}</div>
+            <ul class="footer-links">
+                <li><a href="/marketplace">{{ t('nav.marketplace') or 'Marketplace' }}</a></li>
+                <li><a href="/pricing">{{ t('nav.pricing') or 'Pricing' }}</a></li>
+                <li><a href="/providers">{{ t('nav.providers') or 'Sell Services' }}</a></li>
+                <li><a href="/api-docs">{{ t('nav.api_docs') or 'API Docs' }}</a></li>
+                <li><a href="/status">{{ t('footer.status') or 'Status' }}</a></li>
+                <li><a href="/quality-policy">{{ t('footer.quality_policy') or 'Quality Policy' }}</a></li>
+                <li><a href="/about">{{ t('footer.about') or 'About' }}</a></li>
+            </ul>
+        </div>
+        <div>
+            <div class="footer-heading">{{ t('footer.legal') or 'Legal' }}</div>
+            <ul class="footer-links">
+                <li><a href="/terms">{{ t('footer.terms') or 'Terms' }}</a></li>
+                <li><a href="/privacy">{{ t('footer.privacy') or 'Privacy' }}</a></li>
+            </ul>
+        </div>
+        <div>
+            <div class="footer-heading">{{ t('footer.community') or 'Community' }}</div>
+            <ul class="footer-links">
+                <li><a href="https://github.com/JudyaiLab/agentictrade" target="_blank" rel="noopener">GitHub</a></li>
+                <li><a href="https://discord.gg/A6eRjMSsWs" target="_blank" rel="noopener">Discord</a></li>
+                <li><a href="https://judyailab.com" target="_blank" rel="noopener">JudyAI Lab</a></li>
+            </ul>
+        </div>
+    </div>
+    {% if supported_locales %}
+    <div class="footer-lang">
+        {% for loc in supported_locales %}
+        <a href="?lang={{ loc }}" class="lang-option{% if locale == loc %} active{% endif %}"
+           style="opacity:{% if locale == loc %}1{% else %}0.5{% endif %};">
+            {{ t('lang.' ~ loc) }}
+        </a>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <div class="footer-bottom">
+        &copy; 2025-2026 AgenticTrade by <a href="https://judyailab.com">JudyAI Lab</a>. {{ t('footer.copyright') or 'All rights reserved.' }}
+    </div>
+</footer>
+
+</div>
+
+{% block extra_js %}{% endblock %}
+
+</body>
+</html>

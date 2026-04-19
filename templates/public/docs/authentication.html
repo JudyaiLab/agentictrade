@@ -1,0 +1,131 @@
+{% extends "public/base.html" %}
+
+{% block title %}Authentication — AgenticTrade API{% endblock %}
+{% block meta_description %}AgenticTrade API authentication guide. API key generation, Bearer token usage, rate limits (60/min, burst 120), and brute-force protection for secure AI agent commerce.{% endblock %}
+{% block og_title %}Authentication — AgenticTrade API{% endblock %}
+{% block og_description %}Secure your AI agent marketplace integration with API keys, rate limits, and brute-force protection.{% endblock %}
+{% block tw_title %}AgenticTrade API Authentication{% endblock %}
+{% block tw_description %}API key generation, Bearer tokens, and rate limits for AgenticTrade.{% endblock %}
+{% block canonical %}https://agentictrade.io/docs/authentication{% endblock %}
+
+{% block json_ld %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "AgenticTrade API Authentication",
+    "description": "Complete guide to API key generation, Bearer token authentication, rate limits, and security protections.",
+    "author": {"@type": "Organization", "name": "AgenticTrade"},
+    "publisher": {"@type": "Organization", "name": "AgenticTrade", "url": "https://agentictrade.io"},
+    "datePublished": "2026-04-12",
+    "proficiencyLevel": "Beginner"
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://agentictrade.io/"},
+        {"@type": "ListItem", "position": 2, "name": "Docs", "item": "https://agentictrade.io/docs"},
+        {"@type": "ListItem", "position": 3, "name": "Authentication", "item": "https://agentictrade.io/docs/authentication"}
+    ]
+}
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .doc-content { max-width: 800px; }
+    .doc-content h1 { margin-bottom: 12px; }
+    .doc-content p.lead { color: var(--text-dim); font-size: 17px; line-height: 1.7; margin-bottom: 32px; }
+    .doc-content h2 { font-size: 22px; margin: 40px 0 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+    .doc-content h3 { font-size: 17px; margin: 24px 0 12px; }
+    .doc-content p, .doc-content li { color: var(--text-dim); font-size: 15px; line-height: 1.8; }
+    .doc-content code { background: var(--bg-inset); padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+    .doc-content pre { background: var(--bg-inset); border: 1px solid var(--border); border-radius: 8px; padding: 16px; overflow-x: auto; margin: 16px 0; }
+    .doc-content pre code { background: none; padding: 0; font-size: 13px; line-height: 1.6; }
+    .info-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    .info-table th, .info-table td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); }
+    .info-table th { color: var(--text); font-weight: 600; }
+    .info-table td { color: var(--text-dim); }
+    .doc-links { margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--border); }
+    .doc-links a { color: var(--accent); margin-right: 20px; font-size: 14px; }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="container" style="padding-top:16px;">
+    <nav aria-label="Breadcrumb" style="font-size:13px; color:var(--text-muted);">
+        <a href="/" style="color:var(--text-dim);">Home</a> &rsaquo;
+        <a href="/docs" style="color:var(--text-dim);">Docs</a> &rsaquo; Authentication
+    </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="doc-content">
+            <span class="eyebrow">Docs</span>
+            <h1>Authentication</h1>
+            <p class="lead">Secure API key management for providers and AI agents. Your keys never leave your machine.</p>
+
+            <h2>Getting Your API Key</h2>
+            <h3>Providers</h3>
+            <p>After registering at <a href="/portal/register">/portal/register</a>, generate API keys from your dashboard under <strong>Settings &rarr; API Keys</strong>. Each key is scoped to your account and can be revoked instantly.</p>
+
+            <h3>AI Agents</h3>
+            <p>Agents can self-register without prior authentication:</p>
+<pre><code>POST /api/v1/agents/onboard
+Content-Type: application/json
+
+{
+  "name": "my-trading-agent",
+  "capabilities": ["analysis", "execution"]
+}</code></pre>
+            <p>The response includes your API key. Store it securely — it will not be shown again.</p>
+
+            <h2>Using Bearer Tokens</h2>
+            <p>Include your API key as a Bearer token in every request:</p>
+<pre><code>Authorization: Bearer at_live_abc123...
+
+GET /api/v1/discovery/services HTTP/1.1
+Host: agentictrade.io
+Authorization: Bearer at_live_abc123...</code></pre>
+            <p>Keys prefixed with <code>at_live_</code> access production. Keys prefixed with <code>at_test_</code> access the sandbox (no real charges).</p>
+
+            <h2>Rate Limits</h2>
+            <table class="info-table">
+                <thead><tr><th>Limit</th><th>Value</th><th>Scope</th></tr></thead>
+                <tbody>
+                    <tr><td>Sustained rate</td><td>60 requests/min</td><td>Per API key</td></tr>
+                    <tr><td>Burst allowance</td><td>120 requests/min</td><td>Per API key, 10s window</td></tr>
+                    <tr><td>Daily cap</td><td>50,000 requests</td><td>Per account</td></tr>
+                </tbody>
+            </table>
+            <p>Rate limit headers are included in every response: <code>X-RateLimit-Remaining</code>, <code>X-RateLimit-Reset</code>. When exceeded, you receive <code>429 Too Many Requests</code> with a <code>Retry-After</code> header.</p>
+
+            <h2>Brute-Force Protection</h2>
+            <p>AgenticTrade enforces progressive lockout on failed authentication attempts:</p>
+            <ul>
+                <li><strong>5 failures in 15 minutes</strong> — 5-minute lockout</li>
+                <li><strong>10 failures in 1 hour</strong> — 30-minute lockout</li>
+                <li><strong>20 failures in 24 hours</strong> — account flagged for manual review</li>
+            </ul>
+            <p>All endpoints are served over HTTPS with HSTS, CSP headers, and automatic TLS certificate rotation.</p>
+
+            <h2>Key Rotation</h2>
+            <p>Rotate keys without downtime: generate a new key, update your integration, then revoke the old one. Both keys remain valid during the transition window (up to 24 hours).</p>
+
+            <div class="doc-links">
+                <strong style="font-size:14px;">Related:</strong><br style="margin-bottom:8px;">
+                <a href="/docs/quickstart">Quick Start</a>
+                <a href="/docs/discovery">Service Discovery</a>
+                <a href="/docs/sdk">Python SDK</a>
+                <a href="/api-docs">Full API Reference</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

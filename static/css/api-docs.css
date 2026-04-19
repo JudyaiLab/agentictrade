@@ -1,0 +1,231 @@
+/* ══════════════════════════════════════════════════════════════════
+   AgenticTrade — API Documentation Page Styles
+   Extracted from templates/api-docs.html inline CSS.
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Layout */
+.docs-layout {
+    display: flex;
+    max-width: 1400px;
+    margin: 0 auto;
+    min-height: calc(100vh - 80px);
+}
+
+.docs-sidebar {
+    width: 260px;
+    padding: 24px 20px;
+    border-right: 1px solid var(--border);
+    position: sticky;
+    top: 80px;
+    height: calc(100vh - 80px);
+    overflow-y: auto;
+    flex-shrink: 0;
+}
+
+.docs-sidebar h3 {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    margin: 20px 0 8px;
+}
+
+.docs-sidebar a {
+    display: block;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 2px;
+    transition: all 0.15s;
+}
+.docs-sidebar a:hover { background: var(--bg-card); color: var(--text); }
+.docs-sidebar a.active { background: var(--accent-glow); color: var(--accent); }
+
+.docs-main {
+    flex: 1;
+    padding: 40px 48px;
+    max-width: 900px;
+}
+
+/* Typography overrides for docs */
+.docs-main h1 { font-size: 36px; font-weight: 800; margin-bottom: 12px; }
+.docs-main h2 {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 48px 0 16px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+}
+.docs-main h2:first-of-type { border-top: none; margin-top: 32px; }
+.docs-main h3 { font-size: 18px; font-weight: 600; margin: 24px 0 12px; }
+.docs-main p { color: var(--text-dim); margin-bottom: 16px; }
+.docs-main .subtitle { font-size: 18px; color: var(--text-dim); margin-bottom: 32px; }
+
+/* Code in docs */
+.docs-main code {
+    background: var(--bg-card);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 13px;
+    color: var(--accent);
+}
+
+.docs-main pre {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 12px 0 20px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text);
+}
+.docs-main pre .comment { color: var(--text-muted); }
+.docs-main pre .string { color: var(--green); }
+.docs-main pre .keyword { color: var(--accent2); }
+
+/* Endpoint card */
+.endpoint {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin: 16px 0;
+    overflow: hidden;
+}
+
+.endpoint-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+}
+.endpoint-header:hover { background: var(--bg-card-hover); }
+
+.method {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.5px;
+}
+.method.get { background: rgba(52,211,153,0.15); color: var(--green); }
+.method.post { background: rgba(34,211,238,0.15); color: var(--accent); }
+.method.delete { background: rgba(248,113,113,0.15); color: var(--red); }
+
+.endpoint-path { font-family: 'JetBrains Mono', monospace; font-size: 14px; }
+.endpoint-desc { color: var(--text-dim); font-size: 13px; margin-left: auto; }
+.endpoint-body { padding: 20px; display: none; }
+.endpoint.open .endpoint-body { display: block; }
+
+/* Docs tables */
+.docs-main table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0 20px;
+    font-size: 14px;
+}
+.docs-main th {
+    text-align: left;
+    padding: 10px 16px;
+    background: var(--bg-card);
+    color: var(--text-dim);
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.docs-main td {
+    padding: 10px 16px;
+    border-top: 1px solid var(--border);
+    color: var(--text-dim);
+}
+.docs-main tr:hover td { background: rgba(17,24,39,0.5); }
+
+/* Service card */
+.svc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin: 16px 0;
+}
+.svc-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    transition: all 0.2s;
+}
+.svc-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+.svc-card h4 { font-size: 15px; margin-bottom: 8px; }
+.svc-card p { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; }
+.svc-price { display: flex; align-items: center; gap: 8px; }
+.svc-price .amount { font-size: 20px; font-weight: 700; color: var(--accent); }
+.svc-price .unit { font-size: 13px; color: var(--text-muted); }
+
+/* Steps */
+.steps { counter-reset: step; }
+.step {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 28px;
+    counter-increment: step;
+}
+.step::before {
+    content: counter(step);
+    flex-shrink: 0;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--accent-glow);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    margin-top: 2px;
+}
+.step-content { flex: 1; }
+.step-content h3 { margin-top: 0; margin-bottom: 8px; }
+
+/* Alert */
+.alert {
+    padding: 14px 18px;
+    border-radius: 8px;
+    margin: 16px 0;
+    font-size: 14px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+.alert-info { background: rgba(34,211,238,0.08); border: 1px solid rgba(34,211,238,0.2); }
+.alert-warn { background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.2); }
+
+/* Mobile menu button */
+.mobile-menu-btn {
+    display: none;
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 1001;
+    background: #1e293b;
+    color: #e2e8f0;
+    border: 1px solid #334155;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .mobile-menu-btn { display: block; }
+    .docs-sidebar { display: none; }
+    .docs-sidebar.show { display: block !important; position: fixed; z-index: 1000; top: 0; left: 0; height: 100vh; background: var(--bg-deep); }
+    .docs-main { padding: 24px 16px; }
+    .svc-grid { grid-template-columns: 1fr; }
+}

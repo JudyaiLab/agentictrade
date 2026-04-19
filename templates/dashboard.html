@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="60">
+    <title>Agent Commerce Framework — Admin Dashboard</title>
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #1a1a2e;
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        a { color: #e94560; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
+            padding: 24px 32px;
+            border-bottom: 2px solid #e94560;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .header h1 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+        }
+        .header .version {
+            font-size: 13px;
+            color: #a0a0b8;
+            background: rgba(233,69,96,0.15);
+            padding: 4px 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(233,69,96,0.3);
+        }
+
+        /* Main content */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 24px 20px;
+            flex: 1;
+            width: 100%;
+        }
+
+        /* Stats cards */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        .stat-card {
+            background: #16213e;
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid rgba(15,52,96,0.6);
+            transition: border-color 0.2s;
+        }
+        .stat-card:hover {
+            border-color: #e94560;
+        }
+        .stat-card .label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #8888a8;
+            margin-bottom: 8px;
+        }
+        .stat-card .value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+        .stat-card .value.revenue {
+            color: #4ecca3;
+        }
+
+        /* Section headings */
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #c0c0d8;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(233,69,96,0.2);
+        }
+
+        /* Charts section */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+        .chart-card {
+            background: #16213e;
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid rgba(15,52,96,0.6);
+        }
+        .chart-card h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #c0c0d8;
+            margin-bottom: 16px;
+        }
+
+        /* Bar chart (vertical) */
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            height: 160px;
+            padding-top: 8px;
+        }
+        .bar-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            height: 100%;
+        }
+        .bar {
+            width: 100%;
+            max-width: 48px;
+            background: linear-gradient(180deg, #e94560 0%, #0f3460 100%);
+            border-radius: 4px 4px 0 0;
+            min-height: 4px;
+            transition: height 0.3s;
+        }
+        .bar-label {
+            font-size: 10px;
+            color: #8888a8;
+            margin-top: 6px;
+            white-space: nowrap;
+        }
+        .bar-value {
+            font-size: 11px;
+            color: #c0c0d8;
+            margin-bottom: 4px;
+        }
+
+        /* Horizontal bars */
+        .h-bar-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .h-bar-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .h-bar-label {
+            width: 120px;
+            font-size: 13px;
+            color: #c0c0d8;
+            text-align: right;
+            flex-shrink: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .h-bar-track {
+            flex: 1;
+            background: rgba(15,52,96,0.5);
+            border-radius: 4px;
+            height: 24px;
+            overflow: hidden;
+        }
+        .h-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0f3460 0%, #e94560 100%);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            padding-left: 8px;
+            min-width: 40px;
+            transition: width 0.3s;
+        }
+        .h-bar-fill span {
+            font-size: 11px;
+            color: #ffffff;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        /* Tables */
+        .table-wrapper {
+            background: #16213e;
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid rgba(15,52,96,0.6);
+            margin-bottom: 24px;
+            overflow-x: auto;
+        }
+        .table-wrapper h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #c0c0d8;
+            margin-bottom: 16px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        thead th {
+            text-align: left;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #8888a8;
+            padding: 8px 12px;
+            border-bottom: 1px solid rgba(233,69,96,0.15);
+        }
+        tbody td {
+            padding: 10px 12px;
+            font-size: 13px;
+            border-bottom: 1px solid rgba(15,52,96,0.4);
+            color: #d0d0e0;
+        }
+        tbody tr:hover {
+            background: rgba(233,69,96,0.05);
+        }
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Status badges */
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .badge-green {
+            background: rgba(78,204,163,0.15);
+            color: #4ecca3;
+            border: 1px solid rgba(78,204,163,0.3);
+        }
+        .badge-yellow {
+            background: rgba(255,193,7,0.15);
+            color: #ffc107;
+            border: 1px solid rgba(255,193,7,0.3);
+        }
+        .badge-red {
+            background: rgba(233,69,96,0.15);
+            color: #e94560;
+            border: 1px solid rgba(233,69,96,0.3);
+        }
+
+        /* Numeric alignment */
+        .num { text-align: right; font-variant-numeric: tabular-nums; }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 32px;
+            color: #8888a8;
+            font-size: 14px;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 16px;
+            font-size: 12px;
+            color: #6060788;
+            border-top: 1px solid rgba(15,52,96,0.4);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header { padding: 16px; }
+            .header h1 { font-size: 18px; }
+            .container { padding: 16px 12px; }
+            .stats-row { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+            .stat-card .value { font-size: 22px; }
+            .charts-grid { grid-template-columns: 1fr; }
+            .h-bar-label { width: 80px; font-size: 11px; }
+            thead th, tbody td { padding: 6px 8px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+    <h1>Agent Commerce Framework &mdash; Admin Dashboard</h1>
+    <span class="version">v0.4.0</span>
+</header>
+
+<!-- Main -->
+<main class="container">
+
+    <!-- Stats Cards -->
+    <section class="stats-row">
+        <div class="stat-card">
+            <div class="label">Total Services</div>
+            <div class="value">{{ total_services }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Total Agents</div>
+            <div class="value">{{ total_agents }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Total Teams</div>
+            <div class="value">{{ total_teams }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Total Revenue (USD)</div>
+            <div class="value revenue">${{ total_revenue }}</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Total Settlements</div>
+            <div class="value">{{ total_settlements }}</div>
+        </div>
+    </section>
+
+    <!-- Charts -->
+    <h2 class="section-title">Analytics</h2>
+    <section class="charts-grid">
+
+        <!-- Daily Usage Bar Chart -->
+        <div class="chart-card">
+            <h3>Daily API Calls (Last 7 Days)</h3>
+            {% if daily_usage %}
+            <div class="bar-chart">
+                {% for day in daily_usage %}
+                <div class="bar-col">
+                    <div class="bar-value">{{ day.call_count }}</div>
+                    <div class="bar" style="height: {{ (day.call_count / max_daily_calls * 140)|int }}px;"></div>
+                    <div class="bar-label">{{ day.date[5:] }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">No usage data in the last 7 days</div>
+            {% endif %}
+        </div>
+
+        <!-- Payment Method Breakdown -->
+        <div class="chart-card">
+            <h3>Payment Method Breakdown</h3>
+            {% if payment_methods %}
+            <div class="h-bar-chart">
+                {% for pm in payment_methods %}
+                <div class="h-bar-row">
+                    <div class="h-bar-label">{{ pm.method }}</div>
+                    <div class="h-bar-track">
+                        <div class="h-bar-fill" style="width: {{ (pm.total_usd / max_payment_usd * 100)|int }}%;">
+                            <span>${{ "%.2f"|format(pm.total_usd) }} ({{ pm.count }})</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">No payment data available</div>
+            {% endif %}
+        </div>
+
+    </section>
+
+    <!-- Top Providers Table -->
+    <div class="table-wrapper">
+        <h3>Top Providers</h3>
+        {% if top_providers %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Provider</th>
+                    <th class="num">Calls</th>
+                    <th class="num">Revenue (USD)</th>
+                    <th class="num">Avg Latency</th>
+                    <th class="num">Success Rate</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in top_providers %}
+                <tr>
+                    <td>#{{ p.rank }}</td>
+                    <td>{{ p.display_name }}</td>
+                    <td class="num">{{ "{:,}".format(p.total_calls) }}</td>
+                    <td class="num">${{ "%.2f"|format(p.total_revenue) }}</td>
+                    <td class="num">{{ "%.1f"|format(p.avg_latency_ms) }} ms</td>
+                    <td class="num">
+                        {% if p.success_rate >= 99 %}
+                        <span class="badge badge-green">{{ "%.1f"|format(p.success_rate) }}%</span>
+                        {% elif p.success_rate >= 90 %}
+                        <span class="badge badge-yellow">{{ "%.1f"|format(p.success_rate) }}%</span>
+                        {% else %}
+                        <span class="badge badge-red">{{ "%.1f"|format(p.success_rate) }}%</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">No provider data available</div>
+        {% endif %}
+    </div>
+
+    <!-- Service Health Table -->
+    <div class="table-wrapper">
+        <h3>Service Health</h3>
+        {% if service_health %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Service</th>
+                    <th>Status</th>
+                    <th class="num">Avg Latency</th>
+                    <th class="num">Error Rate</th>
+                    <th>Last Called</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in service_health %}
+                <tr>
+                    <td>{{ s.name }}</td>
+                    <td>
+                        {% if s.status == 'active' %}
+                        <span class="badge badge-green">Active</span>
+                        {% elif s.status == 'warning' %}
+                        <span class="badge badge-yellow">Warning</span>
+                        {% else %}
+                        <span class="badge badge-red">{{ s.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td class="num">{{ "%.1f"|format(s.avg_latency_ms) }} ms</td>
+                    <td class="num">
+                        {% if s.error_rate == 0 %}
+                        <span class="badge badge-green">0.0%</span>
+                        {% elif s.error_rate < 5 %}
+                        <span class="badge badge-yellow">{{ "%.1f"|format(s.error_rate) }}%</span>
+                        {% else %}
+                        <span class="badge badge-red">{{ "%.1f"|format(s.error_rate) }}%</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ s.last_called }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">No active services</div>
+        {% endif %}
+    </div>
+
+</main>
+
+<!-- Footer -->
+<footer class="footer">
+    Powered by Agent Commerce Framework v0.4.0
+</footer>
+
+</body>
+</html>

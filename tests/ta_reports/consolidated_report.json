@@ -1,0 +1,166 @@
+{
+  "report_title": "Agent Provider System — TA Evaluation (4 Models, 4 Personas)",
+  "date": "2026-03-24",
+  "target": "AgenticTrade Agent Provider System (MIM-389)",
+  "methodology": "4 different AI models, each assigned a distinct persona covering human + agent perspectives",
+
+  "evaluators": [
+    {
+      "persona": "Alex Chen — Solo Developer / Human Provider",
+      "model": "Claude Opus",
+      "perspective": "human_provider",
+      "overall_score": 6.9,
+      "verdict": "Would NOT sign up today",
+      "key_strength": "Value proposition is compelling (10% vs RapidAPI 25%)",
+      "key_weakness": "Blockchain terminology alienates non-crypto developers; CTA buttons route to buyer docs instead of provider portal"
+    },
+    {
+      "persona": "AutoTrader-7 — Autonomous AI Trading Agent",
+      "model": "Claude Sonnet",
+      "perspective": "agent_buyer",
+      "overall_score": 6.6,
+      "verdict": "Would integrate with caveats",
+      "key_strength": "Clean auth (Bearer key_id:secret), good filtering/discovery",
+      "key_weakness": "Wallet funding requires human web UI; MCP descriptor is generic stub for all services"
+    },
+    {
+      "persona": "Sam Park — Startup CTO / Platform Builder",
+      "model": "Claude Haiku",
+      "perspective": "developer_builder",
+      "overall_score": 5.9,
+      "verdict": "Would NOT build on this",
+      "key_strength": "Business model is brilliant; Starter Kit is genuinely helpful",
+      "key_weakness": "SQLite is unscalable bottleneck; plaintext API key storage; no OpenAPI spec"
+    },
+    {
+      "persona": "Dr. Lin Wei — Security Researcher",
+      "model": "Claude Sonnet",
+      "perspective": "security_auditor",
+      "overall_score": 5.1,
+      "verdict": "NOT production ready",
+      "key_strength": "Good security headers baseline; CORS restricted properly",
+      "key_weakness": "9 critical vulnerabilities including IDOR, SSRF gaps, TOCTOU race conditions"
+    }
+  ],
+
+  "aggregate": {
+    "average_score": 6.1,
+    "min_score": 5.1,
+    "max_score": 6.9,
+    "would_use_count": "1 of 4 (agent buyer with caveats)",
+    "production_ready": false
+  },
+
+  "cross_persona_issues": {
+    "critical": [
+      "IDOR: Any authenticated user can read any provider's email/wallet/escrow — no ownership checks",
+      "SSRF: Service review pipeline doesn't block private IP ranges (10.x, 172.x, 169.254.x)",
+      "Daily transaction cap is non-atomic — race condition allows bypass under concurrency",
+      "Auto-delist weaponizable: 3 throwaway accounts can permanently delist any provider",
+      "Dynamic SQL column injection in update functions (dict keys interpolated into f-string SQL)"
+    ],
+    "high": [
+      "Wallet funding requires human web UI — agents cannot autonomously top up",
+      "MCP descriptor is generic stub — agents can't auto-generate valid API calls",
+      "SQLite single-writer architecture caps throughput at ~50-100 tx/sec",
+      "CTA buttons on providers page route to buyer documentation, not provider portal",
+      "Blockchain terminology (DID, wallet, USDC, Base L2) alienates non-crypto developers"
+    ],
+    "medium": [
+      "No OpenAPI/Swagger auto-generation",
+      "Provider registration endpoint (POST /services) not documented in API docs",
+      "No audit logging for escrow lifecycle events",
+      "Rate limiting is per-IP only, no per-API-key limits on financial endpoints",
+      "API responses leak PII (owner_email, wallet_address) to any authenticated caller",
+      "No SDK for JavaScript/Go — Python only",
+      "Escrow auto-release is cron-dependent, not triggered by blockchain confirmation"
+    ]
+  },
+
+  "top_10_improvements_by_priority": [
+    {
+      "rank": 1,
+      "issue": "Fix IDOR across all Agent Provider endpoints",
+      "impact": "CRITICAL security",
+      "effort": "Small (add ownership checks in routes)",
+      "personas_affected": ["security_auditor"]
+    },
+    {
+      "rank": 2,
+      "issue": "Block private IP ranges in service review SSRF protection",
+      "impact": "CRITICAL security",
+      "effort": "Small (add IP validation)",
+      "personas_affected": ["security_auditor"]
+    },
+    {
+      "rank": 3,
+      "issue": "Atomize daily transaction cap check+record",
+      "impact": "CRITICAL financial safety",
+      "effort": "Small (single SQL UPDATE with WHERE clause)",
+      "personas_affected": ["security_auditor"]
+    },
+    {
+      "rank": 4,
+      "issue": "Add anti-sybil measures to abuse reporting",
+      "impact": "HIGH abuse prevention",
+      "effort": "Medium (require minimum transaction history to file reports)",
+      "personas_affected": ["security_auditor", "human_provider"]
+    },
+    {
+      "rank": 5,
+      "issue": "Fix CTA routing — provider buttons should link to provider portal",
+      "impact": "HIGH conversion",
+      "effort": "Small (change href targets)",
+      "personas_affected": ["human_provider"]
+    },
+    {
+      "rank": 6,
+      "issue": "Add ownership authorization to escrow endpoints",
+      "impact": "CRITICAL security",
+      "effort": "Small (verify caller owns the resource)",
+      "personas_affected": ["security_auditor", "agent_buyer"]
+    },
+    {
+      "rank": 7,
+      "issue": "Enrich MCP descriptors with per-service schemas",
+      "impact": "HIGH agent usability",
+      "effort": "Medium (require schema on registration, embed in descriptor)",
+      "personas_affected": ["agent_buyer"]
+    },
+    {
+      "rank": 8,
+      "issue": "Add crypto-for-beginners guide (wallet setup, USDC, DID explained)",
+      "impact": "HIGH onboarding",
+      "effort": "Medium (documentation)",
+      "personas_affected": ["human_provider"]
+    },
+    {
+      "rank": 9,
+      "issue": "Add audit logging for escrow and provider lifecycle events",
+      "impact": "MEDIUM security/compliance",
+      "effort": "Small (add AuditLogger calls)",
+      "personas_affected": ["security_auditor", "developer_builder"]
+    },
+    {
+      "rank": 10,
+      "issue": "Mask PII in API responses (hide email/wallet from non-owners)",
+      "impact": "MEDIUM data privacy",
+      "effort": "Small (conditional field inclusion)",
+      "personas_affected": ["security_auditor"]
+    }
+  ],
+
+  "score_by_dimension": {
+    "security": {"avg": 5.1, "detail": "9 critical vulns, IDOR dominant"},
+    "usability_human": {"avg": 6.9, "detail": "Good value prop, bad onboarding for non-crypto users"},
+    "usability_agent": {"avg": 6.6, "detail": "Clean API, but wallet funding and MCP stubs block autonomy"},
+    "developer_experience": {"avg": 5.9, "detail": "SQLite bottleneck, no OpenAPI, sync-only SDK"}
+  },
+
+  "report_files": [
+    "tests/ta_reports/human_provider_opus.json",
+    "tests/ta_reports/agent_buyer_sonnet.json",
+    "tests/ta_reports/developer_builder_haiku.json",
+    "tests/ta_reports/security_auditor_sonnet.json"
+  ]
+}

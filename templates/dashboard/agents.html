@@ -1,0 +1,88 @@
+{% extends "dashboard/base.html" %}
+{% block title %}Agents{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+    <h1 class="text-lg font-bold text-white">Registered Agents</h1>
+    <span class="text-xs text-acf-muted">{{ agents|length }} agent{{ 's' if agents|length != 1 else '' }}</span>
+</div>
+
+<div class="bg-acf-panel rounded-lg border border-acf-border/60 overflow-x-auto">
+    {% if agents %}
+    <table class="w-full text-sm">
+        <thead>
+            <tr class="border-b border-acf-accent/15">
+                <th class="text-left text-[11px] uppercase tracking-wider text-acf-muted px-4 py-3">Display Name</th>
+                <th class="text-left text-[11px] uppercase tracking-wider text-acf-muted px-4 py-3">Agent ID</th>
+                <th class="text-left text-[11px] uppercase tracking-wider text-acf-muted px-4 py-3">Identity Type</th>
+                <th class="text-right text-[11px] uppercase tracking-wider text-acf-muted px-4 py-3">Reputation</th>
+                <th class="text-left text-[11px] uppercase tracking-wider text-acf-muted px-4 py-3">Wallet</th>
+                <th class="text-left text-[11px] uppercase tracking-wider text-acf-muted px-4 py-3">Provides</th>
+                <th class="text-left text-[11px] uppercase tracking-wider text-acf-muted px-4 py-3">Consumes</th>
+                <th class="text-center text-[11px] uppercase tracking-wider text-acf-muted px-4 py-3">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for agent in agents %}
+            <tr class="border-b border-acf-border/40 hover:bg-acf-accent/5">
+                <td class="px-4 py-2.5 font-medium text-white">
+                    {{ agent.display_name }}
+                    {% if agent.verified %}
+                    <span class="ml-1 text-acf-green text-xs" title="Verified">&#10003;</span>
+                    {% endif %}
+                </td>
+                <td class="px-4 py-2.5 text-gray-400 text-xs font-mono truncate max-w-[120px]">{{ agent.agent_id[:16] }}</td>
+                <td class="px-4 py-2.5">
+                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-semibold uppercase
+                        {% if agent.identity_type == 'did_vc' %}bg-purple-500/15 text-purple-400 border border-purple-500/30
+                        {% elif agent.identity_type == 'kya_jwt' %}bg-blue-500/15 text-blue-400 border border-blue-500/30
+                        {% else %}bg-gray-500/15 text-gray-400 border border-gray-500/30
+                        {% endif %}">
+                        {{ agent.identity_type }}
+                    </span>
+                </td>
+                <td class="px-4 py-2.5 text-right">
+                    {% set score = agent.reputation_score %}
+                    <span class="font-mono font-semibold
+                        {% if score >= 80 %}text-acf-green
+                        {% elif score >= 50 %}text-yellow-400
+                        {% else %}text-acf-accent
+                        {% endif %}">
+                        {{ "%.1f"|format(score) }}
+                    </span>
+                </td>
+                <td class="px-4 py-2.5 text-xs font-mono text-gray-400 truncate max-w-[100px]">
+                    {{ agent.wallet_address[:10] ~ '...' if agent.wallet_address else '-' }}
+                </td>
+                <td class="px-4 py-2.5 text-xs text-gray-400">
+                    {% if agent.provided_services %}
+                    {{ agent.provided_services|length }} service{{ 's' if agent.provided_services|length != 1 else '' }}
+                    {% else %}
+                    <span class="text-acf-muted">-</span>
+                    {% endif %}
+                </td>
+                <td class="px-4 py-2.5 text-xs text-gray-400">
+                    {% if agent.consumed_services %}
+                    {{ agent.consumed_services|length }} service{{ 's' if agent.consumed_services|length != 1 else '' }}
+                    {% else %}
+                    <span class="text-acf-muted">-</span>
+                    {% endif %}
+                </td>
+                <td class="px-4 py-2.5 text-center">
+                    {% if agent.status == 'active' %}
+                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-semibold uppercase bg-acf-green/15 text-acf-green border border-acf-green/30">Active</span>
+                    {% elif agent.status == 'suspended' %}
+                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-semibold uppercase bg-yellow-500/15 text-yellow-400 border border-yellow-500/30">Suspended</span>
+                    {% else %}
+                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-semibold uppercase bg-acf-accent/15 text-acf-accent border border-acf-accent/30">{{ agent.status }}</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="text-center py-12 text-acf-muted text-sm">No agents registered</div>
+    {% endif %}
+</div>
+{% endblock %}

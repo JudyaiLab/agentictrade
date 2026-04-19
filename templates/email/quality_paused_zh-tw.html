@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">
+
+<div style="background: #F8D7DA; border-left: 4px solid #DC3545; padding: 16px; border-radius: 4px; margin-bottom: 24px;">
+  <strong style="color: #721C24;">⛔ 服務已暫停</strong>
+</div>
+
+<p>您的服務 <strong>{{service_name}}</strong> 已被<strong style="color: #dc3545;">自動暫停</strong>，因為品質分數 <strong>{{quality_score}}/100</strong> 已連續 3 輪監測低於 <strong>{{threshold_pause}}</strong> 分。</p>
+
+<h2 style="font-size: 18px; margin-top: 32px;">目前狀況</h2>
+<ul style="line-height: 2;">
+  <li>您的服務已<strong>從市場下架</strong>，不再顯示於搜尋結果</li>
+  <li>既有的 API 呼叫將收到 503 回應</li>
+  <li>您的服務資料和設定均<strong>完整保留</strong></li>
+  <li>修復問題後可申請重新上線</li>
+</ul>
+
+<h2 style="font-size: 18px; margin-top: 32px;">如何重新啟用</h2>
+<ol style="line-height: 2;">
+  <li>修復造成停機或回應緩慢的端點問題</li>
+  <li>確認服務穩定回應（< 5 秒、HTTP 2xx）</li>
+  <li>聯繫我們申請重新啟用審核</li>
+  <li>重新上線前將進行 24 小時觀察期</li>
+</ol>
+
+<p style="margin: 24px 0;">
+  <a href="{{policy_url}}"
+     style="background: #6C63FF; color: white; padding: 12px 24px;
+            border-radius: 6px; text-decoration: none; font-weight: 600;">
+    查看品質政策
+  </a>
+</p>
+
+<p style="margin-top: 32px; color: #666; font-size: 14px;">
+  需要協助嗎？回覆此信件 — 我們希望幫助您的服務恢復上線。<br>
+  <a href="https://agentictrade.io" style="color: #6C63FF;">agentictrade.io</a>
+</p>
+
+<hr style="border: none; border-top: 1px solid #eee; margin: 32px 0;">
+<p style="color: #999; font-size: 12px;">
+  服務 ID: {{service_id}}<br>
+  您收到此信件是因為您的服務已依據我們的<a href="{{policy_url}}">品質政策</a>自動暫停。
+</p>
+
+</body>
+</html>

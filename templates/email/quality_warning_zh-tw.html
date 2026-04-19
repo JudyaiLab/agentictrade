@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">
+
+<div style="background: #FFF3CD; border-left: 4px solid #FFC107; padding: 16px; border-radius: 4px; margin-bottom: 24px;">
+  <strong style="color: #856404;">⚠️ 服務品質警告</strong>
+</div>
+
+<p>您的服務 <strong>{{service_name}}</strong> 目前品質分數為 <strong style="color: #dc3545;">{{quality_score}}/100</strong>，低於平台門檻 <strong>{{threshold_warn}}</strong> 分。</p>
+
+<h2 style="font-size: 18px; margin-top: 32px;">這代表什麼</h2>
+<ul style="line-height: 2;">
+  <li>您的服務目前仍然<strong>保持上線</strong>，但在搜尋結果中排名可能較低</li>
+  <li>若品質持續低於 <strong>{{threshold_pause}}</strong> 分達 3 次連續檢查，服務將被<strong>自動暫停</strong></li>
+  <li>品質評分依據：正常運行時間（50%）、回應延遲（30%）、錯誤率（20%）</li>
+</ul>
+
+<h2 style="font-size: 18px; margin-top: 32px;">建議採取的行動</h2>
+<ol style="line-height: 2;">
+  <li>檢查您的服務端點是否正常回應且速度足夠</li>
+  <li>查看伺服器日誌中的錯誤或逾時記錄</li>
+  <li>確保端點在 5 秒內回應</li>
+  <li>確認服務回傳 HTTP 2xx 狀態碼</li>
+</ol>
+
+<p style="margin: 24px 0;">
+  <a href="{{policy_url}}"
+     style="background: #6C63FF; color: white; padding: 12px 24px;
+            border-radius: 6px; text-decoration: none; font-weight: 600;">
+    查看品質政策
+  </a>
+</p>
+
+<p style="margin-top: 32px; color: #666; font-size: 14px;">
+  有問題嗎？直接回覆此信件 — 我們會協助您改善服務品質。<br>
+  <a href="https://agentictrade.io" style="color: #6C63FF;">agentictrade.io</a>
+</p>
+
+<hr style="border: none; border-top: 1px solid #eee; margin: 32px 0;">
+<p style="color: #999; font-size: 12px;">
+  服務 ID: {{service_id}}<br>
+  您收到此信件是因為您是 AgenticTrade 上此服務的註冊供應商。
+</p>
+
+</body>
+</html>

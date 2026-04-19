@@ -1,0 +1,253 @@
+{% extends "public/base.html" %}
+
+{% block title %}{{ t('privacy.page_title') or 'Privacy Policy — AgenticTrade' }}{% endblock %}
+{% block meta_description %}{{ t('privacy.meta_desc') or 'AgenticTrade Privacy Policy. Learn how we collect, use, and protect your data on the AgenticTrade API marketplace.' }}{% endblock %}
+{% block og_title %}{{ t('privacy.og_title') or 'Privacy Policy — AgenticTrade API Marketplace' }}{% endblock %}
+{% block og_description %}{{ t('privacy.og_desc') or 'How AgenticTrade collects, uses, and protects your data on the API marketplace for AI agents.' }}{% endblock %}
+{% block tw_title %}{{ t('privacy.tw_title') or 'AgenticTrade Privacy Policy' }}{% endblock %}
+{% block tw_description %}{{ t('privacy.tw_desc') or 'Privacy Policy for AgenticTrade, the API marketplace for AI agents.' }}{% endblock %}
+{% block robots %}index, follow{% endblock %}
+
+{% block json_ld %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Privacy Policy — AgenticTrade",
+    "description": "Privacy Policy for the AgenticTrade API marketplace.",
+    "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://agentictrade.io/"},
+            {"@type": "ListItem", "position": 2, "name": "Privacy Policy", "item": "https://agentictrade.io/privacy"}
+        ]
+    }
+}
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .legal-hero { padding: 60px 0 40px; max-width: 800px; }
+    .legal-hero p { color: var(--text-dim); font-size: 16px; line-height: 1.7; }
+
+    .legal-content { max-width: 800px; padding-bottom: 60px; }
+    .legal-content h2 {
+        font-size: 22px;
+        margin-top: 48px;
+        margin-bottom: 16px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border);
+    }
+    .legal-content h2:first-of-type { border-top: none; margin-top: 0; padding-top: 0; }
+    .legal-content h3 { font-size: 17px; margin-top: 24px; margin-bottom: 10px; }
+    .legal-content p, .legal-content li {
+        color: var(--text-dim);
+        font-size: 15px;
+        line-height: 1.8;
+    }
+    .legal-content ul, .legal-content ol {
+        padding-left: 24px;
+        margin-bottom: 16px;
+    }
+    .legal-content li { margin-bottom: 8px; }
+    .legal-content .effective-date {
+        display: inline-block;
+        background: var(--bg-card);
+        border-radius: 8px;
+        padding: 8px 16px;
+        font-size: 14px;
+        color: var(--text-dim);
+        box-shadow: var(--ring);
+        margin-bottom: 32px;
+    }
+
+    .legal-toc {
+        background: var(--bg-card);
+        border-radius: 12px;
+        padding: 24px 28px;
+        margin-bottom: 40px;
+        box-shadow: var(--ring);
+    }
+    .legal-toc h3 { margin-top: 0; margin-bottom: 12px; font-size: 15px; }
+    .legal-toc ol { padding-left: 20px; margin-bottom: 0; }
+    .legal-toc li { margin-bottom: 4px; }
+    .legal-toc a { color: var(--accent); text-decoration: none; font-size: 14px; }
+    .legal-toc a:hover { text-decoration: underline; }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="container" style="padding-top:16px;">
+    <nav aria-label="Breadcrumb" style="font-size:13px; color:var(--text-muted);">
+        <a href="/" style="color:var(--text-dim);">{{ t('breadcrumb.home') or 'Home' }}</a> &rsaquo; Privacy Policy
+    </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+
+<section class="section">
+    <div class="container">
+        <div class="legal-hero">
+            <span class="eyebrow">Legal</span>
+            <h1>Privacy Policy</h1>
+            <p>This Privacy Policy describes how AgenticTrade, operated by JudyAI Lab, collects, uses, and protects your information when you use our platform. We are committed to protecting your privacy and handling your data transparently.</p>
+        </div>
+
+        <div class="legal-content">
+            <div class="effective-date">Last updated: March 2026</div>
+
+            {# Table of Contents #}
+            <div class="legal-toc">
+                <h3>Table of Contents</h3>
+                <ol>
+                    <li><a href="#information-we-collect">Information We Collect</a></li>
+                    <li><a href="#how-we-use">How We Use Information</a></li>
+                    <li><a href="#data-sharing">Data Sharing</a></li>
+                    <li><a href="#cookies">Cookies and Tracking</a></li>
+                    <li><a href="#data-security">Data Security</a></li>
+                    <li><a href="#data-retention">Data Retention</a></li>
+                    <li><a href="#your-rights">Your Rights</a></li>
+                    <li><a href="#international-transfers">International Data Transfers</a></li>
+                    <li><a href="#children">Children's Privacy</a></li>
+                    <li><a href="#changes">Changes to This Policy</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ol>
+            </div>
+
+            {# 1. Information We Collect #}
+            <h2 id="information-we-collect">1. Information We Collect</h2>
+
+            <h3>Account Information</h3>
+            <p>When you register for an AgenticTrade account, we collect:</p>
+            <ul>
+                <li>Email address</li>
+                <li>Display name or organization name</li>
+                <li>Wallet addresses (for USDC payments on Base)</li>
+                <li>Payment method details (processed by our payment partners; we do not store full payment credentials)</li>
+            </ul>
+
+            <h3>Usage Data</h3>
+            <p>We automatically collect data about how you interact with the Platform:</p>
+            <ul>
+                <li>API call records (timestamp, service called, response status, latency)</li>
+                <li>Agent identity information (agent ID, associated account)</li>
+                <li>Billing and transaction records</li>
+                <li>IP addresses and request metadata</li>
+                <li>Browser or client type, operating system, and language preference</li>
+            </ul>
+
+            <h3>Provider-Specific Data</h3>
+            <p>If you are a Provider, we additionally collect:</p>
+            <ul>
+                <li>API endpoint URLs and service descriptions</li>
+                <li>Encrypted API credentials (stored securely for Proxy Key routing)</li>
+                <li>Payout information (wallet address or PayPal email)</li>
+                <li>Service health metrics (response time, error rate, uptime)</li>
+            </ul>
+
+            {# 2. How We Use Information #}
+            <h2 id="how-we-use">2. How We Use Information</h2>
+            <p>We use the information we collect for the following purposes:</p>
+            <ul>
+                <li><strong>Platform operations:</strong> To facilitate API discovery, routing, billing, and settlement between Providers and Buyers</li>
+                <li><strong>Account management:</strong> To create and manage your account, authenticate access, and communicate with you about your account</li>
+                <li><strong>Payment processing:</strong> To process transactions, calculate commissions, and manage payouts</li>
+                <li><strong>Analytics and improvement:</strong> To understand Platform usage patterns, improve our services, and develop new features</li>
+                <li><strong>Security:</strong> To detect, prevent, and respond to fraud, abuse, security incidents, and technical issues</li>
+                <li><strong>Legal compliance:</strong> To comply with applicable laws, regulations, and legal processes</li>
+                <li><strong>Communication:</strong> To send you service-related notices, updates, and promotional information (with opt-out available for marketing communications)</li>
+            </ul>
+
+            {# 3. Data Sharing #}
+            <h2 id="data-sharing">3. Data Sharing</h2>
+            <p>We do not sell your personal data. We share information only in the following circumstances:</p>
+            <ul>
+                <li><strong>With Providers and Buyers:</strong> Transactional data necessary to complete API calls (e.g., a Provider may see aggregate usage metrics; a Buyer sees the service they called and the charge). We do not share Provider API credentials with Buyers.</li>
+                <li><strong>Payment processors:</strong> We share transaction data with our payment partners (Base/USDC, NOWPayments, PayPal) to process payments. These partners have their own privacy policies.</li>
+                <li><strong>Service providers:</strong> We may share data with third-party service providers that help us operate the Platform (e.g., hosting, analytics, email delivery), under strict data processing agreements.</li>
+                <li><strong>Legal requirements:</strong> We may disclose information if required by law, regulation, legal process, or governmental request.</li>
+                <li><strong>Business transfers:</strong> In the event of a merger, acquisition, or sale of assets, your data may be transferred as part of the transaction. We will notify you of any such change.</li>
+                <li><strong>With your consent:</strong> We may share data for other purposes with your explicit consent.</li>
+            </ul>
+
+            {# 4. Cookies and Tracking #}
+            <h2 id="cookies">4. Cookies and Tracking</h2>
+            <p>AgenticTrade uses cookies and similar technologies for the following purposes:</p>
+            <ul>
+                <li><strong>Essential cookies:</strong> Required for Platform functionality, including authentication, session management, and language preferences.</li>
+                <li><strong>Analytics cookies:</strong> Help us understand how visitors interact with our website so we can improve the user experience.</li>
+            </ul>
+            <p>We do not use third-party advertising cookies or trackers. You can manage cookie preferences through your browser settings. Disabling essential cookies may affect Platform functionality.</p>
+            <p>For API interactions (agent-to-platform), cookies are not used. Authentication is handled via API keys and Proxy Keys in request headers.</p>
+
+            {# 5. Data Security #}
+            <h2 id="data-security">5. Data Security</h2>
+            <p>We implement appropriate technical and organizational measures to protect your data, including:</p>
+            <ul>
+                <li>Encryption of Provider API credentials at rest</li>
+                <li>TLS encryption for all data in transit</li>
+                <li>Proxy Key isolation to prevent credential exposure</li>
+                <li>SSRF protection on all outbound proxy requests</li>
+                <li>Per-client rate limiting to prevent abuse</li>
+                <li>Regular security audits and monitoring</li>
+            </ul>
+            <p>While we strive to protect your data, no method of electronic storage or transmission is 100% secure. We cannot guarantee absolute security but will notify affected users promptly in the event of a data breach.</p>
+
+            {# 6. Data Retention #}
+            <h2 id="data-retention">6. Data Retention</h2>
+            <p>We retain your data for as long as necessary to provide our services and fulfill the purposes described in this policy:</p>
+            <ul>
+                <li><strong>Account data:</strong> Retained for the duration of your account, plus 30 days after account closure to process pending transactions.</li>
+                <li><strong>Transaction records:</strong> Retained for a minimum of 5 years to comply with financial record-keeping requirements.</li>
+                <li><strong>Usage logs:</strong> Retained for 12 months for analytics and security purposes, then anonymized or deleted.</li>
+                <li><strong>Provider credentials:</strong> Deleted immediately upon service delisting or account closure.</li>
+            </ul>
+
+            {# 7. Your Rights #}
+            <h2 id="your-rights">7. Your Rights</h2>
+            <p>Depending on your jurisdiction, you may have the following rights regarding your personal data:</p>
+            <ul>
+                <li><strong>Access:</strong> Request a copy of the personal data we hold about you.</li>
+                <li><strong>Correction:</strong> Request correction of inaccurate or incomplete data.</li>
+                <li><strong>Deletion:</strong> Request deletion of your personal data, subject to legal retention requirements.</li>
+                <li><strong>Portability:</strong> Request a machine-readable copy of your data.</li>
+                <li><strong>Objection:</strong> Object to processing of your data for certain purposes.</li>
+                <li><strong>Withdraw consent:</strong> Where processing is based on consent, you may withdraw it at any time.</li>
+            </ul>
+            <p>To exercise any of these rights, contact us at partners@agentictrade.io. We will respond to verified requests within 30 days.</p>
+
+            {# 8. International Data Transfers #}
+            <h2 id="international-transfers">8. International Data Transfers</h2>
+            <p>AgenticTrade serves users worldwide. Your data may be processed and stored in jurisdictions outside your country of residence. We ensure appropriate safeguards are in place for international transfers, including contractual data protection clauses with our service providers.</p>
+            <p>Blockchain transactions (USDC on Base) are inherently global and recorded on a public ledger. Transaction hashes and wallet addresses are visible on the blockchain. We cannot delete or modify data recorded on-chain.</p>
+
+            {# 9. Children's Privacy #}
+            <h2 id="children">9. Children's Privacy</h2>
+            <p>AgenticTrade is not directed at individuals under the age of 18. We do not knowingly collect personal information from children. If we become aware that we have collected data from a child under 18, we will take steps to delete that information promptly.</p>
+            <p>If you believe a child has provided us with personal information, please contact us at partners@agentictrade.io.</p>
+
+            {# 10. Changes to This Policy #}
+            <h2 id="changes">10. Changes to This Policy</h2>
+            <p>We may update this Privacy Policy from time to time to reflect changes in our practices, technology, or legal requirements. We will post the updated policy on this page and update the "Last updated" date.</p>
+            <p>For material changes, we will make reasonable efforts to notify you via email or a prominent notice on the Platform. Your continued use of AgenticTrade after any changes constitutes acceptance of the updated Privacy Policy.</p>
+
+            {# 11. Contact #}
+            <h2 id="contact">11. Contact</h2>
+            <p>If you have questions, concerns, or requests regarding this Privacy Policy or our data practices, please contact us:</p>
+            <ul>
+                <li><strong>Email:</strong> <a href="mailto:partners@agentictrade.io">partners@agentictrade.io</a></li>
+                <li><strong>Operator:</strong> JudyAI Lab</li>
+                <li><strong>Website:</strong> <a href="https://agentictrade.io">agentictrade.io</a></li>
+            </ul>
+
+            <div class="text-center" style="padding:48px 0 0;">
+                <a href="/terms" class="btn-primary" style="margin-right:12px;">Read Terms of Service</a>
+                <a href="/" class="btn-outline">Back to Home</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

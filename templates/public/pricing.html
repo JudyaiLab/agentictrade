@@ -1,0 +1,321 @@
+{% extends "public/base.html" %}
+
+{% block title %}{{ t('pricing.page_title') or 'Pricing — 0% Commission to Start | AgenticTrade Marketplace' }}{% endblock %}
+{% block meta_description %}{{ t('pricing.meta_desc') or 'AgenticTrade pricing: 0% commission month 1, 5% months 2-3, 10% capped. Quality rewards drop to 6%. Compare with RapidAPI (25%) and Fiverr (20%).' }}{% endblock %}
+{% block og_title %}{{ t('pricing.og_title') or 'AgenticTrade Pricing — 0% Commission to Start' }}{% endblock %}
+{% block og_description %}{{ t('pricing.og_desc') or '0% commission month 1, capped at 10%. Pay-per-call in USDC. Compare vs RapidAPI (25%), Fiverr (20%), Etsy (6.5%).' }}{% endblock %}
+{% block tw_title %}{{ t('pricing.tw_title') or 'AgenticTrade Pricing — Start at 0% Commission' }}{% endblock %}
+{% block tw_description %}{{ t('pricing.tw_desc') or '0% commission month 1. AI agents pay per call in USDC. Compare with RapidAPI, Fiverr, and Etsy.' }}{% endblock %}
+
+{% block json_ld %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        {
+            "@type": "Question",
+            "name": "How much does AgenticTrade cost for providers?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "AgenticTrade charges 0% commission for your first month, 5% for months 2-3, and 10% from month 4 onward. High-quality providers (95+ health score) can reduce their effective rate to as low as 6% through the Quality Rewards program."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "How does AgenticTrade compare to RapidAPI pricing?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "RapidAPI charges 25%+ commission with subscription-based billing. AgenticTrade caps at 10% commission with per-call billing in USDC. AgenticTrade also offers agent-native discovery via MCP and instant on-chain settlement, which RapidAPI does not support."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "What is the Quality Rewards program?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Quality Rewards automatically lower your commission rate based on your service health score. Standard providers pay 10%, Verified providers (80+ health) pay 8%, and Premium providers (95+ health) pay only 6% — a 40% savings on platform fees."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Are there any upfront costs or subscription fees?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "No. AgenticTrade is free to join for both providers and buyers. There are no subscription fees, setup costs, or minimum commitments. You only pay commission on actual transactions."
+            }
+        }
+    ]
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Pricing — AgenticTrade",
+    "description": "AgenticTrade pricing: pay-per-call with provider-set prices. Platform commission starts at 0%.",
+    "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://agentictrade.io/"},
+            {"@type": "ListItem", "position": 2, "name": "Pricing", "item": "https://agentictrade.io/pricing"}
+        ]
+    }
+}
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .pricing-hero { padding: 60px 0 40px; text-align: center; }
+    .pricing-hero p { max-width: 50ch; margin: 0 auto; color: var(--text-dim); font-size: 17px; line-height: 1.7; }
+
+    .tier-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 48px 0; }
+    .tier-card {
+        background: var(--bg-card); border-radius: var(--radius); padding: 32px 24px;
+        text-align: center; position: relative; box-shadow: var(--ring);
+    }
+    .tier-card.featured { box-shadow: 0 0 0 1px var(--accent), 0 0 24px rgba(34,211,238,0.08); }
+    .tier-card.featured::before {
+        content: attr(data-badge); position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        color: #000; font-size: 12px; font-weight: 700; padding: 4px 14px; border-radius: 9999px;
+    }
+    .tier-label { font-size: 13px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; margin-bottom: 8px; }
+    .tier-rate { font-size: 44px; font-weight: 800; color: var(--accent); margin-bottom: 4px; }
+    .tier-period { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+    .tier-features { list-style: none; padding: 0; text-align: left; }
+    .tier-features li {
+        padding: 8px 0; border-bottom: 1px solid var(--border); color: var(--text-dim); font-size: 14px;
+        display: flex; align-items: center; gap: 8px;
+    }
+    .tier-features li:last-child { border-bottom: none; }
+    .tier-features li::before { content: "\2713"; color: var(--green); font-weight: 700; }
+
+    .compare-table { margin: 48px 0; overflow-x: auto; }
+    .compare-table table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .compare-table th {
+        text-align: left; padding: 12px 16px; background: var(--bg-card); color: var(--text-dim);
+        font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em;
+        border-bottom: 2px solid var(--border);
+    }
+    .compare-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); color: var(--text-dim); }
+    .compare-table .highlight { color: var(--accent); font-weight: 700; }
+
+    .quality-section { margin: 48px 0; }
+    .quality-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 24px; }
+    .quality-card {
+        background: var(--bg-card); border-radius: var(--radius-sm); padding: 20px; text-align: center;
+        box-shadow: var(--ring);
+    }
+    .quality-card .q-rate { font-size: 28px; font-weight: 800; color: var(--accent); }
+    .quality-card .q-label { font-size: 13px; color: var(--text-dim); margin-top: 4px; }
+    .quality-card .q-saving { font-size: 12px; color: var(--green); margin-top: 4px; }
+
+    .referral-box {
+        background: linear-gradient(135deg, rgba(34,211,238,0.06), rgba(167,139,250,0.06));
+        border: 1px solid rgba(34,211,238,0.12);
+        border-radius: var(--radius); padding: 32px; margin: 48px 0; text-align: center;
+    }
+
+    @media (max-width: 900px) {
+        .tier-grid { grid-template-columns: 1fr; }
+        .quality-grid { grid-template-columns: 1fr; }
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="container" style="padding-top:16px;">
+    <nav aria-label="Breadcrumb" style="font-size:13px; color:var(--text-muted);">
+        <a href="/" style="color:var(--text-dim);">{{ t('breadcrumb.home') or 'Home' }}</a> &rsaquo; {{ t('nav.pricing') or 'Pricing' }}
+    </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+
+{# Hero #}
+<section class="section" style="padding-bottom: 0;">
+    <div class="container">
+        <div class="pricing-hero">
+            <span class="eyebrow">{{ t('nav.pricing') or 'Pricing' }}</span>
+            <h1>{{ t('pricing.title') or 'Simple, Transparent Pricing' }}</h1>
+            <p>{{ t('pricing.subtitle') or 'Free to start. Pay-per-call with provider-set prices. Platform commission starts at 0% and caps at 10%.' }}</p>
+        </div>
+    </div>
+</section>
+
+{# Tiers #}
+<section class="section">
+    <div class="container">
+        <div class="tier-grid">
+            <div class="tier-card featured" data-badge="{{ t('pricing.most_popular') or 'Most Popular' }}">
+                <div class="tier-label">{{ t('pricing.month1') or 'Month 1' }}</div>
+                <div class="tier-rate">0%</div>
+                <div class="tier-period">{{ t('pricing.commission') or 'commission' }}</div>
+                <ul class="tier-features">
+                    <li>{{ t('pricing.feat_marketplace_access') or 'Full marketplace access' }}</li>
+                    <li>{{ t('pricing.feat_mcp_generation') or 'MCP Tool Descriptor generation' }}</li>
+                    <li>{{ t('pricing.feat_proxy_key') or 'Proxy Key protection' }}</li>
+                    <li>{{ t('pricing.feat_analytics') or 'Usage analytics dashboard' }}</li>
+                </ul>
+            </div>
+            <div class="tier-card">
+                <div class="tier-label">{{ t('pricing.months2_3') or 'Months 2-3' }}</div>
+                <div class="tier-rate">5%</div>
+                <div class="tier-period">{{ t('pricing.commission') or 'commission' }}</div>
+                <ul class="tier-features">
+                    <li>{{ t('pricing.feat_everything_month1') or 'Everything in Month 1' }}</li>
+                    <li>{{ t('pricing.feat_priority_search') or 'Priority in search results' }}</li>
+                    <li>{{ t('pricing.feat_growth_program') or 'Provider Growth Program' }}</li>
+                    <li>{{ t('pricing.feat_founding_badge') or 'Founding Seller badge eligibility' }}</li>
+                </ul>
+            </div>
+            <div class="tier-card">
+                <div class="tier-label">{{ t('pricing.month4_plus') or 'Month 4+' }}</div>
+                <div class="tier-rate">10%</div>
+                <div class="tier-period">{{ t('pricing.capped') or 'capped' }}</div>
+                <ul class="tier-features">
+                    <li>{{ t('pricing.feat_everything_months2_3') or 'Everything in Months 2–3' }}</li>
+                    <li>{{ t('pricing.feat_volume_discounts') or 'Volume discounts available' }}</li>
+                    <li>{{ t('pricing.feat_dedicated_support') or 'Dedicated support' }}</li>
+                    <li>{{ t('pricing.feat_custom_settlement') or 'Custom settlement schedule' }}</li>
+                </ul>
+            </div>
+        </div>
+
+        {# Quality Rewards #}
+        <div class="quality-section">
+            <span class="eyebrow">{{ t('pricing.quality_eyebrow') or 'Quality Rewards' }}</span>
+            <h2>{{ t('pricing.quality_title') or 'Lower Fees for Higher Quality' }}</h2>
+            <p class="section-subtitle">{{ t('pricing.quality_subtitle') or 'Maintain a high health score and your effective commission rate drops automatically. The platform takes the lower of your time-based rate and quality-based rate.' }}</p>
+
+            {# Quality Monitoring Explanation #}
+            <div style="background: var(--bg-card); border-radius: var(--radius); padding: 28px 32px; margin-bottom: 28px; box-shadow: var(--ring); border-left: 3px solid var(--accent);">
+                <h3 style="margin-bottom: 8px; font-size: 17px;">{{ t('pricing.quality_monitor_title') or 'We Monitor Service Quality 24/7' }}</h3>
+                <p style="color: var(--text-dim); font-size: 15px; line-height: 1.7; margin-bottom: 16px;">
+                    {{ t('pricing.quality_monitor_desc') or 'Every service on AgenticTrade is monitored around the clock by our automated quality patrol system. This protects both providers and users.' }}
+                </p>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px;">
+                    <div style="display: flex; gap: 10px; align-items: flex-start;">
+                        <span style="font-size: 20px; flex-shrink: 0;">&#x23F1;</span>
+                        <div>
+                            <strong style="font-size: 14px;">{{ t('pricing.quality_check_uptime') or 'Uptime' }}</strong>
+                            <p style="color: var(--text-muted); font-size: 13px; margin: 2px 0 0;">{{ t('pricing.quality_check_uptime_desc') or 'Is your service online and reachable?' }}</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: flex-start;">
+                        <span style="font-size: 20px; flex-shrink: 0;">&#x26A1;</span>
+                        <div>
+                            <strong style="font-size: 14px;">{{ t('pricing.quality_check_speed') or 'Response Time' }}</strong>
+                            <p style="color: var(--text-muted); font-size: 13px; margin: 2px 0 0;">{{ t('pricing.quality_check_speed_desc') or 'How fast does it respond to requests?' }}</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: flex-start;">
+                        <span style="font-size: 20px; flex-shrink: 0;">&#x2705;</span>
+                        <div>
+                            <strong style="font-size: 14px;">{{ t('pricing.quality_check_errors') or 'Error Rate' }}</strong>
+                            <p style="color: var(--text-muted); font-size: 13px; margin: 2px 0 0;">{{ t('pricing.quality_check_errors_desc') or 'Are responses correct and error-free?' }}</p>
+                        </div>
+                    </div>
+                </div>
+                <p style="color: var(--text-muted); font-size: 13px; margin-top: 16px; margin-bottom: 0;">
+                    {{ t('pricing.quality_monitor_note') or 'Your health score (0–100) is calculated from these metrics over the last 30 days. Higher score = lower commission — automatically.' }}
+                </p>
+            </div>
+
+            <div class="quality-grid">
+                <div class="quality-card">
+                    <div class="q-rate">10%</div>
+                    <div class="q-label">{{ t('pricing.q_standard_label') or 'Standard (<80 health)' }}</div>
+                </div>
+                <div class="quality-card">
+                    <div class="q-rate">8%</div>
+                    <div class="q-label">{{ t('pricing.q_verified_label') or 'Verified (80+ health)' }}</div>
+                    <div class="q-saving">{{ t('pricing.q_save_20') or 'Save 20%' }}</div>
+                </div>
+                <div class="quality-card">
+                    <div class="q-rate">6%</div>
+                    <div class="q-label">{{ t('pricing.q_premium_label') or 'Premium (95+ health)' }}</div>
+                    <div class="q-saving">{{ t('pricing.q_save_40') or 'Save 40%' }}</div>
+                </div>
+            </div>
+        </div>
+
+        {# Comparison #}
+        <div class="compare-table">
+            <span class="eyebrow">{{ t('pricing.compare_eyebrow') or 'Compare' }}</span>
+            <h2 class="mb-24">{{ t('pricing.compare_title') or 'How We Compare' }}</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>{{ t('pricing.col_feature') or 'Feature' }}</th>
+                        <th class="highlight">AgenticTrade</th>
+                        <th>RapidAPI</th>
+                        <th>Fiverr</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ t('pricing.commission') or 'Commission' }}</td>
+                        <td class="highlight">0-10%</td>
+                        <td>25%+</td>
+                        <td>20%</td>
+                    </tr>
+                    <tr>
+                        <td>{{ t('pricing.compare_billing') or 'Billing Model' }}</td>
+                        <td class="highlight">{{ t('pricing.compare_per_call') or 'Per call' }}</td>
+                        <td>{{ t('pricing.compare_subscription') or 'Subscription' }}</td>
+                        <td>{{ t('pricing.compare_per_project') or 'Per project' }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ t('pricing.compare_agent_native') or 'Agent Native' }}</td>
+                        <td class="highlight">{{ t('pricing.compare_yes_mcp') or 'Yes (MCP)' }}</td>
+                        <td>{{ t('pricing.compare_no') or 'No' }}</td>
+                        <td>{{ t('pricing.compare_no') or 'No' }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ t('pricing.compare_payout') or 'Payout' }}</td>
+                        <td class="highlight">{{ t('pricing.compare_usdc_instant') or 'USDC (instant)' }}</td>
+                        <td>{{ t('pricing.compare_stripe_monthly') or 'Stripe (monthly)' }}</td>
+                        <td>{{ t('pricing.compare_bank_biweekly') or 'Bank (bi-weekly)' }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        {# FAQ #}
+        <div style="margin: 48px 0;">
+            <span class="eyebrow">{{ t('pricing.faq_eyebrow') or 'FAQ' }}</span>
+            <h2 class="mb-24">{{ t('pricing.faq_title') or 'Pricing Questions' }}</h2>
+            <div class="faq-grid" style="max-width:700px;">
+                <div class="faq-item">
+                    <div class="faq-q">{{ t('pricing.faq_q1') or 'How much does AgenticTrade cost for providers?' }}</div>
+                    <div class="faq-a">{{ t('pricing.faq_a1') or 'AgenticTrade charges 0% commission for your first month, 5% for months 2-3, and 10% from month 4 onward. High-quality providers (95+ health score) can reduce their effective rate to as low as 6% through the Quality Rewards program.' }}</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q">{{ t('pricing.faq_q2') or 'How does AgenticTrade compare to RapidAPI pricing?' }}</div>
+                    <div class="faq-a">{{ t('pricing.faq_a2') or 'RapidAPI charges 25%+ commission with subscription-based billing. AgenticTrade caps at 10% commission with per-call billing in USDC. AgenticTrade also offers agent-native discovery via MCP and instant on-chain settlement.' }}</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q">{{ t('pricing.faq_q3') or 'What is the Quality Rewards program?' }}</div>
+                    <div class="faq-a">{{ t('pricing.faq_a3') or 'Quality Rewards automatically lower your commission rate based on your service health score. Standard providers pay 10%, Verified (80+ health) pay 8%, and Premium (95+ health) pay only 6% — a 40% savings on platform fees.' }}</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q">{{ t('pricing.faq_q4') or 'Are there any upfront costs or subscription fees?' }}</div>
+                    <div class="faq-a">{{ t('pricing.faq_a4') or 'No. AgenticTrade is free to join for both providers and buyers. There are no subscription fees, setup costs, or minimum commitments. You only pay commission on actual transactions.' }}</div>
+                </div>
+            </div>
+        </div>
+
+        {# Referral #}
+        <div class="referral-box">
+            <h3>{{ t('pricing.referral_box_title') or 'Referral Program: Earn 20% Forever' }}</h3>
+            <p class="text-dim" style="max-width:50ch; margin:12px auto;">{{ t('pricing.referral_box_desc') or 'Refer providers or builders and earn 20% of the platform fee on all their transactions — permanently. No cap, no expiry.' }}</p>
+            <a href="/portal/register" class="btn-primary" style="margin-top:16px;">{{ t('landing.ref_cta') or 'Start Earning Now' }}</a>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

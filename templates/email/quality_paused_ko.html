@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">
+
+<div style="background: #F8D7DA; border-left: 4px solid #DC3545; padding: 16px; border-radius: 4px; margin-bottom: 24px;">
+  <strong style="color: #721C24;">⛔ 서비스 일시 중지</strong>
+</div>
+
+<p>귀하의 서비스 <strong>{{service_name}}</strong>이(가) <strong style="color: #dc3545;">자동으로 일시 중지</strong>되었습니다. 품질 점수 <strong>{{quality_score}}/100</strong>이(가) 3회 ���속 모니터링에서 <strong>{{threshold_pause}}</strong>점 미만을 유지했습니다.</p>
+
+<h2 style="font-size: 18px; margin-top: 32px;">현재 상황</h2>
+<ul style="line-height: 2;">
+  <li>서비스가 마켓플레이스에�� <strong>더 이상 표시되지 않습니다</strong></li>
+  <li>기존 API 호출은 503 응답을 받게 됩니다</li>
+  <li>서비스 데이터와 설정은 <strong>보존</strong>됩니다</li>
+  <li>문제 해결 후 재활성화를 요청할 수 있습니다</li>
+</ul>
+
+<h2 style="font-size: 18px; margin-top: 32px;">재활성화 방법</h2>
+<ol style="line-height: 2;">
+  <li>다운타임이나 느린 응답을 유발하는 엔드포인트 문제를 수정하세요</li>
+  <li>서비스가 안정��으로 응답하는지 확인하세요 (5초 미만, HTTP 2xx)</li>
+  <li>재활성화 검토를 요청하려면 문의하세요</li>
+  <li>완전한 재활성화 전 24시간 모니터링 기간이 있습니다</li>
+</ol>
+
+<p style="margin: 24px 0;">
+  <a href="{{policy_url}}" style="background: #6C63FF; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 600;">품질 정책 보기</a>
+</p>
+
+<p style="margin-top: 32px; color: #666; font-size: 14px;">
+  도움이 필요하신가요? 이 이메일에 답장해 주세요.<br>
+  <a href="https://agentictrade.io" style="color: #6C63FF;">agentictrade.io</a>
+</p>
+
+<hr style="border: none; border-top: 1px solid #eee; margin: 32px 0;">
+<p style="color: #999; font-size: 12px;">
+  서비스 ID: {{service_id}}<br>
+  <a href="{{policy_url}}">품질 정책</a>에 따라 서비스가 자동 일시 중지되어 이 이메일을 받으셨습니다.
+</p>
+
+</body>
+</html>

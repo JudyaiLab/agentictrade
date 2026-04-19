@@ -1,0 +1,121 @@
+{% extends "portal/base.html" %}
+{% block title %}Negotiation History{% endblock %}
+
+{% block extra_css %}
+<style>
+    .neg-status { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 9999px; font-weight: 600; }
+    .neg-accepted { background: rgba(52,211,153,0.15); color: #34d399; }
+    .neg-rejected { background: rgba(239,68,68,0.15); color: #ef4444; }
+    .neg-open { background: rgba(99,102,241,0.15); color: #818cf8; }
+    .neg-expired { background: rgba(255,255,255,0.08); color: var(--text-dim); }
+    .neg-detail { background: rgba(255,255,255,0.02); border-radius: 8px; padding: 16px; margin-top: 8px; display: none; }
+    .neg-detail.show { display: block; }
+    .neg-toggle { cursor: pointer; user-select: none; }
+    .neg-toggle:hover td { background: rgba(255,255,255,0.02); }
+    .round-row { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    .round-num { width: 28px; height: 28px; border-radius: 50%; background: rgba(99,102,241,0.15); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; flex-shrink: 0; }
+    .round-arrow { color: var(--text-dim); font-size: 18px; }
+    .round-price { font-weight: 600; color: var(--text-bright); }
+    .round-agent { font-size: 12px; color: var(--text-dim); }
+    .neg-summary { display: flex; gap: 8px; align-items: center; font-size: 13px; color: var(--text-dim); }
+    .neg-summary .price-start { color: var(--text-dim); }
+    .neg-summary .price-end { color: #34d399; font-weight: 600; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 32px;">
+    <h1 style="font-size: 24px; font-weight: 700; color: var(--text-bright); margin-bottom: 8px;">Negotiation History</h1>
+    <p style="color: var(--text-dim); font-size: 14px;">View all price negotiations your agents have participated in. Negotiations happen autonomously between buyer and seller agents — no human intervention needed.</p>
+</div>
+
+<!-- Stats -->
+<div class="portal-grid" style="grid-template-columns: repeat(4, 1fr);">
+    <div class="portal-card portal-stat">
+        <div class="portal-stat-value">{{ stats.total }}</div>
+        <div class="portal-stat-label">Total</div>
+    </div>
+    <div class="portal-card portal-stat">
+        <div class="portal-stat-value" style="color: #34d399;">{{ stats.accepted }}</div>
+        <div class="portal-stat-label">Accepted</div>
+    </div>
+    <div class="portal-card portal-stat">
+        <div class="portal-stat-value" style="color: #ef4444;">{{ stats.rejected }}</div>
+        <div class="portal-stat-label">Rejected</div>
+    </div>
+    <div class="portal-card portal-stat">
+        <div class="portal-stat-value" style="color: var(--accent);">{{ stats.open }}</div>
+        <div class="portal-stat-label">Open / Expired</div>
+    </div>
+</div>
+
+<!-- Negotiations table -->
+<div class="portal-card">
+    <h3 style="font-size: 16px; font-weight: 600; color: var(--text-bright); margin-bottom: 16px;">All Negotiations</h3>
+
+    {% if negotiations|length == 0 %}
+    <div class="portal-empty">
+        <p>No negotiations yet. When your agents negotiate prices with other agents, the history will appear here.</p>
+    </div>
+    {% else %}
+    <div class="portal-table-wrap">
+        <table class="portal-table">
+            <thead>
+                <tr>
+                    <th>Service</th>
+                    <th>Buyer</th>
+                    <th>Seller</th>
+                    <th>Price Flow</th>
+                    <th>Rounds</th>
+                    <th>Status</th>
+                    <th>Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for neg in negotiations %}
+                <tr class="neg-toggle" onclick="document.getElementById('neg-{{ neg.session_id[:8] }}').classList.toggle('show')">
+                    <td>{{ neg.service_id[:12] }}…</td>
+                    <td>{{ neg.buyer_id }}</td>
+                    <td>{{ neg.seller_id }}</td>
+                    <td>
+                        <div class="neg-summary">
+                            <span class="price-start">${{ "%.4f"|format(neg.initial_price) }}</span>
+                            <span>→</span>
+                            <span class="price-end">${{ "%.4f"|format(neg.final_price) }}</span>
+                        </div>
+                    </td>
+                    <td>{{ neg.rounds|length }}</td>
+                    <td><span class="neg-status neg-{{ neg.status }}">{{ neg.status }}</span></td>
+                    <td style="color: var(--text-dim); font-size: 13px;">{{ neg.created_at[:16] }}</td>
+                </tr>
+                <tr>
+                    <td colspan="7" style="padding: 0; border: none;">
+                        <div class="neg-detail" id="neg-{{ neg.session_id[:8] }}">
+                            {% for r in neg.rounds %}
+                            <div class="round-row">
+                                <div class="round-num">{{ r.round_num }}</div>
+                                <div>
+                                    <div class="round-price">${{ "%.4f"|format(r.proposed_price_usd) }}</div>
+                                    <div class="round-agent">by {{ r.proposer }}</div>
+                                </div>
+                                {% if r.response %}
+                                <div class="round-arrow">→</div>
+                                <div>
+                                    <span class="neg-status neg-{{ r.response }}">{{ r.response }}</span>
+                                    {% if r.counter_price_usd > 0 %}
+                                    <span style="margin-left: 8px; color: var(--text-bright);">${{ "%.4f"|format(r.counter_price_usd) }}</span>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

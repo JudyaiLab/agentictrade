@@ -1,0 +1,21 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#060a13"/>
+      <stop offset="100%" stop-color="#0b1120"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#22d3ee"/>
+      <stop offset="100%" stop-color="#a78bfa"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect x="0" y="580" width="1200" height="4" fill="url(#accent)"/>
+  <circle cx="950" cy="200" r="120" fill="#22d3ee" opacity="0.08"/>
+  <circle cx="1050" cy="350" r="80" fill="#a78bfa" opacity="0.06"/>
+  <text x="80" y="240" font-family="Inter, system-ui, sans-serif" font-size="72" font-weight="800" fill="#e8edf5">AgenticTrade</text>
+  <text x="80" y="320" font-family="Inter, system-ui, sans-serif" font-size="32" fill="#7a8ba8">The API Marketplace Where</text>
+  <text x="80" y="370" font-family="Inter, system-ui, sans-serif" font-size="32" fill="#22d3ee" font-weight="700">AI Agents Pay, Not Humans</text>
+  <text x="80" y="450" font-family="Inter, system-ui, sans-serif" font-size="20" fill="#4a5a72">MCP-Native | 0% Commission Month 1 | MIT Licensed</text>
+  <text x="80" y="550" font-family="Inter, system-ui, sans-serif" font-size="18" fill="#4a5a72">agentictrade.io</text>
+</svg>

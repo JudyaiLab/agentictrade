@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">
+
+<div style="background: #FFF3CD; border-left: 4px solid #FFC107; padding: 16px; border-radius: 4px; margin-bottom: 24px;">
+  <strong style="color: #856404;">⚠️ Quality Warning</strong>
+</div>
+
+<p>Your service <strong>{{service_name}}</strong> has a quality score of <strong style="color: #dc3545;">{{quality_score}}/100</strong>, which is below our platform threshold of <strong>{{threshold_warn}}</strong>.</p>
+
+<h2 style="font-size: 18px; margin-top: 32px;">What This Means</h2>
+<ul style="line-height: 2;">
+  <li>Your service is still <strong>active</strong>, but may rank lower in discovery results</li>
+  <li>If quality remains below <strong>{{threshold_pause}}</strong> for 3 consecutive check rounds, your service will be <strong>automatically paused</strong></li>
+  <li>Quality is measured by: uptime (50%), response latency (30%), and error rate (20%)</li>
+</ul>
+
+<h2 style="font-size: 18px; margin-top: 32px;">Recommended Actions</h2>
+<ol style="line-height: 2;">
+  <li>Check your service endpoint is responding correctly and quickly</li>
+  <li>Review server logs for errors or timeouts</li>
+  <li>Ensure your endpoint responds within 5 seconds</li>
+  <li>Verify your service returns HTTP 2xx status codes</li>
+</ol>
+
+<p style="margin: 24px 0;">
+  <a href="{{policy_url}}"
+     style="background: #6C63FF; color: white; padding: 12px 24px;
+            border-radius: 6px; text-decoration: none; font-weight: 600;">
+    View Quality Policy
+  </a>
+</p>
+
+<p style="margin-top: 32px; color: #666; font-size: 14px;">
+  Questions? Reply to this email — we're here to help you improve.<br>
+  <a href="https://agentictrade.io" style="color: #6C63FF;">agentictrade.io</a>
+</p>
+
+<hr style="border: none; border-top: 1px solid #eee; margin: 32px 0;">
+<p style="color: #999; font-size: 12px;">
+  Service ID: {{service_id}}<br>
+  You're receiving this because you are the registered provider of this service on AgenticTrade.
+</p>
+
+</body>
+</html>

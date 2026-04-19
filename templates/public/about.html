@@ -1,0 +1,277 @@
+{% extends "public/base.html" %}
+
+{% block title %}{{ t('about.page_title') or 'About AgenticTrade — AI Service Marketplace by JudyAI Lab' }}{% endblock %}
+{% block meta_description %}{{ t('about.meta_desc') or 'AgenticTrade by JudyAI Lab: an AI service marketplace where providers list services and AI agents automatically discover, use, and pay for them.' }}{% endblock %}
+{% block og_title %}{{ t('about.og_title') or 'About AgenticTrade — Building the AI Service Marketplace' }}{% endblock %}
+{% block og_description %}{{ t('about.og_desc') or 'We connect people who build AI services with AI agents that need them. Automatic discovery, automatic payments, open source.' }}{% endblock %}
+{% block tw_title %}{{ t('about.tw_title') or 'About AgenticTrade — AI Service Marketplace' }}{% endblock %}
+{% block tw_description %}{{ t('about.tw_desc') or 'Connecting AI service creators with AI agent customers. Automatic discovery, automatic payments. Built by JudyAI Lab.' }}{% endblock %}
+
+{% block json_ld %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        {
+            "@type": "Question",
+            "name": "What is AgenticTrade?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "AgenticTrade is an AI service marketplace. People who build AI services list them here, and AI agents automatically discover, use, and pay for those services. Think of it as a marketplace where AI agents are the customers."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "How does AgenticTrade work?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Providers list their services and set prices. AI agents search the marketplace, find services they need, use them, and pay per use — all automatically. Providers get paid without invoicing. Agents get capabilities without manual integration."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Who built AgenticTrade?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "AgenticTrade is built by JudyAI Lab, founded by Judy Wang. JudyAI Lab builds tools and infrastructure for the emerging AI agent economy."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Is AgenticTrade open source?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. AgenticTrade is fully open source under the MIT license. You can audit, fork, and contribute on GitHub."
+            }
+        }
+    ]
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    "name": "About AgenticTrade",
+    "description": "AI service marketplace where providers list services and AI agents automatically discover, use, and pay for them.",
+    "mainEntity": {
+        "@type": "Organization",
+        "name": "AgenticTrade",
+        "url": "https://agentictrade.io",
+        "foundingDate": "2025",
+        "parentOrganization": {
+            "@type": "Organization",
+            "name": "JudyAI Lab",
+            "url": "https://judyailab.com"
+        }
+    },
+    "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://agentictrade.io/"},
+            {"@type": "ListItem", "position": 2, "name": "About", "item": "https://agentictrade.io/about"}
+        ]
+    }
+}
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .about-hero { padding: 60px 0 40px; max-width: 680px; }
+    .about-hero p { color: var(--text-dim); font-size: 17px; line-height: 1.8; margin-bottom: 16px; }
+
+    .mission-card {
+        background: var(--bg-card); border-radius: var(--radius); padding: 32px;
+        max-width: 680px; box-shadow: var(--ring); margin-bottom: 48px;
+    }
+    .mission-card blockquote {
+        font-size: 20px; font-weight: 600; line-height: 1.5; color: var(--text);
+        border-left: 3px solid var(--accent); padding-left: 20px; margin-bottom: 12px;
+    }
+    .mission-card p { color: var(--text-dim); font-size: 15px; line-height: 1.7; margin: 0; }
+
+    .how-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 32px 0 48px; }
+    .how-card {
+        background: var(--bg-card); border-radius: var(--radius); padding: 28px;
+        box-shadow: var(--ring);
+    }
+    .how-card .how-icon { font-size: 32px; margin-bottom: 12px; }
+    .how-card h3 { color: var(--accent); margin-bottom: 8px; font-size: 17px; }
+    .how-card p { color: var(--text-dim); font-size: 14px; line-height: 1.6; margin: 0; }
+
+    .trust-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 32px 0; }
+    .trust-item {
+        display: flex; gap: 14px; align-items: flex-start; padding: 16px;
+        background: var(--bg-card); border-radius: var(--radius-sm); box-shadow: var(--ring);
+    }
+    .trust-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+    .trust-item h4 { margin-bottom: 2px; font-size: 15px; }
+    .trust-item p { color: var(--text-dim); font-size: 13px; margin: 0; }
+
+    .founder-card {
+        background: var(--bg-card); border-radius: var(--radius); padding: 32px;
+        max-width: 680px; box-shadow: var(--ring); margin: 32px 0;
+    }
+    .founder-card h3 { color: var(--accent); margin-bottom: 4px; }
+    .founder-card .role { color: var(--text-dim); font-size: 14px; margin-bottom: 16px; }
+    .founder-card p { color: var(--text-dim); font-size: 15px; line-height: 1.7; margin-bottom: 10px; }
+
+    .contact-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 32px 0; }
+    .contact-card {
+        background: var(--bg-card); border-radius: var(--radius-sm); padding: 20px;
+        box-shadow: var(--ring);
+    }
+    .contact-card h4 { margin-bottom: 4px; font-size: 14px; }
+    .contact-card a { font-size: 14px; }
+
+    @media (max-width: 900px) {
+        .how-grid, .contact-grid { grid-template-columns: 1fr; }
+        .trust-grid { grid-template-columns: 1fr; }
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="container" style="padding-top:16px;">
+    <nav aria-label="Breadcrumb" style="font-size:13px; color:var(--text-muted);">
+        <a href="/" style="color:var(--text-dim);">{{ t('breadcrumb.home') or 'Home' }}</a> &rsaquo; {{ t('breadcrumb.about') or 'About' }}
+    </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+
+{# Hero #}
+<section class="section">
+    <div class="container">
+        <div class="about-hero">
+            <span class="eyebrow">{{ t('footer.about') or 'About' }}</span>
+            <h1>{{ t('about.title') or 'About AgenticTrade' }}</h1>
+            <p>{{ t('about.hero_p1') or 'AI agents are getting smarter every day. They can write code, analyze data, and make decisions. But when they need to use an external service — send an email, fetch market data, process an image — they hit a wall. There\'s no easy way for agents to find services, use them, and pay for them.' }}</p>
+            <p>{{ t('about.hero_p2') or 'AgenticTrade solves this. We\'re the marketplace that connects people who build AI services with AI agents that need them. Providers list their services, agents find and pay for them — automatically.' }}</p>
+        </div>
+
+        {# Mission #}
+        <span class="eyebrow">{{ t('about.mission_eyebrow') or 'Mission' }}</span>
+        <h2 class="mb-24">{{ t('about.mission_title') or 'Our Mission' }}</h2>
+        <div class="mission-card">
+            <blockquote>{{ t('about.mission_quote') or 'Make it easy for anyone to earn money from AI agents, and easy for AI agents to find the services they need.' }}</blockquote>
+            <p>{{ t('about.mission_desc') or 'We believe every useful AI service should have customers, and every AI agent should have access to the tools it needs. AgenticTrade makes both happen — automatically.' }}</p>
+        </div>
+
+        {# How It Works (Plain Language) #}
+        <span class="eyebrow">{{ t('about.how_eyebrow') or 'How It Works' }}</span>
+        <h2>{{ t('about.how_title') or 'The Simple Version' }}</h2>
+        <p class="section-subtitle">{{ t('about.how_subtitle') or 'No jargon. Here\'s what actually happens.' }}</p>
+
+        <div class="how-grid">
+            <div class="how-card">
+                <div class="how-icon">&#x1F4E6;</div>
+                <h3>{{ t('about.how1_title') or 'Providers List Services' }}</h3>
+                <p>{{ t('about.how1_desc') or 'You have an AI service — maybe it translates text, analyzes images, or fetches market data. You list it on AgenticTrade, set your price, and you\'re done.' }}</p>
+            </div>
+            <div class="how-card">
+                <div class="how-icon">&#x1F50D;</div>
+                <h3>{{ t('about.how2_title') or 'AI Agents Find Services' }}</h3>
+                <p>{{ t('about.how2_desc') or 'AI agents around the world search AgenticTrade when they need capabilities. They find your service, check the price, and decide to use it — all automatically.' }}</p>
+            </div>
+            <div class="how-card">
+                <div class="how-icon">&#x1F4B0;</div>
+                <h3>{{ t('about.how3_title') or 'Payments Happen Automatically' }}</h3>
+                <p>{{ t('about.how3_desc') or 'Every time an agent uses your service, you get paid in USDC (a digital dollar). No invoicing, no chasing. The money shows up in your dashboard.' }}</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+{# Trust & Team #}
+<section class="section section-alt">
+    <div class="container">
+        <span class="eyebrow">{{ t('about.trust_eyebrow') or 'Trust & Security' }}</span>
+        <h2>{{ t('about.trust_title') or 'Built for Trust' }}</h2>
+        <div class="trust-grid">
+            <div class="trust-item">
+                <span class="trust-icon">&#x1F512;</span>
+                <div>
+                    <h4>{{ t('about.trust_proxy') or 'Your Credentials Stay Private' }}</h4>
+                    <p>{{ t('about.trust_proxy_desc') or 'Your API keys never leave your machine. We use a proxy system so nothing sensitive is ever exposed.' }}</p>
+                </div>
+            </div>
+            <div class="trust-item">
+                <span class="trust-icon">&#x26D3;</span>
+                <div>
+                    <h4>{{ t('about.trust_onchain') or 'Transparent Payments' }}</h4>
+                    <p>{{ t('about.trust_onchain_desc') or 'All payments are in USDC on Base (Ethereum L2). Transparent, verifiable, no chargebacks.' }}</p>
+                </div>
+            </div>
+            <div class="trust-item">
+                <span class="trust-icon">&#x1F6E1;</span>
+                <div>
+                    <h4>{{ t('about.trust_security') or 'Built-in Security' }}</h4>
+                    <p>{{ t('about.trust_security_desc') or 'Rate limiting, input validation, and security protections included. Your service is protected from abuse.' }}</p>
+                </div>
+            </div>
+            <div class="trust-item">
+                <span class="trust-icon">&#x1F4DC;</span>
+                <div>
+                    <h4>{{ t('about.trust_oss') or 'Open Source (MIT)' }}</h4>
+                    <p>{{ t('about.trust_oss_desc') or 'Full source code on GitHub. Audit it, fork it, contribute. No vendor lock-in.' }}</p>
+                </div>
+            </div>
+        </div>
+
+        {# Founder #}
+        <span class="eyebrow" style="margin-top: 40px;">{{ t('about.founder_eyebrow') or 'Team' }}</span>
+        <h2>{{ t('about.founder_title') or 'Founded by JudyAI Lab' }}</h2>
+        <div class="founder-card">
+            <h3>Judy Wang</h3>
+            <div class="role">{{ t('about.founder_role') or 'Founder, JudyAI Lab' }}</div>
+            <p>{{ t('about.founder_p1') or 'JudyAI Lab builds tools and infrastructure for the emerging AI agent economy. AgenticTrade is our flagship product — a marketplace where AI agents are customers, not just tools.' }}</p>
+        </div>
+
+        {# FAQ #}
+        <div style="margin: 48px 0 0;">
+            <span class="eyebrow">{{ t('about.faq_eyebrow') or 'FAQ' }}</span>
+            <h2 class="mb-24">{{ t('about.faq_title') or 'About AgenticTrade' }}</h2>
+            <div class="faq-grid" style="max-width:700px;">
+                <div class="faq-item">
+                    <div class="faq-q">{{ t('about.faq_q1') or 'What is AgenticTrade in simple terms?' }}</div>
+                    <div class="faq-a">{{ t('about.faq_a1') or 'It\'s a marketplace for AI services. People who build useful AI tools list them here. AI agents find those tools, use them, and pay for them — all automatically. Think of it as an app store, but the customers are AI agents instead of humans.' }}</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q">{{ t('about.faq_q2') or 'What do you mean by \"AI agents are customers\"?' }}</div>
+                    <div class="faq-a">{{ t('about.faq_a2') or 'Today, AI agents can make decisions and take actions on their own. When an agent needs a capability it doesn\'t have — like accessing market data or translating text — it searches AgenticTrade, picks a service, uses it, and pays. No human needs to be involved.' }}</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q">{{ t('about.faq_q3') or 'Is AgenticTrade free to use?' }}</div>
+                    <div class="faq-a">{{ t('about.faq_a3') or 'Yes, signing up is free. Providers pay 0% commission for the first month. After that, commission starts at 5% and caps at 10%. For agent builders, you only pay for the services your agent actually uses.' }}</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q">{{ t('about.faq_q4') or 'Who built AgenticTrade?' }}</div>
+                    <div class="faq-a">{{ t('about.faq_a4') or 'AgenticTrade is built by JudyAI Lab, founded by Judy Wang. We focus on building tools for the AI agent economy — making it possible for AI agents to be useful economic participants.' }}</div>
+                </div>
+            </div>
+        </div>
+
+        {# Contact #}
+        <span class="eyebrow" style="margin-top: 32px;">{{ t('about.contact_eyebrow') or 'Contact' }}</span>
+        <h2>{{ t('about.contact_title') or 'Get in Touch' }}</h2>
+        <div class="contact-grid">
+            <div class="contact-card">
+                <h4>{{ t('about.contact_general') or 'General' }}</h4>
+                <a href="mailto:hello@agentictrade.io">hello@agentictrade.io</a>
+            </div>
+            <div class="contact-card">
+                <h4>{{ t('about.contact_support') or 'Technical Support' }}</h4>
+                <a href="mailto:support@agentictrade.io">support@agentictrade.io</a>
+            </div>
+            <div class="contact-card">
+                <h4>{{ t('about.contact_partnerships') or 'Partnerships' }}</h4>
+                <a href="mailto:partners@agentictrade.io">partners@agentictrade.io</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

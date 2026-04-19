@@ -1,0 +1,100 @@
+{% extends "dashboard/base.html" %}
+{% block title %}Provider Growth{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+    <h1 class="text-lg font-bold text-white">Provider Growth Dashboard</h1>
+    <span class="text-xs text-acf-muted">{{ providers|length }} provider{{ 's' if providers|length != 1 else '' }} with activity</span>
+</div>
+
+<!-- Summary Cards -->
+<div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
+    <div class="bg-acf-panel rounded-lg p-4 border border-acf-border/60">
+        <div class="text-[11px] uppercase tracking-wider text-acf-muted mb-1">Total Providers</div>
+        <div class="text-2xl font-bold text-white">{{ summary.total_providers }}</div>
+    </div>
+    <div class="bg-acf-panel rounded-lg p-4 border border-acf-border/60">
+        <div class="text-[11px] uppercase tracking-wider text-acf-muted mb-1">Total Revenue</div>
+        <div class="text-2xl font-bold text-acf-green">${{ "%.2f"|format(summary.total_revenue) }}</div>
+    </div>
+    <div class="bg-acf-panel rounded-lg p-4 border border-acf-border/60">
+        <div class="text-[11px] uppercase tracking-wider text-acf-muted mb-1">Total Commission</div>
+        <div class="text-2xl font-bold text-acf-accent">${{ "%.2f"|format(summary.total_commission) }}</div>
+    </div>
+</div>
+
+<!-- Provider Growth Trend -->
+{% if growth_trend %}
+<h2 class="text-sm font-semibold uppercase tracking-wider text-gray-400 mb-4 pb-2 border-b border-acf-accent/20">
+    Provider Growth Trend (New Registrations per Week)
+</h2>
+<div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3 mb-8">
+    {% for week in growth_trend %}
+    <div class="bg-acf-panel rounded-lg p-3 border border-acf-border/60 text-center">
+        <div class="text-[10px] text-acf-muted mb-1">{{ week.week }}</div>
+        <div class="text-lg font-bold text-white">{{ week.new_providers }}</div>
+        <div class="text-[10px] text-acf-muted">new provider{{ 's' if week.new_providers != 1 else '' }}</div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- Per-Provider Revenue Table -->
+<h2 class="text-sm font-semibold uppercase tracking-wider text-gray-400 mb-4 pb-2 border-b border-acf-accent/20">
+    Per-Provider Breakdown
+</h2>
+<div class="bg-acf-panel rounded-lg border border-acf-border/60 overflow-x-auto">
+    {% if providers %}
+    <table class="w-full text-sm">
+        <thead>
+            <tr class="border-b border-acf-accent/15">
+                <th class="text-left text-[11px] uppercase tracking-wider text-acf-muted px-4 py-3">Provider</th>
+                <th class="text-center text-[11px] uppercase tracking-wider text-acf-muted px-4 py-3">Quality Tier</th>
+                <th class="text-right text-[11px] uppercase tracking-wider text-acf-muted px-4 py-3">Revenue</th>
+                <th class="text-right text-[11px] uppercase tracking-wider text-acf-muted px-4 py-3">Commission</th>
+                <th class="text-right text-[11px] uppercase tracking-wider text-acf-muted px-4 py-3">Net Payout</th>
+                <th class="text-right text-[11px] uppercase tracking-wider text-acf-muted px-4 py-3">7d Calls</th>
+                <th class="text-right text-[11px] uppercase tracking-wider text-acf-muted px-4 py-3">30d Calls</th>
+                <th class="text-right text-[11px] uppercase tracking-wider text-acf-muted px-4 py-3">All-Time</th>
+                <th class="text-right text-[11px] uppercase tracking-wider text-acf-muted px-4 py-3">Avg Latency</th>
+                <th class="text-right text-[11px] uppercase tracking-wider text-acf-muted px-4 py-3">Success Rate</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in providers %}
+            <tr class="border-b border-acf-border/40 hover:bg-acf-accent/5">
+                <td class="px-4 py-2.5 font-medium text-white truncate max-w-[160px]">{{ p.provider_id[:20] }}</td>
+                <td class="px-4 py-2.5 text-center">
+                    {% if p.quality_tier == 'Premium' %}
+                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-semibold uppercase bg-acf-green/15 text-acf-green border border-acf-green/30">Premium</span>
+                    {% elif p.quality_tier == 'Verified' %}
+                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-semibold uppercase bg-blue-500/15 text-blue-400 border border-blue-500/30">Verified</span>
+                    {% else %}
+                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-semibold uppercase bg-gray-500/15 text-gray-400 border border-gray-500/30">Standard</span>
+                    {% endif %}
+                </td>
+                <td class="px-4 py-2.5 text-right font-mono text-acf-green">${{ "%.2f"|format(p.total_revenue) }}</td>
+                <td class="px-4 py-2.5 text-right font-mono text-acf-accent">${{ "%.2f"|format(p.commission_paid) }}</td>
+                <td class="px-4 py-2.5 text-right font-mono text-white">${{ "%.2f"|format(p.net_payout) }}</td>
+                <td class="px-4 py-2.5 text-right font-mono">{{ "{:,}".format(p.calls_7d) }}</td>
+                <td class="px-4 py-2.5 text-right font-mono">{{ "{:,}".format(p.calls_30d) }}</td>
+                <td class="px-4 py-2.5 text-right font-mono">{{ "{:,}".format(p.total_calls) }}</td>
+                <td class="px-4 py-2.5 text-right font-mono">{{ "%.1f"|format(p.avg_latency) }} ms</td>
+                <td class="px-4 py-2.5 text-right">
+                    <span class="font-mono font-semibold
+                        {% if p.success_rate >= 99 %}text-acf-green
+                        {% elif p.success_rate >= 95 %}text-yellow-400
+                        {% else %}text-acf-accent
+                        {% endif %}">
+                        {{ "%.1f"|format(p.success_rate) }}%
+                    </span>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="text-center py-12 text-acf-muted text-sm">No provider data available</div>
+    {% endif %}
+</div>
+{% endblock %}

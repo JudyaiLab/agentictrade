@@ -1,0 +1,573 @@
+{% extends "public/base.html" %}
+
+{% block title %}{{ t('landing.page_title') or 'AgenticTrade — AI Service Marketplace | AI Finds & Pays You' }}{% endblock %}
+{% block meta_description %}{{ t('landing.meta_desc') or 'AgenticTrade is an AI service marketplace. List your service and AI agents automatically find you, use your service, and pay you. Or connect your AI agent to hundreds of services with one integration.' }}{% endblock %}
+{% block og_title %}{{ t('landing.og_title') or 'AgenticTrade — The AI Service Marketplace' }}{% endblock %}
+{% block og_description %}{{ t('landing.og_desc') or 'List your service and let AI agents find you and pay automatically. Or give your AI agent access to a marketplace of services — one integration, hundreds of capabilities.' }}{% endblock %}
+{% block tw_title %}{{ t('landing.tw_title') or 'AgenticTrade — AI Agents Find Your Service & Pay Automatically' }}{% endblock %}
+{% block tw_description %}{{ t('landing.tw_desc') or 'The AI service marketplace. List your service, AI agents find you and pay per use. 0% commission month 1.' }}{% endblock %}
+
+{% block json_ld %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "AgenticTrade",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Any",
+    "description": "An AI service marketplace where providers list services and AI agents automatically discover, use, and pay for them. No manual billing, no marketing needed.",
+    "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD",
+        "description": "Free to start. 0% commission for the first month."
+    },
+    "featureList": [
+        "AI agents automatically discover your service",
+        "Per-use payments — no subscriptions",
+        "3-minute setup, no coding required",
+        "One integration connects to all marketplace services",
+        "Your credentials stay on your machine",
+        "Referral program with 20% lifetime commission"
+    ]
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        {
+            "@type": "Question",
+            "name": "What is AgenticTrade?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "AgenticTrade is an AI service marketplace. If you have a useful AI service, you list it here and AI agents will automatically find it, use it, and pay you. If you build AI agents, you connect to AgenticTrade and your agent gets access to hundreds of services instantly."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Do I need to be a developer?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "No. You can list a service in 3 minutes without writing any code. Our setup tool handles the technical parts for you. If you do have an existing API, you can register that directly too."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "How do I get paid?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Every time an AI agent uses your service, you get paid automatically in USDC (a digital dollar). No invoicing, no chasing payments. Money shows up in your dashboard and you can withdraw anytime."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "How much does it cost?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Free to sign up. Providers pay 0% commission the first month, 5% months 2-3, and it caps at 10%. For agents using services, you only pay per use — no subscription fees."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Is my data safe?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. Your API keys and credentials never leave your machine. We use a proxy system so your real credentials are never exposed to anyone. All transactions are tracked and fully transparent."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "How is this different from RapidAPI or Fiverr?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Those platforms are built for humans. AgenticTrade is built for AI agents — they automatically discover services, decide what to use, and pay per call. No human needs to browse or manage billing. Our commission is also much lower (max 10% vs 20-25%)."
+            }
+        },
+        {
+            "@type": "Question",
+            "name": "Do I need to know about crypto?",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Mostly no. Your account has a built-in balance, and everyday transactions are handled automatically. Providers can choose PayPal to receive fiat — no crypto needed at all. If you prefer USDC payouts, you'll link a wallet address when you're ready to withdraw — the platform guides you through it."
+            }
+        }
+    ]
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "How to Make Money with AI Agents on AgenticTrade",
+    "description": "List your API service and let AI agents discover, use, and pay for it automatically. Passive income powered by AI agent commerce.",
+    "step": [
+        {"@type": "HowToStep", "position": 1, "name": "List your service", "text": "Describe what your service does and set your price per call. No coding needed — setup takes 3 minutes."},
+        {"@type": "HowToStep", "position": 2, "name": "AI agents discover you", "text": "AI agents from Claude, ChatGPT, and custom frameworks automatically find your service through 6 discovery protocols (MCP, OpenAPI, ACDP, and more)."},
+        {"@type": "HowToStep", "position": 3, "name": "Get paid automatically", "text": "Every time an AI agent uses your service, you earn money instantly in USDC, PayPal, or 300+ cryptocurrencies. No invoicing needed."},
+        {"@type": "HowToStep", "position": 4, "name": "Scale with quality", "text": "Maintain high uptime to earn Premium tier (6% commission vs 10%). Your quality score improves your marketplace ranking and attracts more AI agent traffic."}
+    ]
+}
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ── Hero ── */
+    .hero { padding: 80px 0 48px; max-width: 700px; }
+    .hero h1 { margin-bottom: 16px; font-size: 42px; line-height: 1.2; }
+    .hero-desc {
+        font-size: 19px; color: var(--text-dim); line-height: 1.7;
+        margin-bottom: 28px; max-width: 55ch;
+    }
+    .hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 32px; }
+
+    /* ── Two Audience Cards ── */
+    .audience-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .audience-card {
+        background: var(--bg-card); border-radius: var(--radius); padding: 36px;
+        box-shadow: var(--ring); transition: all 0.25s;
+    }
+    .audience-card:hover { box-shadow: var(--ring-hover); transform: translateY(-2px); }
+    .audience-card .card-label {
+        font-size: 12px; font-weight: 700; text-transform: uppercase;
+        letter-spacing: 0.08em; margin-bottom: 12px;
+    }
+    .audience-card h3 { font-size: 22px; margin-bottom: 12px; line-height: 1.3; }
+    .audience-card .card-desc {
+        font-size: 15px; color: var(--text-dim); line-height: 1.7; margin-bottom: 20px;
+    }
+    .benefit-list { list-style: none; padding: 0; margin: 0 0 24px; }
+    .benefit-list li {
+        font-size: 14px; color: var(--text-dim); padding: 8px 0;
+        border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; gap: 10px;
+    }
+    .benefit-list li:last-child { border-bottom: none; }
+    .benefit-list .check { color: var(--green); font-weight: 700; flex-shrink: 0; }
+
+    /* ── How It Works ── */
+    .how-section { text-align: center; }
+    .how-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; max-width: 840px; margin: 0 auto; }
+    .how-step-card {
+        background: var(--bg-card); border-radius: var(--radius); padding: 32px 24px;
+        box-shadow: var(--ring);
+    }
+    .how-step-card .step-num {
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 40px; height: 40px; border-radius: 50%;
+        background: var(--accent); color: #000; font-weight: 800; font-size: 18px;
+        margin-bottom: 16px;
+    }
+    .how-step-card h4 { font-size: 17px; margin-bottom: 8px; }
+    .how-step-card p { font-size: 14px; color: var(--text-dim); margin: 0; line-height: 1.6; }
+
+    /* ── Use Cases ── */
+    .usecase-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .usecase-card {
+        background: var(--bg-card); border-radius: var(--radius); padding: 28px;
+        box-shadow: var(--ring);
+    }
+    .usecase-card .usecase-icon { font-size: 32px; margin-bottom: 12px; }
+    .usecase-card h4 { font-size: 16px; margin-bottom: 8px; }
+    .usecase-card p { font-size: 13px; color: var(--text-dim); line-height: 1.6; margin: 0; }
+
+    /* ── Comparison ── */
+    .compare-table {
+        width: 100%; border-collapse: collapse; max-width: 700px;
+        font-size: 14px;
+    }
+    .compare-table th, .compare-table td {
+        padding: 14px 16px; text-align: left; border-bottom: 1px solid var(--border);
+    }
+    .compare-table th { color: var(--text-muted); font-weight: 600; font-size: 13px; }
+    .compare-table td:first-child { color: var(--text); font-weight: 600; }
+    .compare-table .highlight { color: var(--green); font-weight: 700; }
+
+    /* ── Stats Row ── */
+    .metrics-row {
+        display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
+        max-width: 700px; margin: 0 auto;
+    }
+    .metric-card { text-align: center; padding: 20px 12px; }
+    .metric-val { font-size: 28px; font-weight: 800; color: var(--accent); }
+    .metric-label { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+
+    /* ── Referral ── */
+    .referral-banner {
+        background: linear-gradient(135deg, rgba(167,139,250,0.08), rgba(52,211,153,0.06));
+        border: 1px solid rgba(167,139,250,0.2);
+        border-radius: var(--radius); padding: 36px; text-align: center;
+        max-width: 600px; margin: 0 auto;
+    }
+    .referral-banner h3 { margin-bottom: 12px; }
+    .referral-banner p { color: var(--text-dim); font-size: 15px; line-height: 1.7; margin-bottom: 20px; max-width: 45ch; margin-left: auto; margin-right: auto; }
+
+    /* ── FAQ ── */
+    .faq-grid { max-width: 700px; }
+
+    /* ── Final CTA ── */
+    .final-cta { text-align: center; max-width: 560px; margin: 0 auto; }
+    .final-cta h2 { margin-bottom: 12px; }
+    .final-cta p { color: var(--text-dim); margin-bottom: 28px; font-size: 17px; line-height: 1.7; }
+    .final-cta-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+    @media (max-width: 900px) {
+        .audience-grid { grid-template-columns: 1fr; }
+        .how-steps { grid-template-columns: 1fr; max-width: 400px; }
+        .usecase-grid { grid-template-columns: 1fr; }
+        .metrics-row { grid-template-columns: 1fr 1fr; }
+        .hero h1 { font-size: 32px; }
+    }
+    @media (max-width: 640px) {
+        .hero { padding: 48px 0 32px; }
+        .metrics-row { grid-template-columns: 1fr 1fr; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+{# ══════ SECTION 1: HERO ══════ #}
+<section class="section" style="padding-bottom: 48px;">
+    <div class="container">
+        <div class="hero">
+            <span class="eyebrow">{{ t('landing.eyebrow') or 'AI Service Marketplace' }}</span>
+            <h1>{{ t('landing.hero_title_1') or 'You Build AI Services.' }}<br><span class="gradient-text">{{ t('landing.hero_title_2') or 'AI Agents Pay You.' }}</span></h1>
+            <p class="hero-desc">{{ t('landing.hero_desc') or 'List your service on AgenticTrade. AI agents automatically find you, use your service, and pay you per use. No marketing, no invoicing, no chasing payments.' }}</p>
+            <div class="hero-ctas">
+                <a href="/portal/register" class="btn-primary">{{ t('landing.cta_list_service') or 'List My Service' }}</a>
+                <a href="/api-docs#quickstart" class="btn-secondary">{{ t('landing.cta_connect_agent') or 'Connect My Agent' }}</a>
+            </div>
+            <div class="stats-row">
+                <div class="stat-item">
+                    <div class="stat-num">{{ service_count }}+</div>
+                    <div class="stat-label">{{ t('landing.stat_services') or 'Services Listed' }}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-num">{{ total_calls }}</div>
+                    <div class="stat-label">{{ t('landing.stat_calls') or 'Service Calls' }}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-num">{{ agent_count }}</div>
+                    <div class="stat-label">{{ t('landing.stat_agents') or 'Active Agents' }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{# ══════ SECTION 2: TWO AUDIENCES ══════ #}
+<section class="section section-alt">
+    <div class="container">
+        <div class="section-header center">
+            <span class="eyebrow">{{ t('landing.who_eyebrow') or 'Who Is This For' }}</span>
+            <h2>{{ t('landing.who_title') or 'Whether You Build Services or Build Agents' }}</h2>
+            <p class="section-subtitle" style="margin-left:auto;margin-right:auto;">{{ t('landing.who_subtitle') or 'AgenticTrade connects people who create AI services with AI agents that need them.' }}</p>
+        </div>
+        <div class="audience-grid">
+            {# Card 1: Service Providers #}
+            <div class="audience-card">
+                <div class="card-label" style="color: var(--green);">{{ t('landing.provider_label') or 'I Have a Service to Sell' }}</div>
+                <h3>{{ t('landing.provider_title') or 'Turn Your AI Skills Into Income' }}</h3>
+                <p class="card-desc">{{ t('landing.provider_desc') or 'You built something useful — an NLP tool, an image generator, a data scraper, a trading signal. List it here and let AI agents become your customers.' }}</p>
+                <ul class="benefit-list">
+                    <li><span class="check">&#x2713;</span> {{ t('landing.provider_b1') or 'AI agents find you automatically — no marketing needed' }}</li>
+                    <li><span class="check">&#x2713;</span> {{ t('landing.provider_b2') or 'Get paid every time your service is used — no invoicing' }}</li>
+                    <li><span class="check">&#x2713;</span> {{ t('landing.provider_b3') or '3-minute setup, no coding required' }}</li>
+                    <li><span class="check">&#x2713;</span> {{ t('landing.provider_b4') or '0% commission for your first month' }}</li>
+                </ul>
+                <a href="/providers" class="btn-primary" style="width: 100%; text-align: center;">{{ t('landing.provider_cta') or 'Start Selling' }}</a>
+            </div>
+
+            {# Card 2: Agent Builders #}
+            <div class="audience-card">
+                <div class="card-label" style="color: var(--accent);">{{ t('landing.builder_label') or 'I Build AI Agents' }}</div>
+                <h3>{{ t('landing.builder_title') or 'Give Your Agent Superpowers' }}</h3>
+                <p class="card-desc">{{ t('landing.builder_desc') or 'Your agent needs to send emails, analyze images, fetch market data, or translate text. Instead of integrating each service one by one — connect once and access everything.' }}</p>
+                <ul class="benefit-list">
+                    <li><span class="check">&#x2713;</span> {{ t('landing.builder_b1') or 'One integration = access to all marketplace services' }}</li>
+                    <li><span class="check">&#x2713;</span> {{ t('landing.builder_b2') or 'Pay per use — no subscriptions, no waste' }}</li>
+                    <li><span class="check">&#x2713;</span> {{ t('landing.builder_b3') or 'Your agent discovers and pays for services on its own' }}</li>
+                    <li><span class="check">&#x2713;</span> {{ t('landing.builder_b4') or 'No API key juggling — one connection handles everything' }}</li>
+                </ul>
+                <a href="/api-docs#quickstart" class="btn-secondary" style="width: 100%; text-align: center;">{{ t('landing.builder_cta') or 'Connect My Agent' }}</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+{# ══════ SECTION 3: HOW IT WORKS ══════ #}
+<section class="section">
+    <div class="container">
+        <div class="how-section">
+            <span class="eyebrow">{{ t('landing.how_eyebrow') or 'How It Works' }}</span>
+            <h2>{{ t('landing.how_title') or 'Three Steps. That\'s It.' }}</h2>
+            <p class="section-subtitle" style="margin-left:auto;margin-right:auto;">{{ t('landing.how_subtitle') or 'No complicated setup. No technical barriers.' }}</p>
+            <div class="how-steps">
+                <div class="how-step-card">
+                    <div class="step-num">1</div>
+                    <h4>{{ t('landing.how_step1_title') or 'List Your Service' }}</h4>
+                    <p>{{ t('landing.how_step1_desc') or 'Sign up, describe what your service does, and set your price. We automatically create a description that helps AI agents find your service, plus a Proxy Key to protect your credentials. Done in 3 minutes.' }}</p>
+                </div>
+                <div class="how-step-card">
+                    <div class="step-num">2</div>
+                    <h4>{{ t('landing.how_step2_title') or 'AI Agents Find You' }}</h4>
+                    <p>{{ t('landing.how_step2_desc') or 'Your service is automatically discoverable via MCP (Model Context Protocol) by AI agents worldwide. They find you, evaluate your service, and decide to use it — all on their own.' }}</p>
+                </div>
+                <div class="how-step-card">
+                    <div class="step-num">3</div>
+                    <h4>{{ t('landing.how_step3_title') or 'Get Paid Automatically' }}</h4>
+                    <p>{{ t('landing.how_step3_desc') or 'Every time an agent uses your service, you get paid. No invoices, no payment chasing. Money shows up in your dashboard.' }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{# ══════ SECTION 4: USE CASES ══════ #}
+<section class="section section-alt">
+    <div class="container">
+        <div class="section-header center">
+            <span class="eyebrow">{{ t('landing.usecase_eyebrow') or 'What People Are Selling' }}</span>
+            <h2>{{ t('landing.usecase_title') or 'Any AI Service Can Be Listed' }}</h2>
+            <p class="section-subtitle" style="margin-left:auto;margin-right:auto;">{{ t('landing.usecase_subtitle') or 'If an AI agent can call it, you can sell it on AgenticTrade.' }}</p>
+        </div>
+        <div class="usecase-grid">
+            <div class="usecase-card">
+                <div class="usecase-icon">&#x1F4CA;</div>
+                <h4>{{ t('landing.uc1_title') or 'Data & Analytics' }}</h4>
+                <p>{{ t('landing.uc1_desc') or 'Market data feeds, web scrapers, sentiment analysis, financial signals, price aggregators.' }}</p>
+            </div>
+            <div class="usecase-card">
+                <div class="usecase-icon">&#x1F4DD;</div>
+                <h4>{{ t('landing.uc2_title') or 'Text & Language' }}</h4>
+                <p>{{ t('landing.uc2_desc') or 'Translation, summarization, content generation, SEO analysis, grammar checking, NLP pipelines.' }}</p>
+            </div>
+            <div class="usecase-card">
+                <div class="usecase-icon">&#x1F5BC;</div>
+                <h4>{{ t('landing.uc3_title') or 'Image & Media' }}</h4>
+                <p>{{ t('landing.uc3_desc') or 'Image generation, video processing, OCR, image classification, thumbnail creation.' }}</p>
+            </div>
+            <div class="usecase-card">
+                <div class="usecase-icon">&#x1F50D;</div>
+                <h4>{{ t('landing.uc4_title') or 'Search & Research' }}</h4>
+                <p>{{ t('landing.uc4_desc') or 'Web search, knowledge retrieval, academic papers, patent search, news monitoring.' }}</p>
+            </div>
+            <div class="usecase-card">
+                <div class="usecase-icon">&#x2699;</div>
+                <h4>{{ t('landing.uc5_title') or 'Developer Tools' }}</h4>
+                <p>{{ t('landing.uc5_desc') or 'Code review, testing, deployment, monitoring, security scanning, documentation generation.' }}</p>
+            </div>
+            <div class="usecase-card">
+                <div class="usecase-icon">&#x1F4E7;</div>
+                <h4>{{ t('landing.uc6_title') or 'Communication' }}</h4>
+                <p>{{ t('landing.uc6_desc') or 'Email sending, SMS notifications, social media posting, customer support automation.' }}</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+{# ══════ SECTION 5: WHY AGENTICTRADE ══════ #}
+<section class="section">
+    <div class="container">
+        <div class="section-header center">
+            <span class="eyebrow">{{ t('landing.why_eyebrow') or 'Why AgenticTrade' }}</span>
+            <h2>{{ t('landing.why_title') or 'Built Different From Traditional Marketplaces' }}</h2>
+        </div>
+        <table class="compare-table" style="margin: 0 auto;">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>{{ t('landing.compare_at') or 'AgenticTrade' }}</th>
+                    <th>{{ t('landing.compare_rapid') or 'RapidAPI' }}</th>
+                    <th>{{ t('landing.compare_fiverr') or 'Fiverr' }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ t('landing.compare_customers') or 'Customers' }}</td>
+                    <td class="highlight">{{ t('landing.compare_ai') or 'AI Agents (auto)' }}</td>
+                    <td>{{ t('landing.compare_devs') or 'Human developers' }}</td>
+                    <td>{{ t('landing.compare_humans') or 'Human buyers' }}</td>
+                </tr>
+                <tr>
+                    <td>{{ t('landing.compare_billing') or 'Billing' }}</td>
+                    <td class="highlight">{{ t('landing.compare_auto_pay') or 'Automatic per use' }}</td>
+                    <td>{{ t('landing.compare_subscription') or 'Subscription plans' }}</td>
+                    <td>{{ t('landing.compare_manual') or 'Manual per project' }}</td>
+                </tr>
+                <tr>
+                    <td>{{ t('landing.compare_commission') or 'Commission' }}</td>
+                    <td class="highlight">{{ t('landing.compare_10') or '10% max' }}</td>
+                    <td>25%+</td>
+                    <td>20%</td>
+                </tr>
+                <tr>
+                    <td>{{ t('landing.compare_discovery') or 'Discovery' }}</td>
+                    <td class="highlight">{{ t('landing.compare_agent_native') or 'AI-native automatic' }}</td>
+                    <td>{{ t('landing.compare_browse') or 'Human browsing' }}</td>
+                    <td>{{ t('landing.compare_search') or 'Human search' }}</td>
+                </tr>
+                <tr>
+                    <td>{{ t('landing.compare_setup') or 'Setup Time' }}</td>
+                    <td class="highlight">{{ t('landing.compare_3min') or '3 minutes' }}</td>
+                    <td>{{ t('landing.compare_hours') or 'Hours' }}</td>
+                    <td>{{ t('landing.compare_days') or 'Days' }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+{# ══════ SECTION 5b: QUALITY GUARANTEE ══════ #}
+<section class="section">
+    <div class="container">
+        <div class="section-header center">
+            <span class="eyebrow">{{ t('landing.quality_eyebrow') or 'Quality You Can Trust' }}</span>
+            <h2>{{ t('landing.quality_title') or 'We Monitor Every Service, So You Don\'t Have To' }}</h2>
+            <p class="section-subtitle" style="margin-left:auto;margin-right:auto;">{{ t('landing.quality_subtitle') or 'Every service on AgenticTrade is continuously monitored. Low-quality services are automatically flagged and removed.' }}</p>
+        </div>
+        <div class="usecase-grid">
+            <div class="usecase-card">
+                <div class="usecase-icon">&#x1F4AF;</div>
+                <h4>{{ t('landing.quality_score_title') or 'Health Score System' }}</h4>
+                <p>{{ t('landing.quality_score_desc') or 'Every service has a real-time health score (0-100) based on uptime, response time, and error rate. Agents can see the score before choosing a service.' }}</p>
+            </div>
+            <div class="usecase-card">
+                <div class="usecase-icon">&#x1F6E1;</div>
+                <h4>{{ t('landing.quality_patrol_title') or 'Automated Quality Patrol' }}</h4>
+                <p>{{ t('landing.quality_patrol_desc') or 'Our system automatically tests every service at regular intervals. If a service goes down or starts failing, it\'s flagged immediately.' }}</p>
+            </div>
+            <div class="usecase-card">
+                <div class="usecase-icon">&#x2B50;</div>
+                <h4>{{ t('landing.quality_reward_title') or 'Quality Rewards' }}</h4>
+                <p>{{ t('landing.quality_reward_desc') or 'High-quality providers (95+ health score) earn commission discounts — as low as 6% instead of 10%. Better service = more profit for you.' }}</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+{# ══════ SECTION 6: PLATFORM METRICS ══════ #}
+<section class="section section-alt">
+    <div class="container">
+        <div class="section-header center">
+            <span class="eyebrow">{{ t('landing.metrics_eyebrow') or 'Platform' }}</span>
+            <h2>{{ t('landing.metrics_title') or 'Simple, Transparent Pricing' }}</h2>
+        </div>
+        <div class="metrics-row">
+            <div class="metric-card">
+                <div class="metric-val" style="color: var(--green);">0%</div>
+                <div class="metric-label">{{ t('landing.metric_first') or 'First Month Commission' }}</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-val">$0.001</div>
+                <div class="metric-label">{{ t('landing.metric_starting') or 'Starting Price Per Call' }}</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-val" style="font-size: 24px;">10%</div>
+                <div class="metric-label">{{ t('landing.metric_cap') or 'Max Commission (capped)' }}</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-val" style="font-size: 24px;">3 min</div>
+                <div class="metric-label">{{ t('landing.metric_setup') or 'Setup Time' }}</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{# ══════ SECTION 7: TESTIMONIALS ══════ #}
+<section class="section">
+    <div class="container">
+        <div class="section-header center">
+            <span class="eyebrow">{{ t('landing.testimonial_eyebrow') or 'What Users Say' }}</span>
+            <h2>{{ t('landing.testimonial_title') or 'Early Adopter Feedback' }}</h2>
+        </div>
+        <div class="usecase-grid">
+            <div class="usecase-card" style="padding: 28px; position: relative;">
+                <div style="font-size: 36px; color: var(--accent); opacity: 0.3; position: absolute; top: 12px; left: 20px; line-height: 1;">&#x201C;</div>
+                <p style="font-size: 15px; color: var(--text-dim); line-height: 1.7; margin-bottom: 16px; padding-top: 20px; font-style: italic;">{{ t('landing.testimonial_q1') or 'Listed my NLP service and got the first automated payment within a day. No marketing, no billing headaches.' }}</p>
+                <div style="font-size: 13px; font-weight: 600; color: var(--text-muted);">{{ t('landing.testimonial_a1') or '— Service Provider, Beta Program' }}</div>
+            </div>
+            <div class="usecase-card" style="padding: 28px; position: relative;">
+                <div style="font-size: 36px; color: var(--accent); opacity: 0.3; position: absolute; top: 12px; left: 20px; line-height: 1;">&#x201C;</div>
+                <p style="font-size: 15px; color: var(--text-dim); line-height: 1.7; margin-bottom: 16px; padding-top: 20px; font-style: italic;">{{ t('landing.testimonial_q2') or 'Connected my trading agent in 15 minutes. It now accesses market data, news, and analysis services — all through one integration.' }}</p>
+                <div style="font-size: 13px; font-weight: 600; color: var(--text-muted);">{{ t('landing.testimonial_a2') or '— Agent Developer, Early Access' }}</div>
+            </div>
+            <div class="usecase-card" style="padding: 28px; position: relative;">
+                <div style="font-size: 36px; color: var(--accent); opacity: 0.3; position: absolute; top: 12px; left: 20px; line-height: 1;">&#x201C;</div>
+                <p style="font-size: 15px; color: var(--text-dim); line-height: 1.7; margin-bottom: 16px; padding-top: 20px; font-style: italic;">{{ t('landing.testimonial_q3') or 'Pay-per-use finally makes sense for AI agents. No more wasted subscriptions for services my agent only calls occasionally.' }}</p>
+                <div style="font-size: 13px; font-weight: 600; color: var(--text-muted);">{{ t('landing.testimonial_a3') or '— AI Startup Founder' }}</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{# ══════ SECTION 8: REFERRAL ══════ #}
+<section class="section section-alt">
+    <div class="container">
+        <div class="referral-banner">
+            <span class="eyebrow">{{ t('landing.ref_eyebrow') or 'Referral Program' }}</span>
+            <h3>{{ t('landing.ref_title') or 'Know Someone With a Great Service?' }}</h3>
+            <p>{{ t('landing.ref_desc') or 'Refer them to AgenticTrade and earn 20% of the platform fee on every transaction they make — forever. No cap, no expiry. One referral doing $10K/mo = $100/mo passive income for you.' }}</p>
+            <a href="/portal/register" class="btn-primary">{{ t('landing.ref_cta') or 'Get My Referral Link' }}</a>
+        </div>
+    </div>
+</section>
+
+{# ══════ SECTION 9: FAQ ══════ #}
+<section class="section">
+    <div class="container">
+        <div class="section-header center">
+            <span class="eyebrow">{{ t('landing.faq_eyebrow') or 'FAQ' }}</span>
+            <h2>{{ t('landing.faq_title') or 'Common Questions' }}</h2>
+        </div>
+        <div class="faq-grid" style="margin: 0 auto;">
+            <div class="faq-item">
+                <div class="faq-q">{{ t('landing.faq_q1') or 'What is AgenticTrade?' }}</div>
+                <div class="faq-a">{{ t('landing.faq_a1') or 'AgenticTrade is an AI service marketplace. If you have a useful AI service, you list it here and AI agents will automatically find it, use it, and pay you. If you build AI agents, you connect to AgenticTrade and your agent gets access to hundreds of services instantly.' }}</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q">{{ t('landing.faq_q2') or 'Do I need to be a developer?' }}</div>
+                <div class="faq-a">{{ t('landing.faq_a2') or 'No. You can list a service in 3 minutes without writing any code. Our setup tool handles the technical parts for you. If you do have an existing API, you can register that directly too.' }}</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q">{{ t('landing.faq_q3') or 'How do I get paid?' }}</div>
+                <div class="faq-a">{{ t('landing.faq_a3') or 'Every time an AI agent uses your service, you get paid automatically in USDC (a digital dollar). No invoicing, no chasing payments. Money shows up in your dashboard and you can withdraw anytime.' }}</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q">{{ t('landing.faq_q4') or 'How much does it cost?' }}</div>
+                <div class="faq-a">{{ t('landing.faq_a4') or 'Free to sign up. Providers pay 0% commission the first month, 5% months 2-3, and it caps at 10%. For agents using services, you only pay per use — no subscription fees.' }}</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q">{{ t('landing.faq_q5') or 'Is my data safe?' }}</div>
+                <div class="faq-a">{{ t('landing.faq_a5') or 'Yes. Your API keys and credentials never leave your machine. We use a proxy system so your real credentials are never exposed to anyone. All transactions are tracked and fully transparent.' }}</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q">{{ t('landing.faq_q6') or 'How is this different from RapidAPI or Fiverr?' }}</div>
+                <div class="faq-a">{{ t('landing.faq_a6') or 'Those platforms are built for humans. AgenticTrade is built for AI agents — they automatically discover services, decide what to use, and pay per call. No human needs to browse or manage billing. Our commission is also much lower (max 10% vs 20-25%).' }}</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q">{{ t('landing.faq_q7') or 'Do I need to know about crypto?' }}</div>
+                <div class="faq-a">{{ t('landing.faq_a7') or 'Mostly no. Your account has a built-in balance, and everyday transactions are handled automatically. Providers can choose PayPal to receive fiat — no crypto needed at all. If you prefer USDC payouts, you\'ll link a wallet address when you\'re ready to withdraw — the platform guides you through it.' }}</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{# ══════ SECTION 10: FINAL CTA ══════ #}
+<section class="section section-alt">
+    <div class="container">
+        <div class="final-cta">
+            <h2>{{ t('landing.final_title') or 'Ready to Let AI Agents Work for You?' }}</h2>
+            <p>{{ t('landing.final_desc') or 'List your service and start earning from AI agent traffic. Or connect your agent to a marketplace of capabilities. Free to start.' }}</p>
+            <div class="final-cta-btns">
+                <a href="/portal/register" class="btn-primary">{{ t('landing.final_cta_sell') or 'List My Service' }}</a>
+                <a href="/api-docs#quickstart" class="btn-secondary">{{ t('landing.final_cta_build') or 'Connect My Agent' }}</a>
+                <a href="https://discord.gg/A6eRjMSsWs" target="_blank" rel="noopener" class="btn-secondary" style="border-color: #5865F2; color: #5865F2;">{{ t('landing.community_cta') or 'Join Community' }}</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

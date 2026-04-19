@@ -1,0 +1,61 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "agentictrade-mcp"
+version = "0.2.0"
+description = "MCP server for AgenticTrade — AI agent API marketplace. Discover, call, and pay for services (buyer), or register and sell your own (provider)."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [
+    { name = "JudyAI Lab", email = "hello@agentictrade.io" },
+]
+keywords = [
+    "mcp",
+    "model-context-protocol",
+    "ai-agents",
+    "api-marketplace",
+    "agentictrade",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "mcp>=1.0.0",
+    "httpx>=0.25.0",
+    "pydantic>=2.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-asyncio>=0.21",
+    "respx>=0.21",
+]
+
+[project.urls]
+Homepage = "https://agentictrade.io"
+Documentation = "https://agentictrade.io/api-docs"
+Repository = "https://github.com/JudyaiLab/agentictrade"
+Issues = "https://github.com/JudyaiLab/agentictrade/issues"
+
+[project.scripts]
+agentictrade-mcp = "agentictrade_mcp.server:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/agentictrade_mcp"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"

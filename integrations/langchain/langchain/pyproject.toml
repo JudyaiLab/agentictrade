@@ -1,0 +1,70 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agentictrade-langchain"
+version = "0.1.0"
+description = "LangChain & LlamaIndex tools for the AgenticTrade AI-agent marketplace"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+authors = [
+    {name = "JudyAI Lab", email = "miranttie@gmail.com"},
+]
+keywords = [
+    "langchain",
+    "llamaindex",
+    "agentictrade",
+    "ai-agents",
+    "marketplace",
+    "tools",
+    "a2a",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+dependencies = [
+    "langchain-core>=0.2.0",
+    "httpx>=0.25.0",
+    "pydantic>=2.0.0",
+]
+
+[project.optional-dependencies]
+llamaindex = [
+    "llama-index-core>=0.10.0",
+]
+dev = [
+    "pytest>=7.0",
+    "pytest-httpx>=0.30.0",
+    "ruff>=0.4.0",
+]
+
+[project.urls]
+Homepage = "https://agentictrade.io"
+Documentation = "https://agentictrade.io/docs"
+Repository = "https://github.com/JudyAI-Lab/agentictrade-langchain"
+Issues = "https://github.com/JudyAI-Lab/agentictrade-langchain/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["agentictrade_langchain*"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

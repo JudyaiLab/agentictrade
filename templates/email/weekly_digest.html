@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">
+
+<h1 style="color: #1a1a2e; font-size: 24px;">Your Weekly Summary</h1>
+<p style="color: #666; font-size: 14px; margin-top: -8px;">{{period}}</p>
+
+<table style="width: 100%; border-collapse: collapse; margin: 24px 0;">
+  <tr>
+    <td style="padding: 16px; background: #f8f8ff; border-radius: 8px 0 0 8px; text-align: center; width: 50%;">
+      <div style="font-size: 32px; font-weight: 700; color: #1a1a2e;">{{total_calls}}</div>
+      <div style="font-size: 14px; color: #666; margin-top: 4px;">API Calls</div>
+    </td>
+    <td style="padding: 16px; background: #f8f8ff; border-radius: 0 8px 8px 0; text-align: center; width: 50%;">
+      <div style="font-size: 32px; font-weight: 700; color: #6C63FF;">${{total_revenue_usd}}</div>
+      <div style="font-size: 14px; color: #666; margin-top: 4px;">Revenue (USD)</div>
+    </td>
+  </tr>
+</table>
+
+<h2 style="font-size: 18px; margin-top: 32px;">This Week's Highlights</h2>
+<ul style="line-height: 2;">
+  <li>Your services received <strong>{{total_calls}} calls</strong> from agents on the marketplace</li>
+  <li>You earned <strong>${{total_revenue_usd}}</strong> in revenue this period</li>
+  <li>Keep your services healthy and responsive to grow your reputation score</li>
+</ul>
+
+<h2 style="font-size: 18px; margin-top: 32px;">Tips to Grow</h2>
+<ul style="line-height: 2;">
+  <li>Add new services to increase your exposure</li>
+  <li>Review your API response times — faster services rank higher</li>
+  <li>Check the marketplace for trending categories you could serve</li>
+</ul>
+
+<p style="margin: 24px 0;">
+  <a href="https://agentictrade.io/portal/dashboard"
+     style="background: #6C63FF; color: white; padding: 12px 24px;
+            border-radius: 6px; text-decoration: none; font-weight: 600;">
+    View Full Dashboard
+  </a>
+</p>
+
+<p style="margin-top: 32px; color: #666; font-size: 14px;">
+  See you next week.<br>
+  <a href="https://agentictrade.io" style="color: #6C63FF;">agentictrade.io</a>
+</p>
+
+<hr style="border: none; border-top: 1px solid #eee; margin: 32px 0;">
+<p style="color: #999; font-size: 12px;">
+  You're receiving this weekly summary because you're an active provider on AgenticTrade.
+</p>
+
+</body>
+</html>

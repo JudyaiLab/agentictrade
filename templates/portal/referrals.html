@@ -1,0 +1,252 @@
+{% extends "portal/base.html" %}
+{% block title %}Referral Program{% endblock %}
+
+{% block extra_css %}
+<style>
+    .ref-hero { margin-bottom: 32px; }
+    .ref-hero h1 { font-size: 24px; font-weight: 700; color: var(--text-bright); }
+    .ref-hero p { font-size: 14px; color: var(--text-dim); margin-top: 4px; }
+
+    .ref-code-box {
+        background: rgba(99,102,241,0.08);
+        box-shadow: 0 0 0 1px var(--accent);
+        border-radius: 12px;
+        padding: 28px;
+        text-align: center;
+        margin-bottom: 24px;
+    }
+    .ref-code-value {
+        font-size: 36px;
+        font-weight: 800;
+        letter-spacing: 4px;
+        color: var(--accent);
+        font-family: 'SF Mono', 'Fira Code', monospace;
+        user-select: all;
+        margin: 12px 0;
+    }
+    .ref-code-label { font-size: 13px; color: var(--text-dim); }
+    .ref-copy-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 12px;
+        padding: 8px 20px;
+        background: var(--accent);
+        color: #000;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: inherit;
+        transition: opacity .15s;
+    }
+    .ref-copy-btn:hover { opacity: 0.85; }
+    .ref-share-url {
+        margin-top: 12px;
+        font-size: 13px;
+        color: var(--text-dim);
+        word-break: break-all;
+    }
+    .ref-share-url code {
+        background: rgba(255,255,255,0.06);
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        user-select: all;
+    }
+
+    .ref-how {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 32px;
+    }
+    .ref-step {
+        background: rgba(255,255,255,0.02);
+        box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+    }
+    .ref-step-num {
+        width: 32px; height: 32px;
+        background: var(--accent);
+        color: #000;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+    .ref-step h4 { font-size: 14px; color: var(--text-bright); margin-bottom: 4px; }
+    .ref-step p { font-size: 12px; color: var(--text-dim); line-height: 1.5; margin: 0; }
+
+    .ref-table-section { margin-top: 32px; }
+    .ref-empty { text-align: center; padding: 32px; color: var(--text-dim); font-size: 14px; }
+
+    @media (max-width: 768px) {
+        .ref-how { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 480px) {
+        .ref-how { grid-template-columns: 1fr; }
+        .ref-code-value { font-size: 28px; letter-spacing: 2px; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="ref-hero">
+    <h1>{{ t('portal.referral_title') if t else 'Referral Program' }}</h1>
+    <p>{{ t('portal.referral_subtitle') if t else 'Refer providers to AgenticTrade and earn 20% of the platform commission from their API usage — for life.' }}</p>
+</div>
+
+{# ── Stats Grid ── #}
+<div class="portal-grid">
+    <div class="portal-card portal-stat">
+        <div class="portal-stat-value">{{ referral_stats.total_referred }}</div>
+        <div class="portal-stat-label">{{ t('portal.ref_total_referred') if t else 'Total Referred' }}</div>
+    </div>
+    <div class="portal-card portal-stat">
+        <div class="portal-stat-value">{{ referral_stats.active }}</div>
+        <div class="portal-stat-label">{{ t('portal.ref_active') if t else 'Active' }}</div>
+    </div>
+    <div class="portal-card portal-stat">
+        <div class="portal-stat-value">{{ referral_stats.pending }}</div>
+        <div class="portal-stat-label">{{ t('portal.ref_pending') if t else 'Pending' }}</div>
+    </div>
+    <div class="portal-card portal-stat">
+        <div class="portal-stat-value">${{ "%.2f"|format(referral_stats.total_earned|float) }}</div>
+        <div class="portal-stat-label">{{ t('portal.ref_total_earned') if t else 'Total Earned' }}</div>
+    </div>
+</div>
+
+{# ── Referral Code ── #}
+{% if referral_code %}
+<div class="ref-code-box">
+    <div class="ref-code-label">{{ t('portal.ref_your_code') if t else 'Your Referral Code' }}</div>
+    <div class="ref-code-value" id="ref-code">{{ referral_code }}</div>
+    <button class="ref-copy-btn" onclick="copyCode()">
+        <span id="copy-icon">&#x1F4CB;</span>
+        <span id="copy-text">{{ t('portal.ref_copy') if t else 'Copy Code' }}</span>
+    </button>
+    <div class="ref-share-url" style="margin-top:20px;">
+        <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-dim); margin-bottom:8px;">{{ t('portal.ref_share_link') if t else 'Share link:' }}</div>
+        <div style="display:flex; align-items:center; gap:8px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:10px 14px;">
+            <code id="ref-link" style="flex:1; font-size:13px; background:none; padding:0; user-select:all; color:var(--accent);">https://agentictrade.io/portal/register?ref={{ referral_code }}</code>
+            <button class="ref-copy-btn" style="margin-top:0; padding:6px 14px; font-size:13px;" onclick="copyLink()">
+                <span id="link-copy-text">Copy Link</span>
+            </button>
+        </div>
+        <div style="font-size:12px; color:var(--text-dim); margin-top:8px;">Anyone who clicks this link will have your referral code automatically applied when they register.</div>
+    </div>
+</div>
+{% else %}
+<div class="ref-code-box">
+    <div class="ref-code-label">{{ t('portal.ref_no_code') if t else 'You don\'t have a referral code yet' }}</div>
+    <form method="POST" action="/portal/referrals/generate" style="margin-top:16px;">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <button type="submit" class="ref-copy-btn">{{ t('portal.ref_generate') if t else 'Generate My Referral Code' }}</button>
+    </form>
+</div>
+{% endif %}
+
+{# ── How It Works ── #}
+<div class="ref-how">
+    <div class="ref-step">
+        <div class="ref-step-num">1</div>
+        <h4>{{ t('portal.ref_step1_title') if t else 'Get Your Code' }}</h4>
+        <p>{{ t('portal.ref_step1_desc') if t else 'Generate your unique referral code above' }}</p>
+    </div>
+    <div class="ref-step">
+        <div class="ref-step-num">2</div>
+        <h4>{{ t('portal.ref_step2_title') if t else 'Share It' }}</h4>
+        <p>{{ t('portal.ref_step2_desc') if t else 'Send the code or link to API developers you know' }}</p>
+    </div>
+    <div class="ref-step">
+        <div class="ref-step-num">3</div>
+        <h4>{{ t('portal.ref_step3_title') if t else 'They Join' }}</h4>
+        <p>{{ t('portal.ref_step3_desc') if t else 'They click the link, sign up, and get 2 months free (instead of 1)' }}</p>
+    </div>
+    <div class="ref-step">
+        <div class="ref-step-num">4</div>
+        <h4>{{ t('portal.ref_step4_title') if t else 'You Earn' }}</h4>
+        <p>{{ t('portal.ref_step4_desc') if t else '20% of platform commission from their usage, forever' }}</p>
+    </div>
+</div>
+
+{# ── Referral List ── #}
+<div class="portal-card ref-table-section">
+    <h2 style="font-size: 16px; font-weight: 600; color: var(--text-bright); margin-bottom: 16px;">{{ t('portal.ref_your_referrals') if t else 'Your Referrals' }}</h2>
+    {% if referrals %}
+    <div class="portal-table-wrap">
+    <table class="portal-table">
+        <thead>
+            <tr>
+                <th>{{ t('portal.ref_col_code') if t else 'Code' }}</th>
+                <th>{{ t('portal.ref_col_status') if t else 'Status' }}</th>
+                <th>{{ t('portal.ref_col_referred') if t else 'Referred Provider' }}</th>
+                <th>{{ t('portal.ref_col_date') if t else 'Date' }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ref in referrals %}
+            <tr>
+                <td><code style="font-size:13px;">{{ ref.referral_code }}</code></td>
+                <td>
+                    {% if ref.status == 'active' %}
+                    <span class="portal-badge portal-badge-active">Active</span>
+                    {% else %}
+                    <span class="portal-badge" style="background:rgba(234,179,8,0.15); color:#eab308;">Pending</span>
+                    {% endif %}
+                </td>
+                <td>{{ ref.referred_provider_id[:12] ~ '...' if ref.referred_provider_id else '—' }}</td>
+                <td style="font-size:13px; color:var(--text-dim);">{{ ref.created_at[:10] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+    {% else %}
+    <div class="ref-empty">{{ t('portal.ref_no_referrals') if t else 'No referrals yet. Share your code to start earning!' }}</div>
+    {% endif %}
+</div>
+
+{# ── Info Box ── #}
+<div class="portal-card" style="margin-top:8px;">
+    <h3 style="font-size: 15px; font-weight: 600; color: var(--text-bright); margin-bottom: 12px;">{{ t('portal.ref_details_title') if t else 'Program Details' }}</h3>
+    <ul style="list-style: none; padding: 0; margin: 0;">
+        <li style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04); color: var(--text-dim); font-size: 14px;">
+            <strong style="color: var(--text-bright);">{{ t('portal.ref_detail_rate') if t else 'Payout rate' }}:</strong> 20% {{ t('portal.ref_detail_rate_desc') if t else 'of platform commission from referred provider usage' }}
+        </li>
+        <li style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04); color: var(--text-dim); font-size: 14px;">
+            <strong style="color: var(--text-bright);">{{ t('portal.ref_detail_duration') if t else 'Duration' }}:</strong> {{ t('portal.ref_detail_duration_desc') if t else 'Lifetime — as long as the referred provider is active' }}
+        </li>
+        <li style="padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04); color: var(--text-dim); font-size: 14px;">
+            <strong style="color: var(--text-bright);">{{ t('portal.ref_detail_cap') if t else 'Earnings cap' }}:</strong> {{ t('portal.ref_detail_cap_desc') if t else 'None — unlimited referrals, unlimited earnings' }}
+        </li>
+        <li style="padding: 8px 0; color: var(--text-dim); font-size: 14px;">
+            <strong style="color: var(--text-bright);">{{ t('portal.ref_detail_payout') if t else 'Payout schedule' }}:</strong> {{ t('portal.ref_detail_payout_desc') if t else 'Monthly, settled in USDC' }}
+        </li>
+    </ul>
+</div>
+
+<script>
+function copyCode() {
+    const code = document.getElementById('ref-code').textContent.trim();
+    navigator.clipboard.writeText(code).then(() => {
+        document.getElementById('copy-text').textContent = 'Copied!';
+        setTimeout(() => { document.getElementById('copy-text').textContent = '{{ t("portal.ref_copy") if t else "Copy Code" }}'; }, 2000);
+    });
+}
+function copyLink() {
+    const link = document.getElementById('ref-link').textContent.trim();
+    navigator.clipboard.writeText(link).then(() => {
+        document.getElementById('link-copy-text').textContent = 'Copied!';
+        setTimeout(() => { document.getElementById('link-copy-text').textContent = 'Copy Link'; }, 2000);
+    });
+}
+</script>
+{% endblock %}
