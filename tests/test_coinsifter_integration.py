@@ -15,7 +15,7 @@ from decimal import Decimal
 from unittest.mock import AsyncMock, patch
 
 # Allow internal hosts for test
-os.environ.setdefault("ACF_INTERNAL_HOSTS", "172.18.0.1,127.0.0.1")
+os.environ.setdefault("ACF_INTERNAL_HOSTS", "localhost,127.0.0.1")
 
 from marketplace.db import Database
 from marketplace.registry import ServiceRegistry
@@ -29,8 +29,8 @@ import marketplace.registry as _registry_mod
 @pytest.fixture(autouse=True)
 def _allow_internal_hosts():
     """Ensure internal hosts bypass SSRF for all tests in this module."""
-    _proxy_mod._INTERNAL_ALLOWED.update({"172.18.0.1", "127.0.0.1"})
-    _registry_mod._INTERNAL_ALLOWED.update({"172.18.0.1", "127.0.0.1"})
+    _proxy_mod._INTERNAL_ALLOWED.update({"localhost", "127.0.0.1"})
+    _registry_mod._INTERNAL_ALLOWED.update({"localhost", "127.0.0.1"})
     yield
 
 
@@ -62,7 +62,7 @@ class TestCoinSifterRegistration:
             provider_id="judyailab",
             name="CoinSifter — Crypto Market Scanner",
             description="Scan Binance pairs with 8 technical indicators.",
-            endpoint="http://172.18.0.1:8089",
+            endpoint="http://localhost:8089",
             price_per_call="0.50",
             category="crypto-analysis",
             tags=["crypto", "scanner"],
@@ -74,14 +74,14 @@ class TestCoinSifterRegistration:
         assert svc.pricing.price_per_call == Decimal("0.50")
         assert svc.pricing.free_tier_calls == 5
         assert svc.status == "active"
-        assert svc.endpoint == "http://172.18.0.1:8089"
+        assert svc.endpoint == "http://localhost:8089"
 
     def test_register_coinsifter_demo(self, registry):
         svc = registry.register(
             provider_id="judyailab",
             name="CoinSifter Demo",
             description="Free demo endpoint.",
-            endpoint="http://172.18.0.1:8089",
+            endpoint="http://localhost:8089",
             price_per_call="0",
             category="crypto-analysis",
             payment_method="nowpayments",
@@ -93,7 +93,7 @@ class TestCoinSifterRegistration:
             provider_id="judyailab",
             name="CoinSifter Test",
             description="Test",
-            endpoint="http://172.18.0.1:8089",
+            endpoint="http://localhost:8089",
             price_per_call="0.10",
             category="crypto-analysis",
         )
@@ -110,7 +110,7 @@ class TestCoinSifterProxyFlow:
             provider_id="judyailab",
             name="CoinSifter Scan",
             description="Scan service",
-            endpoint="http://172.18.0.1:8089",
+            endpoint="http://localhost:8089",
             price_per_call="0.50",
             payment_method="nowpayments",
             free_tier_calls=3,
@@ -232,7 +232,7 @@ class TestCoinSifterProxyFlow:
             # Verify the request was forwarded to the right URL
             call_args = mock_client.request.call_args
             url = call_args.kwargs.get("url", call_args.args[1] if len(call_args.args) > 1 else "")
-            assert "172.18.0.1:8089" in str(url)
+            assert "localhost:8089" in str(url)
             assert "/api/scan" in str(url)
 
 

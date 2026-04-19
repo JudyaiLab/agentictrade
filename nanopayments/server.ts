@@ -19,7 +19,11 @@ import { createGatewayMiddleware } from "@circle-fin/x402-batching/server";
 
 const PORT = parseInt(process.env.NANO_PORT || "3402", 10);
 const ACF_BACKEND = process.env.ACF_BACKEND || "http://localhost:8092";
-const SELLER_ADDRESS = process.env.SELLER_ADDRESS || "0xc04193f6efe8ee5bbf42cf42a11155724935a5c8";
+const SELLER_ADDRESS = process.env.SELLER_ADDRESS;
+if (!SELLER_ADDRESS) {
+  console.error("SELLER_ADDRESS env var is required");
+  process.exit(1);
+}
 
 // Dual-rail: restrict to Arc testnet for now; add mainnet chain when ready
 const ACCEPTED_NETWORKS = (process.env.ACCEPTED_NETWORKS || "eip155:5042002").split(",");

@@ -10,7 +10,7 @@ readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.10"
 authors = [
-    {name = "JudyAI Lab", email = "miranttie@gmail.com"},
+    {name = "JudyAI Lab", email = "hello@agentictrade.io"},
 ]
 keywords = [
     "langchain",

@@ -29,7 +29,7 @@ class ServiceRegistry:
     """Manages service listings on the marketplace."""
 
     ALLOWED_PAYMENT_METHODS = {"x402", "stripe", "nowpayments", "both"}
-    MAX_PRICE = Decimal("100.00")  # 單次呼叫上限
+    MAX_PRICE = Decimal("100.00")  # max price per call
 
     def __init__(self, db: Database):
         self.db = db

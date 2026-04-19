@@ -104,15 +104,14 @@ async def create_api_key(req: CreateKeyRequest, request: Request):
         except AuthError:
             _record_auth_failure(client_ip)
             raise HTTPException(status_code=401, detail="Invalid credentials")
-        if req.role == "admin" and caller["role"] not in ("admin", "provider", "buyer"):
+        if req.role == "admin" and caller["role"] != "admin":
             raise HTTPException(
-                status_code=403, detail="Authentication required to create admin keys"
+                status_code=403, detail="Only admin keys can create admin keys"
             )
-        # Any authenticated key can create provider keys (enables bootstrapping)
-        if req.role == "provider" and caller["role"] not in ("provider", "admin", "buyer"):
+        if req.role == "provider" and caller["role"] not in ("provider", "admin"):
             raise HTTPException(
                 status_code=403,
-                detail="Authentication required to create provider keys",
+                detail="Only provider or admin keys can create provider keys",
             )
 
     try:

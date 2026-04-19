@@ -5,11 +5,11 @@ Exposes internal services (CoinSifter, JudyAI Tools, etc.) via public URLs
 so that external agents can access them through the marketplace proxy.
 
 Routes: /ext/{service_name}/{path}
-Example: https://agentictrade.io/ext/coinsifter/scan → http://172.18.0.1:8089/scan
 """
 from __future__ import annotations
 
 import logging
+import os
 from typing import Any
 
 import httpx
@@ -20,13 +20,13 @@ logger = logging.getLogger("service_gateway")
 router = APIRouter(tags=["service-gateway"])
 
 # Platform-hosted service registry: name → internal base URL
-# These are trusted services running on the same host.
+# Configure via environment variables; defaults to localhost for local dev.
 HOSTED_SERVICES: dict[str, str] = {
-    "coinsifter": "http://172.18.0.1:8089",
-    "strategy": "http://172.18.0.1:8090",
-    "tools": "http://127.0.0.1:8095",
-    "scanner": "http://172.18.0.1:8094",
-    "legacy": "http://172.18.0.1:8093",
+    "coinsifter": os.environ.get("GATEWAY_COINSIFTER_URL", "http://localhost:8089"),
+    "strategy": os.environ.get("GATEWAY_STRATEGY_URL", "http://localhost:8090"),
+    "tools": os.environ.get("GATEWAY_TOOLS_URL", "http://localhost:8095"),
+    "scanner": os.environ.get("GATEWAY_SCANNER_URL", "http://localhost:8094"),
+    "legacy": os.environ.get("GATEWAY_LEGACY_URL", "http://localhost:8093"),
 }
 
 

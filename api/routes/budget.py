@@ -1,6 +1,6 @@
 """
 Budget Governor API — MIM-625
-Agent 預算控制，防止 Agent 超支。JSON 存儲。
+Agent spending controls to prevent runaway costs. JSON storage.
 """
 from __future__ import annotations
 
@@ -53,7 +53,7 @@ def _load_all() -> dict[str, Any]:
     try:
         return json.loads(BUDGET_FILE.read_text(encoding="utf-8"))
     except (json.JSONDecodeError, OSError):
-        logger.warning("budget.json 損毀，重建空檔")
+        logger.warning("budget.json corrupted, rebuilding empty store")
         return {}
 
 
@@ -68,7 +68,7 @@ def _save_all(data: dict[str, Any]) -> None:
 def _load_policy(agent_id: str) -> BudgetPolicy:
     data = _load_all()
     if agent_id not in data:
-        raise HTTPException(404, f"Agent {agent_id} 尚未設定預算政策")
+        raise HTTPException(404, f"No budget policy found for agent {agent_id}")
     rec = data[agent_id]
     history = rec.pop("history", [])
     policy = BudgetPolicy(**{k: v for k, v in rec.items() if k != "history"})
@@ -86,7 +86,7 @@ def _save_policy(policy: BudgetPolicy) -> None:
 
 
 def _auto_reset(policy: BudgetPolicy) -> BudgetPolicy:
-    """跨天/跨月自動重置計數器。"""
+    """Auto-reset daily/monthly counters on date rollover."""
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     month = today[:7]
 
@@ -105,26 +105,26 @@ def check_budget(policy: BudgetPolicy, amount_usd: float) -> BudgetCheckResult:
     policy = _auto_reset(policy)
 
     if amount_usd <= 0:
-        return BudgetCheckResult(False, reason="金額必須大於 0")
+        return BudgetCheckResult(False, reason="Amount must be greater than 0")
 
     if amount_usd > policy.per_tx_limit_usd:
         return BudgetCheckResult(
             False,
-            reason=f"單筆 ${amount_usd:.4f} 超過上限 ${policy.per_tx_limit_usd:.4f}",
+            reason=f"Per-tx ${amount_usd:.4f} exceeds limit ${policy.per_tx_limit_usd:.4f}",
         )
 
     new_daily = policy.spent_today_usd + amount_usd
     if new_daily > policy.daily_limit_usd:
         return BudgetCheckResult(
             False,
-            reason=f"今日累計 ${new_daily:.4f} 將超過每日上限 ${policy.daily_limit_usd:.4f}",
+            reason=f"Daily total ${new_daily:.4f} would exceed limit ${policy.daily_limit_usd:.4f}",
         )
 
     new_monthly = policy.spent_month_usd + amount_usd
     if new_monthly > policy.monthly_limit_usd:
         return BudgetCheckResult(
             False,
-            reason=f"本月累計 ${new_monthly:.4f} 將超過月上限 ${policy.monthly_limit_usd:.4f}",
+            reason=f"Monthly total ${new_monthly:.4f} would exceed limit ${policy.monthly_limit_usd:.4f}",
         )
 
     return BudgetCheckResult(
@@ -139,7 +139,7 @@ def check_budget(policy: BudgetPolicy, amount_usd: float) -> BudgetCheckResult:
 
 @router.get("/budget/{agent_id}")
 async def get_budget(agent_id: str) -> dict[str, Any]:
-    """查詢 Agent 預算狀態。"""
+    """Query agent budget status."""
     policy = _load_policy(agent_id)
     policy = _auto_reset(policy)
     _save_policy(policy)
@@ -150,7 +150,7 @@ async def get_budget(agent_id: str) -> dict[str, Any]:
 
 @router.post("/budget/{agent_id}")
 async def set_budget(agent_id: str, body: dict[str, Any]) -> dict[str, Any]:
-    """設定或更新 Agent 預算政策。"""
+    """Set or update agent budget policy."""
     data = _load_all()
     existing = data.get(agent_id, {})
 
@@ -172,15 +172,15 @@ async def set_budget(agent_id: str, body: dict[str, Any]) -> dict[str, Any]:
 
 @router.post("/budget/{agent_id}/check")
 async def check_budget_endpoint(agent_id: str, body: dict[str, Any]) -> dict[str, Any]:
-    """檢查某筆交易是否在預算內。"""
+    """Check if a transaction is within budget."""
     amount = body.get("amount_usd")
     if amount is None:
-        raise HTTPException(400, "缺少 amount_usd 欄位")
+        raise HTTPException(400, "amount_usd is required")
 
     try:
         amount = float(amount)
     except (TypeError, ValueError):
-        raise HTTPException(400, "amount_usd 必須為數字")
+        raise HTTPException(400, "amount_usd must be a number")
 
     policy = _load_policy(agent_id)
     result = check_budget(policy, amount)
@@ -190,15 +190,15 @@ async def check_budget_endpoint(agent_id: str, body: dict[str, Any]) -> dict[str
 
 @router.post("/budget/{agent_id}/spend")
 async def record_spend(agent_id: str, body: dict[str, Any]) -> dict[str, Any]:
-    """記錄一筆支出。先檢查預算，通過才記帳。"""
+    """Record a spend. Checks budget first, records only if allowed."""
     amount = body.get("amount_usd")
     if amount is None:
-        raise HTTPException(400, "缺少 amount_usd 欄位")
+        raise HTTPException(400, "amount_usd is required")
 
     try:
         amount = float(amount)
     except (TypeError, ValueError):
-        raise HTTPException(400, "amount_usd 必須為數字")
+        raise HTTPException(400, "amount_usd must be a number")
 
     description = body.get("description", "")
 
@@ -206,7 +206,7 @@ async def record_spend(agent_id: str, body: dict[str, Any]) -> dict[str, Any]:
     result = check_budget(policy, amount)
 
     if not result.allowed:
-        raise HTTPException(403, f"預算不足: {result.reason}")
+        raise HTTPException(403, f"Budget exceeded: {result.reason}")
 
     policy.spent_today_usd += amount
     policy.spent_month_usd += amount
@@ -231,7 +231,7 @@ async def get_budget_history(
     agent_id: str,
     limit: int = 50,
 ) -> dict[str, Any]:
-    """查詢支出歷史。"""
+    """Query spending history."""
     policy = _load_policy(agent_id)
     history = policy.history[-limit:]
     return {

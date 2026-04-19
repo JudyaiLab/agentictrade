@@ -1,6 +1,6 @@
 """
 Negotiation API — MIM-627
-Agent 間自動議價系統。JSON 存儲。
+Autonomous agent-to-agent price negotiation system. JSON storage.
 """
 from __future__ import annotations
 
@@ -61,7 +61,7 @@ def _load_all() -> dict[str, Any]:
     try:
         return json.loads(NEGOTIATION_FILE.read_text(encoding="utf-8"))
     except (json.JSONDecodeError, OSError):
-        logger.warning("negotiations.json 損毀，重建空檔")
+        logger.warning("negotiations.json corrupted, rebuilding empty store")
         return {}
 
 
@@ -76,7 +76,7 @@ def _save_all(data: dict[str, Any]) -> None:
 def _load_session(session_id: str) -> NegotiationSession:
     data = _load_all()
     if session_id not in data:
-        raise HTTPException(404, f"議價 session {session_id} 不存在")
+        raise HTTPException(404, f"Negotiation session {session_id} not found")
     rec = data[session_id]
     rounds = rec.pop("rounds", [])
     session = NegotiationSession(**{k: v for k, v in rec.items() if k != "rounds"})
@@ -91,7 +91,7 @@ def _save_session(session: NegotiationSession) -> None:
 
 
 def _check_expired(session: NegotiationSession) -> NegotiationSession:
-    """檢查是否已過期。"""
+    """Check if session has expired."""
     if session.status != "open":
         return session
     if session.expires_at:
@@ -103,12 +103,12 @@ def _check_expired(session: NegotiationSession) -> NegotiationSession:
 
 
 def _get_participant_role(session: NegotiationSession, agent_id: str) -> str:
-    """判斷 agent 在此 session 中的角色。"""
+    """Determine the agent's role in this session."""
     if agent_id == session.buyer_id:
         return "buyer"
     if agent_id == session.seller_id:
         return "seller"
-    raise HTTPException(403, f"Agent {agent_id} 不是此議價的參與者")
+    raise HTTPException(403, f"Agent {agent_id} is not a participant in this negotiation")
 
 
 # ── API Endpoints ────────────────────────────────────────────
@@ -116,25 +116,25 @@ def _get_participant_role(session: NegotiationSession, agent_id: str) -> str:
 
 @router.post("/negotiate/start")
 async def start_negotiation(body: dict[str, Any]) -> dict[str, Any]:
-    """Buyer 發起議價。"""
+    """Buyer initiates a negotiation."""
     buyer_id = body.get("buyer_id")
     seller_id = body.get("seller_id")
     service_id = body.get("service_id")
     initial_price = body.get("proposed_price_usd")
 
     if not all([buyer_id, seller_id, service_id, initial_price is not None]):
-        raise HTTPException(400, "必須提供 buyer_id, seller_id, service_id, proposed_price_usd")
+        raise HTTPException(400, "buyer_id, seller_id, service_id, and proposed_price_usd are required")
 
     if buyer_id == seller_id:
-        raise HTTPException(400, "買賣雙方不能是同一個 Agent")
+        raise HTTPException(400, "Buyer and seller cannot be the same agent")
 
     try:
         initial_price = float(initial_price)
     except (TypeError, ValueError):
-        raise HTTPException(400, "proposed_price_usd 必須為數字")
+        raise HTTPException(400, "proposed_price_usd must be a number")
 
     if initial_price <= 0:
-        raise HTTPException(400, "出價必須大於 0")
+        raise HTTPException(400, "proposed_price_usd must be greater than 0")
 
     now = datetime.now(timezone.utc)
     session_id = str(uuid.uuid4())
@@ -170,37 +170,37 @@ async def start_negotiation(body: dict[str, Any]) -> dict[str, Any]:
 
 @router.post("/negotiate/{session_id}/counter")
 async def counter_offer(session_id: str, body: dict[str, Any]) -> dict[str, Any]:
-    """回價。"""
+    """Submit a counter-offer."""
     agent_id = body.get("agent_id")
     price = body.get("proposed_price_usd")
 
     if not agent_id or price is None:
-        raise HTTPException(400, "必須提供 agent_id 和 proposed_price_usd")
+        raise HTTPException(400, "agent_id and proposed_price_usd are required")
 
     try:
         price = float(price)
     except (TypeError, ValueError):
-        raise HTTPException(400, "proposed_price_usd 必須為數字")
+        raise HTTPException(400, "proposed_price_usd must be a number")
 
     if price <= 0:
-        raise HTTPException(400, "出價必須大於 0")
+        raise HTTPException(400, "proposed_price_usd must be greater than 0")
 
     session = _load_session(session_id)
     session = _check_expired(session)
 
     if session.status != "open":
-        raise HTTPException(400, f"此議價已結束，狀態: {session.status}")
+        raise HTTPException(400, f"Negotiation is closed, status: {session.status}")
 
     _get_participant_role(session, agent_id)
 
     if len(session.rounds) >= session.max_rounds:
         session.status = "expired"
         _save_session(session)
-        return {"status": "expired", "reason": "超過最大回合數"}
+        return {"status": "expired", "reason": "Maximum rounds exceeded"}
 
     last_round = session.rounds[-1]
     if last_round["proposer"] == agent_id:
-        raise HTTPException(400, "等對方回應，不能連續出價")
+        raise HTTPException(400, "Cannot submit consecutive offers, wait for the other party")
 
     last_round["response"] = "counter"
     last_round["counter_price_usd"] = price
@@ -223,22 +223,22 @@ async def counter_offer(session_id: str, body: dict[str, Any]) -> dict[str, Any]
 
 @router.post("/negotiate/{session_id}/accept")
 async def accept_offer(session_id: str, body: dict[str, Any]) -> dict[str, Any]:
-    """接受當前出價，成交。"""
+    """Accept the current offer and finalize the deal."""
     agent_id = body.get("agent_id")
     if not agent_id:
-        raise HTTPException(400, "必須提供 agent_id")
+        raise HTTPException(400, "agent_id is required")
 
     session = _load_session(session_id)
     session = _check_expired(session)
 
     if session.status != "open":
-        raise HTTPException(400, f"此議價已結束，狀態: {session.status}")
+        raise HTTPException(400, f"Negotiation is closed, status: {session.status}")
 
     _get_participant_role(session, agent_id)
 
     last_round = session.rounds[-1]
     if last_round["proposer"] == agent_id:
-        raise HTTPException(400, "不能接受自己的出價，等對方回應")
+        raise HTTPException(400, "Cannot accept your own offer, wait for the other party")
 
     last_round["response"] = "accept"
     session.status = "accepted"
@@ -257,15 +257,15 @@ async def accept_offer(session_id: str, body: dict[str, Any]) -> dict[str, Any]:
 
 @router.post("/negotiate/{session_id}/reject")
 async def reject_negotiation(session_id: str, body: dict[str, Any]) -> dict[str, Any]:
-    """拒絕議價，結束 session。"""
+    """Reject the negotiation and close the session."""
     agent_id = body.get("agent_id")
     if not agent_id:
-        raise HTTPException(400, "必須提供 agent_id")
+        raise HTTPException(400, "agent_id is required")
 
     session = _load_session(session_id)
 
     if session.status != "open":
-        raise HTTPException(400, f"此議價已結束，狀態: {session.status}")
+        raise HTTPException(400, f"Negotiation is closed, status: {session.status}")
 
     _get_participant_role(session, agent_id)
 
@@ -283,7 +283,7 @@ async def reject_negotiation(session_id: str, body: dict[str, Any]) -> dict[str,
 
 @router.get("/negotiate/{session_id}")
 async def get_negotiation(session_id: str) -> dict[str, Any]:
-    """查詢議價狀態。"""
+    """Query negotiation status."""
     session = _load_session(session_id)
     session = _check_expired(session)
     return asdict(session)
