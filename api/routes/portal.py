@@ -679,8 +679,16 @@ async def portal_negotiations(request: Request):
         except (json.JSONDecodeError, OSError):
             pass
 
-    # Compute stats from negotiations data
+    # Convert dict to list and compute derived fields for template
     all_negs = list(negotiations.values()) if isinstance(negotiations, dict) else negotiations
+    for n in all_negs:
+        rounds = n.get("rounds", [])
+        n["initial_price"] = rounds[0]["proposed_price_usd"] if rounds else 0
+        if n.get("status") == "accepted" and rounds:
+            n["final_price"] = rounds[-1]["proposed_price_usd"]
+        else:
+            n["final_price"] = rounds[-1]["proposed_price_usd"] if rounds else 0
+
     stats = {
         "total": len(all_negs),
         "accepted": sum(1 for n in all_negs if n.get("status") == "accepted"),
@@ -692,7 +700,7 @@ async def portal_negotiations(request: Request):
     return templates.TemplateResponse("portal/negotiations.html", {
         "request": request, **ctx,
         "provider": provider,
-        "negotiations": negotiations,
+        "negotiations": all_negs,
         "stats": stats,
     })
 
