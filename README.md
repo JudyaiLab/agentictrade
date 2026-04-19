@@ -1,8 +1,8 @@
 # Agent Commerce Framework (AgenticTrade)
 
-> **🚀 [Launching on Product Hunt — April 7th! Follow us →](https://www.producthunt.com/p/agentictrade)** Use code `PRODUCTHUNT` for 3 months zero commission.
+> **Built for the [Agentic Commerce on Arc](https://lablab.ai/event/agentic-commerce-on-arc) Hackathon** — x402 Nanopayments + Circle Programmable Wallets on Arc
 
-[![Tests](https://img.shields.io/badge/tests-1513%20passed-brightgreen)](https://agentictrade.io/health) [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue)](https://python.org) [![Live](https://img.shields.io/badge/live-agentictrade.io-00d2ff)](https://agentictrade.io) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/JudyaiLab/agentictrade/pulls) [![MCP](https://img.shields.io/badge/MCP-native-6366f1)](https://modelcontextprotocol.io) [![PyPI](https://img.shields.io/pypi/v/agentictrade)](https://pypi.org/project/agentictrade/) [![LangChain](https://img.shields.io/badge/LangChain-compatible-green)](https://python.langchain.com/)
+[![Tests](https://img.shields.io/badge/tests-1538%20passed-brightgreen)](https://agentictrade.io/health) [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue)](https://python.org) [![Live](https://img.shields.io/badge/live-agentictrade.io-00d2ff)](https://agentictrade.io) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/JudyaiLab/agentictrade/pulls) [![MCP](https://img.shields.io/badge/MCP-native-6366f1)](https://modelcontextprotocol.io) [![Arc Testnet](https://img.shields.io/badge/Arc-Testnet-00d2ff)](https://testnet.arcscan.app/) [![x402](https://img.shields.io/badge/x402-USDC-2775CA)](https://x402.org)
 
 **AI service marketplace where providers list services and AI agents automatically discover, use, and pay for them.** Open source, MCP-native, multi-rail payments (USDC/PayPal/crypto).
 

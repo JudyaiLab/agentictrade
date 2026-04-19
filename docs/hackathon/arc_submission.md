@@ -144,15 +144,19 @@ Settlement Engine → USDC payout to Provider wallet (periodic)
 4. Provide the "Circle Product Feedback" section detailing our experience with Arc, USDC, Gateway, and x402
 5. Submit to multiple tracks: Best Autonomous Commerce Application (primary), Best Gateway-Based Micropayments, Best Trustless AI Agent, Best Dev Tools
 
-## Action Items Before Submission
+## Submission Checklist
 
-- [ ] Register on LabLab.ai
-- [ ] Join LabLab.ai Discord
-- [ ] Create Circle Developer Console account
-- [ ] Deploy AgenticTrade instance on Arc testnet
-- [ ] Integrate Circle Gateway for USDC balance management
-- [ ] Record 2-minute demo video showing end-to-end agent commerce flow on Arc
-- [x] Finalize "Circle Product Feedback" section with real integration experience
+- [x] Register on LabLab.ai
+- [x] Join LabLab.ai Discord
+- [x] Create Circle Developer Console account
+- [x] Deploy AgenticTrade instance on Arc testnet
+- [x] Integrate x402 Nanopayments via `@circle-fin/x402-batching`
+- [x] Integrate Circle Programmable Wallets for seller onboarding
+- [x] 589 nanopayment transactions on Arc testnet ($0.001 USDC each)
+- [x] Finalize "Circle Product Feedback" section with code-level specifics
+- [x] Public GitHub repo with MIT license
+- [x] Live demo at agentictrade.io
+- [ ] Record demo video (in progress)
 - [ ] Submit by April 25, 2026
 
 ## Links
