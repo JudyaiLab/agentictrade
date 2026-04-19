@@ -1,7 +1,7 @@
 # AgenticTrade — Agentic Commerce on Arc Hackathon Submission
 
 **Status:** APPROVED
-**Last Updated:** 2026-04-03
+**Last Updated:** 2026-04-19
 **Hackathon:** Agentic Commerce on Arc (LabLab.ai) — April 20-26, 2026
 
 ## Project Name
@@ -36,29 +36,36 @@ Settlement Engine → USDC payout to Provider wallet (periodic)
 ### Circle Product Feedback
 
 **Products Used:**
-- **USDC on Arc** — Settlement currency for all marketplace micropayments. Deposit TX: `0xead8b5f7bf91ca850f9af5293b2ee3aad0ac0fc32b8eeadad40aef1de6fed141`. 10 successful paid API calls at $0.001 each on Arc testnet (chain ID 5042002).
-- **x402 Payment Standard** — `@circle-fin/x402-batching` server middleware (`gateway.require()`) and client SDK (`GatewayClient`) for HTTP-native micropayments with off-chain batching.
-- **Circle Programmable Wallets** — Developer-controlled seller wallet on ARC-TESTNET (wallet set `ab698b2d...`), eliminating private key management for the provider side.
+- **USDC on Arc** — Settlement currency for all marketplace micropayments. Deposit TX: `0xead8b5f7bf91ca850f9af5293b2ee3aad0ac0fc32b8eeadad40aef1de6fed141`. 519 successful paid API calls at $0.001 each on Arc testnet (chain ID `eip155:5042002`). Full transaction log in `data/nanopayment_transactions.json`.
+- **x402 Payment Standard** — Server-side: `@circle-fin/x402-batching` middleware via `createGatewayMiddleware()` + `gateway.require("$0.001")` per-route pricing (`nanopayments/server.ts:39-79`). Client-side: `GatewayClient` with `client.deposit()` + `client.pay()` flow (`nanopayments/demo-buyer.ts:47-93`). Python buyer uses base `x402` library with `EthAccountSigner` for EIP-712 signed payments (`payments/x402_client.py:102-117`).
+- **Circle Programmable Wallets** — Developer-controlled seller wallet on ARC-TESTNET (wallet set `ab698b2d...`) via `payments/circle_wallets.py`, eliminating private key management for the provider side.
 
 **Why These Products:**
-- x402 eliminates the checkout step entirely — the agent includes USDC payment proof with every API call, no human intervention needed
-- Off-chain batching means individual API calls cost $0 gas — only the initial deposit TX costs gas, making $0.001 micropayments economically viable
-- USDC as Arc's native gas token eliminates the complexity of bridging ETH for gas fees
-- Circle Programmable Wallets let us create developer-controlled seller wallets without managing raw private keys
+- x402 eliminates the checkout step entirely — the agent includes USDC payment proof with every API call, no human intervention needed. This is the difference between "agent-compatible" and "agent-native" commerce.
+- Off-chain batching means individual API calls cost $0 gas — only the initial `client.deposit()` TX costs gas, making $0.001 micropayments economically viable. We ran 519 calls at $0.001 each with zero gas after one deposit.
+- USDC as Arc's native gas token eliminates the dual-token complexity of bridging ETH for gas fees. For AI agents that don't understand token management, single-token simplicity is critical.
+- Circle Programmable Wallets let us onboard providers with just an email — no MetaMask, no seed phrases, no "what's a gas fee?" friction.
 
 **What Worked Well:**
-- **GatewayClient deposit + pay flow worked seamlessly** — deposit USDC once, then make unlimited micropayment API calls without additional on-chain transactions
-- **Off-chain batching eliminates per-call gas costs** — our 10 test calls at $0.001 each cost zero gas after the initial deposit, making true micropayments viable
-- **Circle Programmable Wallets on Arc testnet** — developer-controlled wallets with no private key management needed for the seller side, received 40 USDC for testing
-- **EIP-155 chain ID detection** — Arc testnet chain ID (5042002) was automatically detected by the SDK with no special configuration
-- **USDC as native gas token** — no ETH bridging needed, simplifying the entire payment flow for autonomous agents
+1. **`GatewayClient.deposit()` + `.pay()` two-step flow is perfectly suited for AI agents** — deposit once with a single on-chain TX, then make unlimited off-chain micropayments. Our `demo-buyer.ts:52-59` checks `balances.gateway.available`, auto-deposits if low, then fires 519 paid API calls — all automated, no human needed.
+2. **`createGatewayMiddleware()` + `gateway.require(price)` is the simplest payment middleware we've ever used** — 3 lines of code (`server.ts:39-42`) to protect any Express route with USDC payments. Compare this to Stripe integration which requires 50+ lines of webhook handling, customer objects, and session management.
+3. **Dynamic per-route pricing works cleanly** — we fetch the service's price from our registry, then pass it to `gateway.require()` dynamically (`server.ts:109-126`). This enables a marketplace with hundreds of services at different price points through a single gateway.
+4. **Arc testnet chain ID (`eip155:5042002`) auto-detected** — no manual chain registration. `GatewayClient({ chain: "arcTestnet" })` just works (`demo-buyer.ts:48`).
+5. **Off-chain payment objects contain structured payer data** — `(req as any).payment.payer` gives us the buyer's wallet address per-request (`server.ts:82-83`), which we use to build per-agent transaction histories and reputation scores without additional identity infrastructure.
 
-**What Could Be Improved:**
-- **GatewayClient environment handling** — the client doesn't auto-load `.env` files; we had to pass `PRIVATE_KEY` via `process.env` explicitly, which is error-prone in containerized deployments
-- **Opaque error messages from `gateway.require()`** — when payment fails, the middleware returns generic "Payment failed" errors without indicating whether it's an insufficient balance, wrong chain, or signature issue. More granular error codes would speed up debugging significantly
-- **Arc testnet USDC faucet documentation** — there's no official documentation for obtaining testnet USDC on Arc; we had to use the Circle faucet manually and discover the process through trial and error
-- **Limited TypeScript documentation for x402-batching** — the server-side middleware setup for `@circle-fin/x402-batching` lacks comprehensive examples, especially for Express/Fastify integration patterns
-- **No Python SDK for x402-batching** — only TypeScript is supported; our Python buyer client had to fall back to the base `x402` library, which doesn't support off-chain batching. A Python SDK would unlock the large FastAPI/Django ecosystem for x402 adoption
+**What Could Be Improved (specific, actionable):**
+
+1. **`gateway.require()` error responses lack diagnostic codes** — When a buyer's `client.pay()` fails, the middleware returns HTTP 402 with a generic body. We cannot distinguish between: (a) insufficient gateway balance, (b) wrong chain ID, (c) invalid signature, (d) expired payment authorization. We had to add our own `client.supports(url)` pre-check (`demo-buyer.ts:78-84`) to detect unsupported routes before paying. **Suggestion:** Return a JSON body with `{ "error_code": "INSUFFICIENT_BALANCE" | "CHAIN_MISMATCH" | "SIGNATURE_INVALID", "required_amount": "0.001", "buyer_balance": "0.000" }` so agent clients can self-diagnose and auto-recover.
+
+2. **No Python SDK for `x402-batching` off-chain flow** — Our backend is Python/FastAPI. The base `x402` Python library (`x402[fastapi,evm]>=2.0.0`) supports on-chain EVM ExactScheme payments but NOT the off-chain batching that `@circle-fin/x402-batching` provides. This forced us into a dual-language architecture: TypeScript sidecar for nanopayments + Python for everything else. We had to build `payments/x402_client.py` (290 lines) as a workaround using `x402HTTPClient` + `EthAccountSigner`, but it lacks gateway balance management. **Suggestion:** Release `circle-x402-batching` as a PyPI package wrapping the same `deposit/pay/getBalances` flow. The Python AI agent ecosystem (LangChain, CrewAI, AutoGen) is massive — this would 10x x402 adoption.
+
+3. **`GatewayClient` constructor doesn't validate chain support** — `new GatewayClient({ chain: "arcTestnet", privateKey: key })` silently succeeds even when Arc testnet is unreachable. The first failure only appears at `client.deposit()` time, with an opaque error. **Suggestion:** Add a `client.validateConnection()` async method, or throw on construction if the chain RPC is unreachable.
+
+4. **No webhook/callback for batch settlement events** — Off-chain payments batch-settle periodically, but there's no webhook to notify the seller when settlement actually lands on-chain. Our platform (`marketplace/settlement.py`) has to poll the explorer to detect settlements. **Suggestion:** Add a `gateway.onSettle(callback)` server-side hook that fires when a batch settles, with `{ batch_id, tx_hash, total_amount, individual_payments[] }`.
+
+5. **Arc testnet USDC acquisition is undocumented** — There's no official faucet page for Arc testnet USDC. We obtained test USDC through Circle Developer Console funding (40 USDC), but the process was trial-and-error. A `npx @circle-fin/faucet arc-testnet 0xADDRESS 100` CLI command would dramatically reduce onboarding friction for hackathon participants.
+
+6. **`x402-batching` `latest` tag on npm is risky for production** — The package doesn't have stable semver releases yet, so our `package.json` pins `"@circle-fin/x402-batching": "latest"`. A breaking change in middleware API shape during our development window (April 15-19) would have silently broken our 519-transaction demo. **Suggestion:** Publish tagged releases (`@circle-fin/x402-batching@1.0.0`) and document the middleware contract as stable.
 
 ### Technical Architecture
 
@@ -81,7 +88,7 @@ Settlement Engine → USDC payout to Provider wallet (periodic)
 - MCP Bridge — 5 tools: discover_services, get_service_details, call_service, get_balance, list_categories
 
 **Quality & Coverage:**
-- 1,530+ tests across 50+ test files
+- 1,538+ tests across 54 test files
 - 9-language i18n support
 - MIT License (fully open-source)
 

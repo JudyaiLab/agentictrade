@@ -79,7 +79,7 @@ python examples/two_agents_trading.py
 - **Payments:** x402 USDC on Arc + PayPal + NOWPayments (300+ crypto)
 - **Agent Identity:** API Key → KYA JWT → DID+VC (progressive trust)
 - **Deployment:** Docker Compose, production-ready
-- **Tests:** 1,513 passing across 50+ test files
+- **Tests:** 1,538 passing across 54 test files
 
 ## Circle Products Used
 
