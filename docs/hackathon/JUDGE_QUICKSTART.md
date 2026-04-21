@@ -87,6 +87,8 @@ python examples/two_agents_trading.py
 2. **x402 Payment Standard** — HTTP 402 payment protocol for machine-to-machine commerce
 3. **Circle Programmable Wallets** — Developer-controlled wallets for agent onboarding on Arc testnet
 
+See [Circle Product Feedback](circle-product-feedback.md) for detailed integration experience.
+
 ## Key Files to Review
 
 | File | What It Does |
@@ -98,6 +100,7 @@ python examples/two_agents_trading.py
 | `sdk/agent.py` | Provider + Buyer SDK |
 | `examples/two_agents_trading.py` | Agent-to-agent trading demo |
 | `docs/hackathon/WHY_ARC.md` | Why micropayments need Arc |
+| `docs/hackathon/circle-product-feedback.md` | Circle product feedback |
 
 ## Team
 
@@ -114,4 +117,3 @@ python examples/two_agents_trading.py
 - GitHub: [github.com/JudyaiLab/agentictrade](https://github.com/JudyaiLab/agentictrade)
 - Live: [agentictrade.io](https://agentictrade.io)
 - MCP Server: [pypi.org/project/agentictrade-mcp](https://pypi.org/project/agentictrade-mcp/)
-- Arc Submission: [docs/hackathon/arc_submission.md](arc_submission.md)
