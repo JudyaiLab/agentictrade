@@ -513,7 +513,7 @@ open https://agentictrade.io/status
 | Min Payment | $0.001/call |
 | License | MIT |
 
-→ [Judges Quick Start Guide](docs/hackathon/JUDGE_QUICKSTART.md) · [Arc Submission Details](docs/hackathon/arc_submission.md) · [Why Arc?](docs/hackathon/WHY_ARC.md)
+→ [Judges Quick Start Guide](docs/hackathon/JUDGE_QUICKSTART.md) · [Circle Product Feedback](docs/hackathon/circle-product-feedback.md) · [Why Arc?](docs/hackathon/WHY_ARC.md)
 
 ---
 
