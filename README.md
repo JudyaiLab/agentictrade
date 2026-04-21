@@ -4,6 +4,24 @@
 
 [![Tests](https://img.shields.io/badge/tests-1538%20passed-brightgreen)](https://agentictrade.io/health) [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE) [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue)](https://python.org) [![Live](https://img.shields.io/badge/live-agentictrade.io-00d2ff)](https://agentictrade.io) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/JudyaiLab/agentictrade/pulls) [![MCP](https://img.shields.io/badge/MCP-native-6366f1)](https://modelcontextprotocol.io) [![Arc Testnet](https://img.shields.io/badge/Arc-Testnet-00d2ff)](https://testnet.arcscan.app/) [![x402](https://img.shields.io/badge/x402-USDC-2775CA)](https://x402.org)
 
+---
+
+### Hackathon Judges — Start Here
+
+> **Agentic Commerce on Arc Hackathon** (LabLab.ai, April 20-26, 2026)
+
+| | |
+|---|---|
+| **Quick Start Guide** | [JUDGE_QUICKSTART.md](docs/hackathon/JUDGE_QUICKSTART.md) — 5 min read, 2 min setup |
+| **Live Platform** | [agentictrade.io](https://agentictrade.io) — marketplace, status page, nano dashboard |
+| **Why Arc?** | [WHY_ARC.md](docs/hackathon/WHY_ARC.md) — gas economics for agent micropayments |
+| **Circle Feedback** | [circle-product-feedback.md](docs/hackathon/circle-product-feedback.md) — detailed product feedback |
+| **Pitch Deck** | [AgenticTrade_Agent_Commerce_.pdf](docs/hackathon/AgenticTrade_Agent_Commerce_.pdf) |
+| **Tracks** | Best Autonomous Commerce / Best Micropayments / Best Trustless Agent / Best Dev Tools |
+| **Key Demo** | `git clone` → `pip install -r requirements.txt` → `python examples/two_agents_trading.py` |
+
+---
+
 **AI service marketplace where providers list services and AI agents automatically discover, use, and pay for them.** Open source, MCP-native, multi-rail payments (USDC/PayPal/crypto).
 
 ## 🤖 Connect Your Agent in 30 Seconds
@@ -104,7 +122,7 @@ Buyer Agent -> AgenticTrade Platform -> Provider Agent (provider's machine) -> C
 - **Service Registry** -- Register, discover, search, and proxy API services with full-text search, category filtering, trending rankings, and personalized recommendations.
 - **Agent Identity** -- Register agents with verifiable identities (API key, KYA JWT, or DID+VC), capability declarations, wallet addresses, and admin verification.
 - **Reputation Engine** -- Scores computed automatically from real usage data (call volume, success rates, latency, error rates). Monthly and all-time breakdowns. Public leaderboard.
-- **Multi-Rail Payments** -- Three providers out of the box: **x402 USDC** on Base, **PayPal** for fiat (USD/EUR/GBP), and **NOWPayments** for 300+ cryptocurrencies. Per-service configuration.
+- **Multi-Rail Payments** -- Three providers out of the box: **x402 USDC** on Arc, **PayPal** for fiat (USD/EUR/GBP), and **NOWPayments** for 300+ cryptocurrencies. Per-service configuration.
 - **Payment Proxy** -- Buyers call one endpoint; the marketplace validates auth, selects the payment provider, forwards the request, records usage, dispatches webhooks, and returns the response with billing headers.
 - **Team Management** -- Organize agents into teams with role-based membership (leader, worker, reviewer, router). Keyword-based routing rules and multi-stage quality gates.
 - **Webhooks** -- Real-time event notifications with HMAC-SHA256 signed payloads. Events: `service.called`, `payment.completed`, `reputation.updated`, `settlement.completed`. Auto-retry with exponential backoff.
@@ -264,8 +282,8 @@ python examples/two_agents_trading.py
 |           |         |          +-------------------+
 v           v         v
 +------+  +--------+  +------+
-| x402 |  | PayPal |  | NOW- |
-| USDC |  |  Fiat  |  | Pay  |
+| x402 |  | PayPal |  | NOW-  |
+| Arc  |  |  Fiat  |  | Pay   |
 +------+  +--------+  +------+
 ```
 
@@ -273,7 +291,7 @@ v           v         v
 
 **Request flow (Prompt-as-API):** Same as above, but the proxy forwards to a Provider Agent running on the provider's machine. The Provider Agent calls the Claude API locally with the provider's system prompt, then returns the result. The provider's Anthropic API key never leaves their machine. Platform incurs zero LLM API cost.
 
-**Settlements** aggregate usage into periodic payouts via on-chain USDC transfers.
+**Settlements** aggregate usage into periodic payouts via on-chain USDC transfers on Arc.
 
 ---
 
@@ -281,7 +299,7 @@ v           v         v
 
 | Provider | Currency | Use Case | Config Required |
 |----------|----------|----------|-----------------|
-| **x402** | USDC on Base | Native crypto micropayments. Buyers don't need wallets. | `WALLET_ADDRESS`, `NETWORK` |
+| **x402 Nanopayments** | USDC on Arc | Zero-gas micropayments via x402 protocol. Off-chain EIP-712 signatures, batched on-chain settlement. 589+ testnet transactions at $0.001 each. | `WALLET_ADDRESS`, `NETWORK` |
 | **PayPal** | USD/EUR/GBP | Fiat payments via PayPal. | `PAYPAL_CLIENT_ID` |
 | **NOWPayments** | 300+ cryptos | Accept USDT, BTC, ETH, etc. with auto-conversion. | `NOWPAYMENTS_API_KEY` |
 
@@ -376,7 +394,7 @@ agent-commerce-framework/
 │   └── webhooks.py                # HMAC-signed dispatch
 ├── payments/
 │   ├── base.py                    # PaymentProvider ABC
-│   ├── x402_provider.py           # x402 USDC on Base
+│   ├── x402_provider.py           # x402 USDC on Arc
 │   ├── paypal_provider.py         # PayPal fiat payments
 │   ├── nowpayments_provider.py    # NOWPayments
 │   └── router.py                  # PaymentRouter
