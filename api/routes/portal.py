@@ -658,6 +658,91 @@ async def portal_budget(request: Request):
     })
 
 
+@router.post("/budget", response_class=HTMLResponse)
+async def portal_budget_update(
+    request: Request,
+    daily_limit_usd: float = Form(...),
+    per_tx_limit_usd: float = Form(...),
+    monthly_limit_usd: float = Form(...),
+    csrf_token: str = Form(""),
+):
+    """Save agent budget policy from the portal form."""
+    provider = _get_provider(request)
+    if not provider:
+        return RedirectResponse("/portal/login", status_code=303)
+
+    session = request.cookies.get(_SESSION_COOKIE, "")
+    ctx = _locale_context(request)
+
+    if not _verify_csrf(session, csrf_token):
+        return templates.TemplateResponse("portal/budget.html", {
+            "request": request, **ctx,
+            "provider": provider,
+            "policy": None, "history": [], "daily_pct": 0, "monthly_pct": 0,
+            "alert_success": None,
+            "alert_error": "Invalid request. Please try again.",
+            "csrf_token": _csrf_token(session),
+        }, status_code=403)
+
+    import json
+    data_dir = Path(__file__).resolve().parent.parent.parent / "data"
+    budget_file = data_dir / "budget.json"
+    agent_id = provider.get("id", "")
+
+    try:
+        all_budgets: dict = {}
+        if budget_file.exists():
+            try:
+                all_budgets = json.loads(budget_file.read_text(encoding="utf-8"))
+            except (json.JSONDecodeError, OSError):
+                all_budgets = {}
+
+        existing = all_budgets.get(agent_id, {})
+        all_budgets[agent_id] = {
+            "agent_id": agent_id,
+            "daily_limit_usd": round(float(daily_limit_usd), 4),
+            "per_tx_limit_usd": round(float(per_tx_limit_usd), 4),
+            "monthly_limit_usd": round(float(monthly_limit_usd), 4),
+            "spent_today_usd": existing.get("spent_today_usd", 0.0),
+            "spent_month_usd": existing.get("spent_month_usd", 0.0),
+            "last_reset_date": existing.get("last_reset_date", ""),
+            "last_reset_month": existing.get("last_reset_month", ""),
+            "history": existing.get("history", []),
+        }
+
+        data_dir.mkdir(parents=True, exist_ok=True)
+        budget_file.write_text(
+            json.dumps(all_budgets, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+
+        pol = all_budgets[agent_id]
+        history = pol.get("history", [])[-20:]
+        daily_pct = round(pol["spent_today_usd"] / pol["daily_limit_usd"] * 100, 1) if pol["daily_limit_usd"] > 0 else 0
+        monthly_pct = round(pol["spent_month_usd"] / pol["monthly_limit_usd"] * 100, 1) if pol["monthly_limit_usd"] > 0 else 0
+
+        return templates.TemplateResponse("portal/budget.html", {
+            "request": request, **ctx,
+            "provider": provider,
+            "policy": pol, "history": history,
+            "daily_pct": daily_pct, "monthly_pct": monthly_pct,
+            "alert_success": "Budget policy saved.",
+            "alert_error": None,
+            "csrf_token": _csrf_token(session),
+        })
+
+    except Exception as e:
+        logger.error("Failed to save budget policy for %s: %s", agent_id, e)
+        return templates.TemplateResponse("portal/budget.html", {
+            "request": request, **ctx,
+            "provider": provider,
+            "policy": None, "history": [], "daily_pct": 0, "monthly_pct": 0,
+            "alert_success": None,
+            "alert_error": f"Failed to save: {e}",
+            "csrf_token": _csrf_token(session),
+        }, status_code=500)
+
+
 # ---------------------------------------------------------------------------
 # Negotiations
 # ---------------------------------------------------------------------------
@@ -720,9 +805,9 @@ async def portal_reputation(request: Request):
     leaderboard = []
     my_reputation = None
     try:
-        rep_engine = request.app.state.reputation_engine
-        leaderboard = rep_engine.leaderboard(limit=20)
-        my_reputation = rep_engine.get_score(provider["id"])
+        rep_engine = request.app.state.reputation
+        leaderboard = rep_engine.get_leaderboard(limit=20)
+        my_reputation = rep_engine.compute_reputation(provider["id"])
     except Exception:
         pass
 
