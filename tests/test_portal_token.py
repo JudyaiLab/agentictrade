@@ -229,6 +229,38 @@ class TestTokenUsage:
         assert resp.status_code == 401 or resp.status_code == 403
 
 
+class TestPortalServiceCreation:
+    def test_created_service_belongs_to_portal_provider(
+        self, client, provider_account, db
+    ):
+        cookies = _session_cookie(provider_account["id"])
+        csrf = _get_csrf(client, cookies)
+
+        resp = client.post(
+            "/portal/services/create",
+            data={
+                "csrf_token": csrf,
+                "name": "Portal Test Service",
+                "description": "An external API created through the provider portal.",
+                "endpoint": "https://example.com/api",
+                "price_per_call": "0.05",
+                "free_tier_calls": "2",
+                "category": "data",
+                "service_type": "external",
+            },
+            cookies=cookies,
+        )
+
+        assert resp.status_code == 200
+        assert "Portal Test Service" in resp.text
+        with db.connect() as conn:
+            service = conn.execute(
+                "SELECT provider_id FROM services WHERE name = ?",
+                ("Portal Test Service",),
+            ).fetchone()
+        assert service["provider_id"] == provider_account["id"]
+
+
 class TestSettingsPagePATDisplay:
     def test_settings_shows_generate_button(self, client, provider_account):
         cookies = _session_cookie(provider_account["id"])
