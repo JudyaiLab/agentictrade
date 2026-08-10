@@ -1081,7 +1081,7 @@ async def portal_create_service(
     now = datetime.now(timezone.utc).isoformat()
     service = {
         "id": str(uuid.uuid4()),
-        "provider_id": provider.get("api_key_id") or provider["id"],
+        "provider_id": provider["id"],
         "name": name,
         "description": description,
         "endpoint": endpoint,
